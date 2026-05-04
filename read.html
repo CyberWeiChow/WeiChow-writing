@@ -6,7 +6,7 @@
   <title>阅读</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;700;900&family=Noto+Sans+SC:wght@500;700;900&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;700&family=Noto+Sans+SC:wght@500;700;900&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #f7f5f0;
@@ -15,356 +15,205 @@
       --rule: #d8d4cb;
     }
     * { box-sizing: border-box; }
-    html, body {
+    html { scroll-behavior: smooth; }
+    body {
       margin: 0;
-      height: 100%;
       background: var(--bg);
       color: var(--ink);
       font-family: 'EB Garamond', 'Noto Serif SC', 'Songti SC', serif;
       -webkit-font-smoothing: antialiased;
-      overflow: hidden;
       font-feature-settings: "kern", "liga";
       cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'><path d='M19.5 2.5a2.4 2.4 0 0 1 3.4 3.4L9.5 19.3 3 21l1.7-6.5z' fill='%231a1714' stroke='%23fafaf7' stroke-width='0.8' stroke-linejoin='round'/><path d='M16.5 5.5l3.4 3.4' stroke='%23fafaf7' stroke-width='0.8'/></svg>") 3 25, auto;
     }
     a { color: inherit; text-decoration: none; }
 
     .topbar {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      height: 64px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
       display: grid;
       grid-template-columns: 1fr auto 1fr;
       align-items: center;
-      padding: 0 40px;
+      padding: 16px 32px;
       font-size: 11px;
       letter-spacing: 0.22em;
       text-transform: uppercase;
       color: var(--muted);
-      z-index: 10;
+      background: color-mix(in srgb, var(--bg) 88%, transparent);
+      backdrop-filter: blur(8px);
     }
     .topbar a:hover { color: var(--ink); }
-    .topbar .center {
-      font-style: italic;
-      text-transform: none;
-      letter-spacing: 0.05em;
-      font-size: 14px;
-      color: var(--ink);
-    }
-    .topbar .right { text-align: right; }
+    .topbar .center { text-align: center; }
+    .topbar .right  { text-align: right; }
 
-    .stage {
+    .progress {
       position: fixed;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 80px 40px;
+      top: 0; left: 0;
+      height: 1px;
+      background: var(--ink);
+      width: 0;
+      z-index: 100;
+      opacity: 0.5;
     }
 
-    .sheet {
+    article {
       position: relative;
-      width: min(760px, 96vw);
-      height: min(820px, calc(100vh - 160px));
-      padding: 40px 0 56px;
-      overflow: hidden;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 80px 32px 140px;
     }
 
-    #content {
-      white-space: pre;
-      color: var(--ink);
-      transition: opacity 0.3s ease, transform 0.3s ease;
+    .masthead { margin-bottom: 56px; }
+    .headline {
+      font-family: 'Noto Serif SC', serif;
+      font-weight: 500;
+      font-size: 30px;
+      line-height: 1.35;
+      margin: 0 0 14px;
+      letter-spacing: 0.01em;
     }
-    #content .line { white-space: pre; }
-    #content .char {
+    .lede {
+      font-family: 'EB Garamond', 'Noto Serif SC', serif;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.7;
+      margin: 0 0 14px;
+      font-style: italic;
+    }
+    .byline {
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      color: var(--muted);
+      font-size: 13px;
+      letter-spacing: 0.05em;
+      margin: 0;
+    }
+    .masthead .rule {
+      width: 56px;
+      height: 1px;
+      background: var(--rule);
+      margin: 24px 0 0;
+    }
+
+    #body {
+      color: var(--ink);
+    }
+    #body .line {
+      white-space: pre;
+    }
+    #body .para-gap {
+      height: 0.6em;
+    }
+    #body .char {
       display: inline-block;
       transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
       will-change: transform;
     }
-    #content.flip-out-next { opacity: 0; transform: translateX(-8px); }
-    #content.flip-out-prev { opacity: 0; transform: translateX(8px); }
-    #content.flip-in-next  { opacity: 0; transform: translateX(8px); }
-    #content.flip-in-prev  { opacity: 0; transform: translateX(-8px); }
 
-    .page-num {
-      position: absolute;
-      bottom: 16px;
-      right: 0;
+    footer.colophon {
+      margin-top: 64px;
+      color: var(--muted);
       font-size: 11px;
-      color: var(--muted);
-      letter-spacing: 0.3em;
-      font-variant-numeric: oldstyle-nums;
-    }
-
-    .nav-zone {
-      position: fixed;
-      top: 0; bottom: 0;
-      width: 30%;
-      cursor: pointer;
-      z-index: 5;
-    }
-    .nav-zone.left { left: 0; }
-    .nav-zone.right { right: 0; }
-
-    .arrow {
-      position: fixed;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--muted);
-      font-size: 18px;
-      cursor: pointer;
-      opacity: 0;
-      transition: opacity 0.25s ease, color 0.25s ease;
-      user-select: none;
-      z-index: 6;
-    }
-    .arrow:hover { color: var(--ink); }
-    body:hover .arrow { opacity: 0.5; }
-    .arrow:hover { opacity: 1; }
-    .arrow.left { left: 24px; }
-    .arrow.right { right: 24px; }
-
-    .progress {
-      position: fixed;
-      bottom: 0; left: 0;
-      height: 1px;
-      background: var(--ink);
-      width: 0;
-      transition: width 0.3s ease;
-      z-index: 11;
-      opacity: 0.6;
-    }
-
-    .loading {
-      color: var(--muted);
-      font-size: 13px;
-      font-style: italic;
-    }
-
-    @media (max-width: 640px) {
-      .topbar { padding: 0 20px; font-size: 10px; }
-      .topbar .center { font-size: 13px; }
-      .stage { padding: 64px 20px; }
-    }
-
-    /* ============= MULTI-COLUMN LAYOUT ============= */
-    .cols {
-      display: grid;
-      grid-template-columns: repeat(var(--cols, 1), 1fr);
-      column-gap: var(--gap, 0px);
-    }
-    .col { min-width: 0; }
-    .masthead { margin-bottom: 18px; }
-    .running-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      padding-bottom: 6px;
-      margin-bottom: 14px;
-      border-bottom: 1px solid var(--rule);
-      font-size: 11px;
-      letter-spacing: 0.18em;
+      letter-spacing: 0.4em;
+      text-align: center;
       text-transform: uppercase;
-      color: var(--muted);
     }
+
     .vert-label {
-      position: absolute;
-      right: -32px;
+      position: fixed;
+      right: 20px;
       top: 50%;
       transform: translateY(-50%);
       writing-mode: vertical-rl;
       text-orientation: mixed;
       font-family: 'Noto Sans SC', sans-serif;
-      font-weight: 900;
-      font-size: 26px;
-      letter-spacing: 0.04em;
-      color: var(--ink);
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 0.18em;
+      color: var(--muted);
+      opacity: 0.6;
       line-height: 1;
       pointer-events: none;
+      display: none;
     }
     .vert-label .en {
       font-family: 'Playfair Display', serif;
       font-style: italic;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-    }
-    .vert-label .accent {
-      display: inline-block;
-      width: 20px;
-      height: 4px;
-      background: var(--ink);
-      margin: 0 6px;
-      vertical-align: middle;
+      letter-spacing: 0.04em;
     }
 
-    /* ============= NEWS THEME (vintage newspaper) ============= */
+    /* ======== NEWS theme accents ======== */
     body.theme-news {
-      --bg: #efe6cf;
+      --bg: #efe8d4;
       --ink: #1f1a14;
       --muted: #7a6a52;
       --rule: #c9b890;
     }
     body.theme-news .topbar {
       font-family: 'Old Standard TT', 'Noto Serif SC', serif;
-      letter-spacing: 0.16em;
-    }
-    body.theme-news .topbar .center {
-      font-family: 'Noto Sans SC', sans-serif;
-      font-style: normal;
-      font-weight: 900;
-      text-transform: none;
-      letter-spacing: 0.04em;
-      font-size: 15px;
-      color: var(--ink);
-    }
-    body.theme-news .sheet {
-      width: min(900px, 96vw);
-      padding: 24px 24px 48px;
-      border-top: 4px double var(--ink);
-      border-bottom: 4px double var(--ink);
-    }
-    body.theme-news .masthead {
-      border-bottom: 1px solid var(--ink);
-      padding-bottom: 14px;
-      margin-bottom: 18px;
     }
     body.theme-news .headline {
       font-family: 'Noto Sans SC', sans-serif;
       font-weight: 900;
-      font-size: 30px;
-      line-height: 1.18;
-      letter-spacing: 0.01em;
-      margin: 0 0 10px;
-      color: var(--ink);
+      font-size: 34px;
+      line-height: 1.22;
     }
     body.theme-news .lede {
       font-family: 'Noto Sans SC', sans-serif;
+      font-style: normal;
       font-weight: 500;
-      font-size: 15px;
-      line-height: 1.55;
       color: #3a322a;
-      margin: 0 0 10px;
     }
-    body.theme-news .byline {
-      font-family: 'Noto Serif SC', serif;
-      font-style: italic;
-      font-size: 12px;
-      color: var(--muted);
-      margin: 0;
-      letter-spacing: 0.05em;
+    body.theme-news .masthead {
+      padding-bottom: 22px;
+      border-bottom: 3px double var(--ink);
+      margin-bottom: 40px;
     }
-    body.theme-news .cols {
-      column-rule: 1px solid var(--rule);
-    }
-    body.theme-news .col { padding: 0 6px; }
-    body.theme-news .col:first-child { padding-left: 0; }
-    body.theme-news .col:last-child  { padding-right: 0; }
-    body.theme-news .running-head { font-family: 'Noto Sans SC', sans-serif; font-weight: 700; }
-    body.theme-news .page-num {
-      font-family: 'Old Standard TT', serif;
-      font-style: italic;
-      font-size: 12px;
-      letter-spacing: 0.18em;
-      bottom: 12px;
-      right: 24px;
-    }
-    body.theme-news .page-num::before { content: '— '; }
-    body.theme-news .page-num::after { content: ' —'; }
+    body.theme-news .masthead .rule { display: none; }
+    body.theme-news .vert-label { display: block; }
 
-    /* ============= CRITICISM THEME (academic / literary magazine) ============= */
+    /* ======== CRITICISM theme accents ======== */
     body.theme-criticism {
       --bg: #f3ede0;
       --ink: #1a1714;
       --muted: #6a5f50;
       --rule: #c8bda5;
     }
-    body.theme-criticism .topbar {
-      font-family: 'EB Garamond', 'Noto Serif SC', serif;
-      font-size: 12px;
-      letter-spacing: 0.08em;
-      text-transform: none;
-    }
-    body.theme-criticism .topbar .center {
-      font-style: italic;
-      font-weight: 400;
-      font-size: 15px;
-      letter-spacing: 0.02em;
-    }
-    body.theme-criticism .topbar .right {
-      font-variant: small-caps;
-      letter-spacing: 0.18em;
-      font-size: 11px;
-    }
-    body.theme-criticism .sheet {
-      width: min(900px, 96vw);
-      padding: 28px 56px 64px 28px;
-      max-width: none;
-    }
-    body.theme-criticism .masthead { margin-bottom: 22px; }
     body.theme-criticism .headline {
       font-family: 'Noto Serif SC', serif;
       font-weight: 700;
-      font-size: 24px;
-      line-height: 1.35;
-      margin: 0 0 8px;
-      color: var(--ink);
+      font-size: 26px;
+      line-height: 1.4;
     }
     body.theme-criticism .lede {
       font-family: 'Noto Serif SC', serif;
-      font-weight: 400;
-      font-size: 13px;
-      line-height: 1.7;
-      color: #3a332a;
-      margin: 0 0 10px;
       font-style: italic;
     }
-    body.theme-criticism .byline {
-      font-family: 'EB Garamond', serif;
-      font-size: 12px;
-      color: var(--muted);
-      margin: 0;
-      letter-spacing: 0.04em;
-      font-style: italic;
-    }
-    body.theme-criticism .col { padding: 0 4px; }
-    body.theme-criticism .col:first-child { padding-left: 0; }
-    body.theme-criticism .col:last-child  { padding-right: 0; }
-    body.theme-criticism .running-head { font-family: 'EB Garamond', serif; font-style: italic; text-transform: none; }
-    body.theme-criticism .page-num {
-      font-family: 'EB Garamond', serif;
-      font-style: italic;
-      font-size: 12px;
-      letter-spacing: 0.05em;
-      bottom: 18px;
-      left: 0;
-      right: 0;
-      text-align: center;
+    body.theme-criticism .vert-label { display: block; }
+
+    @media (max-width: 700px) {
+      article { padding: 56px 20px 100px; }
+      .vert-label { display: none !important; }
     }
   </style>
 </head>
 <body>
+  <div class="progress" id="progress"></div>
   <div class="topbar">
     <div><a href="index.html">← 返回</a></div>
-    <div class="center" id="work-title"></div>
+    <div class="center" id="topbar-title"></div>
     <div class="right" id="cat-label"></div>
   </div>
 
-  <div class="stage">
-    <div class="sheet" id="sheet">
-      <div id="content" class="loading">正在排版…</div>
-      <div class="page-num" id="page-num"></div>
-    </div>
-  </div>
+  <aside class="vert-label" id="vert-label"></aside>
 
-  <div class="nav-zone left" id="zone-left"></div>
-  <div class="nav-zone right" id="zone-right"></div>
-  <div class="arrow left">‹</div>
-  <div class="arrow right">›</div>
-  <div class="progress" id="progress"></div>
+  <article id="article">
+    <header class="masthead" id="masthead"></header>
+    <div id="body">
+      <p style="color:var(--muted);font-style:italic">正在排版…</p>
+    </div>
+    <footer class="colophon">— Fin —</footer>
+  </article>
 
   <script type="module">
     import { prepareWithSegments, layoutWithLines } from 'https://esm.sh/@chenglou/pretext';
@@ -375,42 +224,44 @@
 
     const THEMES = {
       creative: {
-        fontSize: 16,
-        lineHeight: 30,
+        fontSize: 17,
+        lineHeight: 32,
         fontFamily: `'EB Garamond', 'Noto Serif SC', 'Songti SC', serif`,
         preloadFonts: ['Noto Serif SC', 'EB Garamond'],
+        bylinePrefix: '',
+        vertLabel: null,
       },
       news: {
-        fontSize: 15,
-        lineHeight: 27,
+        fontSize: 15.5,
+        lineHeight: 29,
         fontFamily: `'Old Standard TT', 'Noto Serif SC', 'STSong', serif`,
-        preloadFonts: ['Noto Serif SC', 'Old Standard TT', 'Playfair Display'],
+        preloadFonts: ['Noto Serif SC', 'Old Standard TT', 'Noto Sans SC'],
+        bylinePrefix: '记者　',
+        bylineSuffix: '　报道',
+        vertLabel: { en: 'BUSINESS', cn: '财经报道' },
       },
       criticism: {
-        fontSize: 15,
-        lineHeight: 28,
+        fontSize: 16,
+        lineHeight: 31,
         fontFamily: `'EB Garamond', 'Noto Serif SC', 'Songti SC', serif`,
         preloadFonts: ['Noto Serif SC', 'EB Garamond'],
+        bylinePrefix: '',
+        bylineSuffix: '　著',
+        vertLabel: { en: 'Literary Criticism', cn: '文学艺术批评' },
       },
     };
 
-    let fontSize, lineHeight, font;
-
-    const $sheet = document.getElementById('sheet');
-    const $content = document.getElementById('content');
-    const $pageNum = document.getElementById('page-num');
-    const $title = document.getElementById('work-title');
+    const $body = document.getElementById('body');
+    const $masthead = document.getElementById('masthead');
+    const $topbarTitle = document.getElementById('topbar-title');
     const $catLabel = document.getElementById('cat-label');
+    const $vert = document.getElementById('vert-label');
     const $progress = document.getElementById('progress');
 
-    let allLines = [];
-    let pages = [];
-    let pageIndex = 0;
-    let _rawText = '';
+    let theme, fontSize, lineHeight, font, _rawText = '';
 
     init().catch(err => {
-      $content.classList.remove('loading');
-      $content.textContent = '加载失败：' + err.message;
+      $body.innerHTML = `<p style="color:#a55">加载失败：${escapeHtml(err.message)}</p>`;
       console.error(err);
     });
 
@@ -420,17 +271,32 @@
       if (!work) throw new Error('找不到作品 ' + id);
 
       document.title = work.title;
-      $title.textContent = work.title;
+      $topbarTitle.textContent = work.title;
       const cat = (manifest.categories || []).find(c => c.id === work.category);
       if (cat) $catLabel.textContent = cat.label;
 
       const themeKey = THEMES[work.category] ? work.category : 'creative';
-      const theme = THEMES[themeKey];
+      theme = THEMES[themeKey];
       document.body.className = 'theme-' + themeKey;
       fontSize = theme.fontSize;
       lineHeight = theme.lineHeight;
       font = `${fontSize}px ${theme.fontFamily}`;
 
+      // ---- masthead ----
+      const bylineHTML = `<p class="byline">${escapeHtml((theme.bylinePrefix || '') + '周未' + (theme.bylineSuffix || ''))}</p>`;
+      $masthead.innerHTML = `
+        <h1 class="headline">${escapeHtml(work.title)}</h1>
+        ${work.subtitle ? `<p class="lede">${escapeHtml(work.subtitle)}</p>` : ''}
+        ${bylineHTML}
+        <div class="rule"></div>
+      `;
+
+      // ---- vertical side label ----
+      if (theme.vertLabel) {
+        $vert.innerHTML = `<span class="en">${escapeHtml(theme.vertLabel.en)}</span>　${escapeHtml(theme.vertLabel.cn)}`;
+      }
+
+      // ---- text ----
       _rawText = await fetch('./works/' + work.file).then(r => {
         if (!r.ok) throw new Error('读取 ' + work.file + ' 失败');
         return r.text();
@@ -440,146 +306,82 @@
         document.fonts.load(`${fontSize}px "${f}"`)
       ));
 
-      paginate();
-      pageIndex = 0;
-      $content.classList.remove('loading');
-      render('next', true);
+      layoutBody();
+      cacheCharPositions();
+
+      window.addEventListener('scroll', () => {
+        const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+        $progress.style.width = (window.scrollY / max * 100) + '%';
+        scheduleDodge();
+      }, { passive: true });
 
       let resizeTimer;
       window.addEventListener('resize', () => {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(() => {
-          const cursor = pages.slice(0, pageIndex).reduce((n, p) => n + p.length, 0);
-          paginate();
-          let acc = 0, idx = 0;
-          for (let i = 0; i < pages.length; i++) {
-            if (acc + pages[i].length > cursor) { idx = i; break; }
-            acc += pages[i].length;
-          }
-          pageIndex = Math.min(idx, pages.length - 1);
-          render('next', true);
+          layoutBody();
+          cacheCharPositions();
         }, 120);
       });
-
-      document.getElementById('zone-left').addEventListener('click', prev);
-      document.getElementById('zone-right').addEventListener('click', next);
-      document.querySelector('.arrow.left').addEventListener('click', prev);
-      document.querySelector('.arrow.right').addEventListener('click', next);
-
-      window.addEventListener('keydown', e => {
-        if (e.key === 'ArrowLeft' || e.key === 'PageUp') prev();
-        else if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
-          e.preventDefault();
-          next();
-        }
-      });
-
-      let touchX = null;
-      window.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; }, { passive: true });
-      window.addEventListener('touchend', e => {
-        if (touchX === null) return;
-        const dx = e.changedTouches[0].clientX - touchX;
-        touchX = null;
-        if (Math.abs(dx) < 40) return;
-        if (dx > 0) prev(); else next();
-      }, { passive: true });
     }
 
-    function buildLines() {
+    function layoutBody() {
       const paragraphs = _rawText
         .replace(/\r\n/g, '\n')
         .replace(/\r/g, '\n')
         .split(/\n+/)
-        .map(p => p.trim())
+        .map(p => p.trim().replace(/^[　\s]+/, ''))
         .filter(p => p.length > 0)
         .map(p => '　　' + p);
 
-      allLines = [];
-      const innerWidth = getContentWidth();
-      if (innerWidth <= 0 || paragraphs.length === 0) return;
+      const innerWidth = $body.clientWidth;
+      if (innerWidth <= 0 || !paragraphs.length) return;
 
+      let html = '';
       for (let i = 0; i < paragraphs.length; i++) {
         const prep = prepareWithSegments(paragraphs[i], font);
         const result = layoutWithLines(prep, innerWidth, lineHeight);
         if (result && result.lines) {
-          for (const line of result.lines) allLines.push(line.text);
+          for (const line of result.lines) {
+            html += `<div class="line" style="height:${lineHeight}px;line-height:${lineHeight}px;font:${font}">${charsToSpans(line.text)}</div>`;
+          }
         }
-        if (i < paragraphs.length - 1) allLines.push('');
+        if (i < paragraphs.length - 1) html += `<div class="para-gap"></div>`;
       }
+      $body.innerHTML = html;
     }
 
-    function paginate() {
-      buildLines();
-      const innerHeight = getContentHeight();
-      const linesPerPage = Math.max(1, Math.floor(innerHeight / lineHeight));
-      pages = [];
-      let cur = [];
-      for (const ln of allLines) {
-        if (cur.length === 0 && ln === '') continue;
-        cur.push(ln);
-        if (cur.length >= linesPerPage) { pages.push(cur); cur = []; }
-      }
-      if (cur.length) pages.push(cur);
-    }
-
-    function renderChars(text) {
-      if (text === '') return '&nbsp;';
+    function charsToSpans(text) {
       return Array.from(text).map(c => {
-        if (c === '　' || c === ' ' || c === '\t') return escapeHtml(c);
+        if (/\s|　/.test(c)) return escapeHtml(c);
         return `<span class="char">${escapeHtml(c)}</span>`;
       }).join('');
     }
 
-    function render(direction, instant) {
-      if (!pages.length) return;
-      const dir = direction === 'prev' ? 'prev' : 'next';
-      const doRender = () => {
-        $content.innerHTML = pages[pageIndex]
-          .map(t => `<div class="line">${renderChars(t)}</div>`)
-          .join('');
-        $content.style.font = font;
-        $content.style.lineHeight = lineHeight + 'px';
-        $pageNum.textContent = `${pageIndex + 1} / ${pages.length}`;
-        $progress.style.width = `${((pageIndex + 1) / pages.length) * 100}%`;
-
-        requestAnimationFrame(cacheCharPositions);
-
-        if (!instant) {
-          $content.classList.add('flip-in-' + dir);
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-              $content.classList.remove('flip-in-' + dir);
-            });
-          });
-        }
-      };
-
-      if (instant) { doRender(); return; }
-      $content.classList.add('flip-out-' + dir);
-      setTimeout(() => {
-        $content.classList.remove('flip-out-' + dir);
-        doRender();
-      }, 180);
-    }
-
-    // ---- mouse-dodge interaction ----
-    let mouseX = -9999, mouseY = -9999;
+    // ---- mouse-dodge ----
+    let mouseX = -99999, mouseY = -99999;
     let charCache = [];
     let rafScheduled = false;
-    const DODGE_RADIUS = 100;
-    const DODGE_MAX = 18;
+    const DODGE_RADIUS = 95;
+    const DODGE_MAX = 16;
 
     function cacheCharPositions() {
       charCache = [];
-      const els = $content.querySelectorAll('.char');
+      const els = $body.querySelectorAll('.char');
+      const sx = window.scrollX, sy = window.scrollY;
       for (const el of els) {
         const r = el.getBoundingClientRect();
-        charCache.push({ el, cx: r.left + r.width / 2, cy: r.top + r.height / 2, dodged: false });
+        charCache.push({
+          el,
+          cx: r.left + r.width / 2 + sx,
+          cy: r.top + r.height / 2 + sy,
+          dodged: false,
+        });
       }
-      scheduleDodgeUpdate();
+      scheduleDodge();
     }
 
-    function scheduleDodgeUpdate() {
+    function scheduleDodge() {
       if (rafScheduled) return;
       rafScheduled = true;
       requestAnimationFrame(updateDodge);
@@ -588,18 +390,21 @@
     function updateDodge() {
       rafScheduled = false;
       const r2 = DODGE_RADIUS * DODGE_RADIUS;
+      const minY = window.scrollY - DODGE_RADIUS;
+      const maxY = window.scrollY + window.innerHeight + DODGE_RADIUS;
       for (const c of charCache) {
+        if (c.cy < minY || c.cy > maxY) {
+          if (c.dodged) { c.el.style.transform = ''; c.dodged = false; }
+          continue;
+        }
         const dx = c.cx - mouseX;
         const dy = c.cy - mouseY;
         const d2 = dx * dx + dy * dy;
         if (d2 > r2) {
-          if (c.dodged) {
-            c.el.style.transform = '';
-            c.dodged = false;
-          }
+          if (c.dodged) { c.el.style.transform = ''; c.dodged = false; }
           continue;
         }
-        const d = Math.sqrt(d2) || 0.0001;
+        const d = Math.sqrt(d2) || 0.001;
         const f = 1 - d / DODGE_RADIUS;
         const push = DODGE_MAX * f * f;
         const tx = (dx / d) * push;
@@ -610,37 +415,14 @@
     }
 
     window.addEventListener('mousemove', (e) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-      scheduleDodgeUpdate();
+      mouseX = e.pageX;
+      mouseY = e.pageY;
+      scheduleDodge();
     });
     window.addEventListener('mouseleave', () => {
-      mouseX = mouseY = -9999;
-      scheduleDodgeUpdate();
+      mouseX = mouseY = -99999;
+      scheduleDodge();
     });
-    window.addEventListener('scroll', () => {
-      cacheCharPositions();
-    }, { passive: true });
-
-    function next() {
-      if (pageIndex >= pages.length - 1) return;
-      pageIndex++;
-      render('next');
-    }
-    function prev() {
-      if (pageIndex <= 0) return;
-      pageIndex--;
-      render('prev');
-    }
-
-    function getContentWidth() {
-      return $sheet.clientWidth;
-    }
-    function getContentHeight() {
-      const cs = getComputedStyle($sheet);
-      const pageNumReserve = 32;
-      return $sheet.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - pageNumReserve;
-    }
 
     function escapeHtml(s) {
       return String(s).replace(/[&<>"']/g, c => ({
