@@ -6,7 +6,7 @@
   <title>阅读</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;700;900&family=Noto+Sans+SC:wght@500;700;900&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #f7f5f0;
@@ -24,6 +24,7 @@
       -webkit-font-smoothing: antialiased;
       overflow: hidden;
       font-feature-settings: "kern", "liga";
+      cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'><path d='M19.5 2.5a2.4 2.4 0 0 1 3.4 3.4L9.5 19.3 3 21l1.7-6.5z' fill='%231a1714' stroke='%23fafaf7' stroke-width='0.8' stroke-linejoin='round'/><path d='M16.5 5.5l3.4 3.4' stroke='%23fafaf7' stroke-width='0.8'/></svg>") 3 25, auto;
     }
     a { color: inherit; text-decoration: none; }
 
@@ -149,6 +150,200 @@
       .topbar .center { font-size: 13px; }
       .stage { padding: 64px 20px; }
     }
+
+    /* ============= MULTI-COLUMN LAYOUT ============= */
+    .cols {
+      display: grid;
+      grid-template-columns: repeat(var(--cols, 1), 1fr);
+      column-gap: var(--gap, 0px);
+    }
+    .col { min-width: 0; }
+    .masthead { margin-bottom: 18px; }
+    .running-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding-bottom: 6px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid var(--rule);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .vert-label {
+      position: absolute;
+      right: -32px;
+      top: 50%;
+      transform: translateY(-50%);
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      font-family: 'Noto Sans SC', sans-serif;
+      font-weight: 900;
+      font-size: 26px;
+      letter-spacing: 0.04em;
+      color: var(--ink);
+      line-height: 1;
+      pointer-events: none;
+    }
+    .vert-label .en {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+    .vert-label .accent {
+      display: inline-block;
+      width: 20px;
+      height: 4px;
+      background: var(--ink);
+      margin: 0 6px;
+      vertical-align: middle;
+    }
+
+    /* ============= NEWS THEME (vintage newspaper) ============= */
+    body.theme-news {
+      --bg: #efe6cf;
+      --ink: #1f1a14;
+      --muted: #7a6a52;
+      --rule: #c9b890;
+    }
+    body.theme-news .topbar {
+      font-family: 'Old Standard TT', 'Noto Serif SC', serif;
+      letter-spacing: 0.16em;
+    }
+    body.theme-news .topbar .center {
+      font-family: 'Noto Sans SC', sans-serif;
+      font-style: normal;
+      font-weight: 900;
+      text-transform: none;
+      letter-spacing: 0.04em;
+      font-size: 15px;
+      color: var(--ink);
+    }
+    body.theme-news .sheet {
+      width: min(900px, 96vw);
+      padding: 24px 24px 48px;
+      border-top: 4px double var(--ink);
+      border-bottom: 4px double var(--ink);
+    }
+    body.theme-news .masthead {
+      border-bottom: 1px solid var(--ink);
+      padding-bottom: 14px;
+      margin-bottom: 18px;
+    }
+    body.theme-news .headline {
+      font-family: 'Noto Sans SC', sans-serif;
+      font-weight: 900;
+      font-size: 30px;
+      line-height: 1.18;
+      letter-spacing: 0.01em;
+      margin: 0 0 10px;
+      color: var(--ink);
+    }
+    body.theme-news .lede {
+      font-family: 'Noto Sans SC', sans-serif;
+      font-weight: 500;
+      font-size: 15px;
+      line-height: 1.55;
+      color: #3a322a;
+      margin: 0 0 10px;
+    }
+    body.theme-news .byline {
+      font-family: 'Noto Serif SC', serif;
+      font-style: italic;
+      font-size: 12px;
+      color: var(--muted);
+      margin: 0;
+      letter-spacing: 0.05em;
+    }
+    body.theme-news .cols {
+      column-rule: 1px solid var(--rule);
+    }
+    body.theme-news .col { padding: 0 6px; }
+    body.theme-news .col:first-child { padding-left: 0; }
+    body.theme-news .col:last-child  { padding-right: 0; }
+    body.theme-news .running-head { font-family: 'Noto Sans SC', sans-serif; font-weight: 700; }
+    body.theme-news .page-num {
+      font-family: 'Old Standard TT', serif;
+      font-style: italic;
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      bottom: 12px;
+      right: 24px;
+    }
+    body.theme-news .page-num::before { content: '— '; }
+    body.theme-news .page-num::after { content: ' —'; }
+
+    /* ============= CRITICISM THEME (academic / literary magazine) ============= */
+    body.theme-criticism {
+      --bg: #f3ede0;
+      --ink: #1a1714;
+      --muted: #6a5f50;
+      --rule: #c8bda5;
+    }
+    body.theme-criticism .topbar {
+      font-family: 'EB Garamond', 'Noto Serif SC', serif;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: none;
+    }
+    body.theme-criticism .topbar .center {
+      font-style: italic;
+      font-weight: 400;
+      font-size: 15px;
+      letter-spacing: 0.02em;
+    }
+    body.theme-criticism .topbar .right {
+      font-variant: small-caps;
+      letter-spacing: 0.18em;
+      font-size: 11px;
+    }
+    body.theme-criticism .sheet {
+      width: min(900px, 96vw);
+      padding: 28px 56px 64px 28px;
+      max-width: none;
+    }
+    body.theme-criticism .masthead { margin-bottom: 22px; }
+    body.theme-criticism .headline {
+      font-family: 'Noto Serif SC', serif;
+      font-weight: 700;
+      font-size: 24px;
+      line-height: 1.35;
+      margin: 0 0 8px;
+      color: var(--ink);
+    }
+    body.theme-criticism .lede {
+      font-family: 'Noto Serif SC', serif;
+      font-weight: 400;
+      font-size: 13px;
+      line-height: 1.7;
+      color: #3a332a;
+      margin: 0 0 10px;
+      font-style: italic;
+    }
+    body.theme-criticism .byline {
+      font-family: 'EB Garamond', serif;
+      font-size: 12px;
+      color: var(--muted);
+      margin: 0;
+      letter-spacing: 0.04em;
+      font-style: italic;
+    }
+    body.theme-criticism .col { padding: 0 4px; }
+    body.theme-criticism .col:first-child { padding-left: 0; }
+    body.theme-criticism .col:last-child  { padding-right: 0; }
+    body.theme-criticism .running-head { font-family: 'EB Garamond', serif; font-style: italic; text-transform: none; }
+    body.theme-criticism .page-num {
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      font-size: 12px;
+      letter-spacing: 0.05em;
+      bottom: 18px;
+      left: 0;
+      right: 0;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -178,10 +373,28 @@
     const id = params.get('id');
     if (!id) location.replace('index.html');
 
-    const fontSize = 16;
-    const lineHeight = 30;
-    const fontFamily = `'EB Garamond', 'Noto Serif SC', 'Songti SC', serif`;
-    const font = `${fontSize}px ${fontFamily}`;
+    const THEMES = {
+      creative: {
+        fontSize: 16,
+        lineHeight: 30,
+        fontFamily: `'EB Garamond', 'Noto Serif SC', 'Songti SC', serif`,
+        preloadFonts: ['Noto Serif SC', 'EB Garamond'],
+      },
+      news: {
+        fontSize: 15,
+        lineHeight: 27,
+        fontFamily: `'Old Standard TT', 'Noto Serif SC', 'STSong', serif`,
+        preloadFonts: ['Noto Serif SC', 'Old Standard TT', 'Playfair Display'],
+      },
+      criticism: {
+        fontSize: 15,
+        lineHeight: 28,
+        fontFamily: `'EB Garamond', 'Noto Serif SC', 'Songti SC', serif`,
+        preloadFonts: ['Noto Serif SC', 'EB Garamond'],
+      },
+    };
+
+    let fontSize, lineHeight, font;
 
     const $sheet = document.getElementById('sheet');
     const $content = document.getElementById('content');
@@ -211,13 +424,21 @@
       const cat = (manifest.categories || []).find(c => c.id === work.category);
       if (cat) $catLabel.textContent = cat.label;
 
+      const themeKey = THEMES[work.category] ? work.category : 'creative';
+      const theme = THEMES[themeKey];
+      document.body.className = 'theme-' + themeKey;
+      fontSize = theme.fontSize;
+      lineHeight = theme.lineHeight;
+      font = `${fontSize}px ${theme.fontFamily}`;
+
       _rawText = await fetch('./works/' + work.file).then(r => {
         if (!r.ok) throw new Error('读取 ' + work.file + ' 失败');
         return r.text();
       });
 
-      await document.fonts.load(`${fontSize}px "Noto Serif SC"`);
-      await document.fonts.load(`${fontSize}px "EB Garamond"`);
+      await Promise.all(theme.preloadFonts.map(f =>
+        document.fonts.load(`${fontSize}px "${f}"`)
+      ));
 
       paginate();
       pageIndex = 0;
