@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>字之集</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #f5efe3;
+      --paper-deep: #ece3d0;
+      --ink: #2a2520;
+      --ink-soft: #6b5f51;
+      --line: #d8cdb6;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'Noto Serif SC', 'Songti SC', 'STSong', serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 80px 32px 120px;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 80px;
+    }
+    h1 {
+      font-size: 44px;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      margin: 0 0 16px;
+    }
+    .subtitle {
+      color: var(--ink-soft);
+      font-size: 16px;
+      letter-spacing: 0.2em;
+    }
+    .divider {
+      width: 60px;
+      height: 1px;
+      background: var(--line);
+      margin: 32px auto 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 36px;
+    }
+    .card {
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.4s ease;
+      display: block;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+    }
+    .cover {
+      aspect-ratio: 3 / 4;
+      border-radius: 2px;
+      box-shadow:
+        0 1px 2px rgba(0,0,0,0.08),
+        0 8px 24px rgba(60, 45, 30, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+      transition: box-shadow 0.4s ease;
+    }
+    .card:hover .cover {
+      box-shadow:
+        0 1px 2px rgba(0,0,0,0.08),
+        0 16px 40px rgba(60, 45, 30, 0.22);
+    }
+    .cover::before {
+      content: '';
+      position: absolute;
+      inset: 12px;
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 1px;
+      pointer-events: none;
+    }
+    .cover-title {
+      writing-mode: vertical-rl;
+      color: rgba(255, 248, 235, 0.95);
+      font-size: 26px;
+      letter-spacing: 0.5em;
+      font-weight: 500;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+    }
+    .meta {
+      margin-top: 18px;
+      text-align: center;
+    }
+    .meta .title {
+      font-size: 18px;
+      letter-spacing: 0.15em;
+      margin-bottom: 6px;
+    }
+    .meta .desc {
+      font-size: 13px;
+      color: var(--ink-soft);
+      letter-spacing: 0.05em;
+    }
+    .empty {
+      text-align: center;
+      color: var(--ink-soft);
+      padding: 80px 0;
+      font-size: 14px;
+      letter-spacing: 0.1em;
+    }
+    footer {
+      margin-top: 100px;
+      text-align: center;
+      color: var(--ink-soft);
+      font-size: 12px;
+      letter-spacing: 0.2em;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1 id="site-title">字之集</h1>
+      <div class="subtitle" id="site-subtitle">一些写下的，与未曾寄出的</div>
+      <div class="divider"></div>
+    </header>
+
+    <div class="grid" id="grid"></div>
+
+    <footer>· 用 pretext 排版 ·</footer>
+  </div>
+
+  <script>
+    (async () => {
+      const grid = document.getElementById('grid');
+      try {
+        const manifest = await fetch('./works/manifest.json').then(r => r.json());
+        document.title = manifest.site.title;
+        document.getElementById('site-title').textContent = manifest.site.title;
+        document.getElementById('site-subtitle').textContent = manifest.site.subtitle;
+
+        if (!manifest.works.length) {
+          grid.innerHTML = '<div class="empty">还没有作品。在 works/ 文件夹里添加吧。</div>';
+          return;
+        }
+
+        grid.innerHTML = manifest.works.map(w => `
+          <a class="card" href="read.html?id=${encodeURIComponent(w.id)}">
+            <div class="cover" style="background: linear-gradient(160deg, ${w.color}, ${shade(w.color, -25)});">
+              <div class="cover-title">${escapeHtml(w.title)}</div>
+            </div>
+            <div class="meta">
+              <div class="title">${escapeHtml(w.title)}</div>
+              <div class="desc">${escapeHtml(w.subtitle || '')}</div>
+            </div>
+          </a>
+        `).join('');
+      } catch (err) {
+        grid.innerHTML = `<div class="empty">无法加载 works/manifest.json。<br>请用本地服务器打开（见 README）。</div>`;
+        console.error(err);
+      }
+    })();
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, c => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+      }[c]));
+    }
+
+    function shade(hex, percent) {
+      const n = parseInt(hex.replace('#',''), 16);
+      let r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+      const f = (1 + percent / 100);
+      r = Math.max(0, Math.min(255, Math.round(r * f)));
+      g = Math.max(0, Math.min(255, Math.round(g * f)));
+      b = Math.max(0, Math.min(255, Math.round(b * f)));
+      return '#' + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
+    }
+  </script>
+</body>
+</html>

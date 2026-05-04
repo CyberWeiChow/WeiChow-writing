@@ -1,0 +1,22 @@
+{
+  "site": {
+    "title": "字之集",
+    "subtitle": "一些写下的，与未曾寄出的"
+  },
+  "works": [
+    {
+      "id": "rainy-night",
+      "title": "雨夜来信",
+      "subtitle": "一封写在雨季的信",
+      "color": "#7d6b56",
+      "file": "rainy-night.txt"
+    },
+    {
+      "id": "summer-corridor",
+      "title": "夏日走廊",
+      "subtitle": "关于一个再也回不去的午后",
+      "color": "#a89376",
+      "file": "summer-corridor.txt"
+    }
+  ]
+}

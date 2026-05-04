@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>阅读</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #f5efe3;
+      --paper-sheet: #fdf8ec;
+      --paper-shadow: rgba(60, 45, 30, 0.18);
+      --ink: #2a2520;
+      --ink-soft: #6b5f51;
+      --line: #d8cdb6;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      height: 100%;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'Noto Serif SC', 'Songti SC', 'STSong', serif;
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+
+    .topbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      font-size: 14px;
+      letter-spacing: 0.15em;
+      color: var(--ink-soft);
+      z-index: 10;
+    }
+    .topbar a { color: inherit; text-decoration: none; }
+    .topbar a:hover { color: var(--ink); }
+
+    .stage {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 24px;
+    }
+
+    .sheet {
+      position: relative;
+      width: min(620px, 92vw);
+      height: min(820px, calc(100vh - 160px));
+      background: var(--paper-sheet);
+      box-shadow:
+        0 1px 2px rgba(0,0,0,0.05),
+        0 24px 60px var(--paper-shadow);
+      padding: 80px 72px;
+      overflow: hidden;
+      background-image:
+        radial-gradient(circle at 30% 20%, rgba(255,255,255,0.6), transparent 60%),
+        repeating-linear-gradient(0deg, rgba(120, 90, 60, 0.015) 0 1px, transparent 1px 3px);
+    }
+    .sheet::before {
+      content: '';
+      position: absolute;
+      inset: 16px;
+      border: 1px solid rgba(125, 107, 86, 0.12);
+      pointer-events: none;
+    }
+
+    #content {
+      white-space: pre;
+      color: var(--ink);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+      transform-origin: center;
+    }
+    #content .line {
+      white-space: pre;
+    }
+    #content.flip-out-next { opacity: 0; transform: translateX(-12px); }
+    #content.flip-out-prev { opacity: 0; transform: translateX(12px); }
+    #content.flip-in-next { opacity: 0; transform: translateX(12px); }
+    #content.flip-in-prev { opacity: 0; transform: translateX(-12px); }
+
+    .page-num {
+      position: absolute;
+      bottom: 28px;
+      left: 0; right: 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--ink-soft);
+      letter-spacing: 0.4em;
+    }
+
+    .nav-zone {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      width: 25%;
+      cursor: pointer;
+      z-index: 5;
+    }
+    .nav-zone.left { left: 0; }
+    .nav-zone.right { right: 0; }
+
+    .arrow {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ink-soft);
+      font-size: 22px;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      user-select: none;
+      z-index: 6;
+    }
+    .nav-zone:hover ~ .arrow.left,
+    .nav-zone:hover ~ .arrow.right,
+    .arrow:hover { opacity: 1; }
+    body:hover .arrow { opacity: 0.4; }
+    .arrow.left { left: 24px; }
+    .arrow.right { right: 24px; }
+
+    .progress {
+      position: fixed;
+      bottom: 0; left: 0;
+      height: 2px;
+      background: var(--ink-soft);
+      width: 0;
+      transition: width 0.3s ease;
+      z-index: 11;
+    }
+
+    .loading {
+      color: var(--ink-soft);
+      font-size: 14px;
+      letter-spacing: 0.2em;
+    }
+
+    @media (max-width: 640px) {
+      .sheet { padding: 56px 36px; }
+      .topbar { padding: 0 16px; font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="index.html">← 返回</a>
+    <div id="work-title"></div>
+    <div></div>
+  </div>
+
+  <div class="stage">
+    <div class="sheet" id="sheet">
+      <div id="content" class="loading">正在排版…</div>
+      <div class="page-num" id="page-num"></div>
+    </div>
+  </div>
+
+  <div class="nav-zone left" id="zone-left"></div>
+  <div class="nav-zone right" id="zone-right"></div>
+  <div class="arrow left">‹</div>
+  <div class="arrow right">›</div>
+  <div class="progress" id="progress"></div>
+
+  <script type="module">
+    import { prepare, layoutWithLines } from 'https://esm.sh/@chenglou/pretext';
+
+    const params = new URLSearchParams(location.search);
+    const id = params.get('id');
+    if (!id) location.replace('index.html');
+
+    const fontSize = 19;
+    const lineHeight = 38;
+    const fontFamily = `'Noto Serif SC', 'Songti SC', 'STSong', serif`;
+    const font = `${fontSize}px ${fontFamily}`;
+
+    const $sheet = document.getElementById('sheet');
+    const $content = document.getElementById('content');
+    const $pageNum = document.getElementById('page-num');
+    const $title = document.getElementById('work-title');
+    const $progress = document.getElementById('progress');
+
+    let allLines = [];   // strings or '' for paragraph break
+    let pages = [];      // array of arrays of lines
+    let pageIndex = 0;
+    let currentLineCursor = 0; // first line of current page in allLines
+
+    init().catch(err => {
+      $content.classList.remove('loading');
+      $content.textContent = '加载失败：' + err.message;
+      console.error(err);
+    });
+
+    async function init() {
+      const manifest = await fetch('./works/manifest.json').then(r => r.json());
+      const work = manifest.works.find(w => w.id === id);
+      if (!work) throw new Error('找不到作品 ' + id);
+
+      document.title = work.title;
+      $title.textContent = work.title;
+
+      const text = await fetch('./works/' + work.file).then(r => {
+        if (!r.ok) throw new Error('读取 ' + work.file + ' 失败');
+        return r.text();
+      });
+
+      // Wait for the web font so canvas/DOM measure with the same font.
+      await document.fonts.load(`${fontSize}px "Noto Serif SC"`);
+
+      buildLines(text);
+      paginate();
+      pageIndex = 0;
+      currentLineCursor = 0;
+      $content.classList.remove('loading');
+      render('next', true);
+
+      // Re-paginate on resize, keep approx same position.
+      let resizeTimer;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+          const cursor = pages.slice(0, pageIndex).reduce((n, p) => n + p.length, 0);
+          paginate();
+          // Find page that contains that cursor.
+          let acc = 0, idx = 0;
+          for (let i = 0; i < pages.length; i++) {
+            if (acc + pages[i].length > cursor) { idx = i; break; }
+            acc += pages[i].length;
+          }
+          pageIndex = idx;
+          render('next', true);
+        }, 120);
+      });
+
+      // Navigation.
+      document.getElementById('zone-left').addEventListener('click', prev);
+      document.getElementById('zone-right').addEventListener('click', next);
+      document.querySelector('.arrow.left').addEventListener('click', prev);
+      document.querySelector('.arrow.right').addEventListener('click', next);
+
+      window.addEventListener('keydown', e => {
+        if (e.key === 'ArrowLeft' || e.key === 'PageUp') prev();
+        else if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
+          e.preventDefault();
+          next();
+        }
+      });
+
+      // Touch swipe.
+      let touchX = null;
+      window.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; }, { passive: true });
+      window.addEventListener('touchend', e => {
+        if (touchX === null) return;
+        const dx = e.changedTouches[0].clientX - touchX;
+        touchX = null;
+        if (Math.abs(dx) < 40) return;
+        if (dx > 0) prev(); else next();
+      }, { passive: true });
+    }
+
+    function buildLines(text) {
+      const paragraphs = text
+        .replace(/\r\n/g, '\n')
+        .split(/\n\s*\n/)
+        .map(p => p.replace(/\n/g, ''))
+        .filter(p => p.trim().length > 0);
+
+      allLines = [];
+      const innerWidth = getContentWidth();
+      for (let i = 0; i < paragraphs.length; i++) {
+        const prep = prepare(paragraphs[i], font);
+        const result = layoutWithLines(prep, innerWidth, lineHeight);
+        for (const line of result.lines) allLines.push(line.text);
+        if (i < paragraphs.length - 1) allLines.push(''); // paragraph break
+      }
+    }
+
+    function paginate() {
+      buildLines(rawText());
+      const innerHeight = getContentHeight();
+      const linesPerPage = Math.max(1, Math.floor(innerHeight / lineHeight));
+      pages = [];
+      let cur = [];
+      for (const ln of allLines) {
+        if (cur.length === 0 && ln === '') continue;
+        cur.push(ln);
+        if (cur.length >= linesPerPage) { pages.push(cur); cur = []; }
+      }
+      if (cur.length) pages.push(cur);
+    }
+
+    let _rawText = '';
+    function rawText() { return _rawText; }
+    // Wrap buildLines so we can re-run on resize without re-fetching:
+    const _origBuildLines = buildLines;
+    buildLines = function(text) {
+      if (text !== undefined) _rawText = text;
+      _origBuildLines(_rawText);
+    };
+
+    function render(direction, instant) {
+      const dir = direction === 'prev' ? 'prev' : 'next';
+      const doRender = () => {
+        $content.innerHTML = pages[pageIndex]
+          .map(t => `<div class="line">${t === '' ? '&nbsp;' : escapeHtml(t)}</div>`)
+          .join('');
+        $content.style.font = font;
+        $content.style.lineHeight = lineHeight + 'px';
+        $pageNum.textContent = `${pageIndex + 1}  /  ${pages.length}`;
+        $progress.style.width = `${((pageIndex + 1) / pages.length) * 100}%`;
+
+        if (!instant) {
+          $content.classList.add('flip-in-' + dir);
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              $content.classList.remove('flip-in-' + dir);
+            });
+          });
+        }
+      };
+
+      if (instant) { doRender(); return; }
+      $content.classList.add('flip-out-' + dir);
+      setTimeout(() => {
+        $content.classList.remove('flip-out-' + dir);
+        doRender();
+      }, 200);
+    }
+
+    function next() {
+      if (pageIndex >= pages.length - 1) return;
+      pageIndex++;
+      render('next');
+    }
+    function prev() {
+      if (pageIndex <= 0) return;
+      pageIndex--;
+      render('prev');
+    }
+
+    function getContentWidth() {
+      const cs = getComputedStyle($sheet);
+      return $sheet.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+    }
+    function getContentHeight() {
+      const cs = getComputedStyle($sheet);
+      const pageNumReserve = 40;
+      return $sheet.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - pageNumReserve;
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, c => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+      }[c]));
+    }
+  </script>
+</body>
+</html>
