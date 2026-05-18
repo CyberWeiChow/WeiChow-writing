@@ -379,6 +379,32 @@ TEMPLATE = r'''<!DOCTYPE html>
       padding-bottom: 28px;
       border-bottom: 1px solid var(--rule);
     }
+    .paper-meta {
+      margin: 0 0 48px;
+      padding: 24px 26px;
+      border: 1px solid var(--rule);
+      background: color-mix(in srgb, var(--surface) 60%, transparent);
+    }
+    .paper-meta .meta-block + .meta-block { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--rule); }
+    .paper-meta .meta-label {
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .paper-meta p {
+      font-family: 'Noto Serif SC', 'Inter', serif;
+      font-size: 14px;
+      line-height: 1.85;
+      color: color-mix(in srgb, var(--ink) 92%, transparent);
+      margin: 0;
+    }
+    .paper-meta p.keywords {
+      letter-spacing: 0.05em;
+      color: var(--muted);
+    }
+
     .reader-body {
       font-family: 'Noto Serif SC', 'Inter', serif;
       font-size: 17px;
@@ -681,20 +707,47 @@ TEMPLATE = r'''<!DOCTYPE html>
       const bylineText = (by.prefix || '') + '周未' + (by.suffix || '');
 
       const text = WORKS[id] || '';
-      const paragraphs = text
+      let paragraphs = text
         .replace(/\r\n/g, '\n').replace(/\r/g, '\n')
         .split(/\n+/)
         .map(p => p.trim().replace(/^[　\s]+/, ''))
-        .filter(p => p.length > 0)
-        .map(p => '　　' + p);
+        .filter(p => p.length > 0);
+
+      // Detect academic-paper preamble (abstract + keywords).
+      let abstractText = null, keywordsText = null;
+      const rest = [];
+      for (const p of paragraphs) {
+        const mAbs = p.match(/^(内容提要|摘要|Abstract)\s*[:：]\s*(.*)$/);
+        const mKw  = p.match(/^(关键词|Keywords)\s*[:：]\s*(.*)$/);
+        if (!abstractText && mAbs) { abstractText = mAbs[2]; continue; }
+        if (!keywordsText && mKw)  { keywordsText = mKw[2]; continue; }
+        rest.push(p);
+      }
+      paragraphs = rest.map(p => '　　' + p);
+
+      const showLede = work.subtitle && !abstractText;
+      const paperMeta = (abstractText || keywordsText) ? `
+        <div class="paper-meta">
+          ${abstractText ? `
+            <div class="meta-block">
+              <div class="meta-label">Abstract · 内容提要</div>
+              <p>${escapeHtml(abstractText)}</p>
+            </div>` : ''}
+          ${keywordsText ? `
+            <div class="meta-block">
+              <div class="meta-label">Keywords · 关键词</div>
+              <p class="keywords">${escapeHtml(keywordsText)}</p>
+            </div>` : ''}
+        </div>` : '';
 
       $view.innerHTML = `
         <article class="reader">
           <a class="back" href="#/${work.category || ''}">← back</a>
           ${cat ? `<div class="cat-tag">${escapeHtml(cat.label)}</div>` : ''}
           <h1 class="headline">${escapeHtml(work.title)}</h1>
-          ${work.subtitle ? `<p class="lede">${escapeHtml(work.subtitle)}</p>` : ''}
+          ${showLede ? `<p class="lede">${escapeHtml(work.subtitle)}</p>` : ''}
           <p class="byline">${escapeHtml(bylineText)}</p>
+          ${paperMeta}
           <div class="reader-body" id="reader-body">
             ${paragraphs.map(p => `<p class="para">${charsToSpans(p)}</p>`).join('')}
           </div>
