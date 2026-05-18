@@ -11,8 +11,8 @@
     ],
     "photo": "photo.jpg",
     "education": [
-      { "year": "2026", "school": "中国社会科学院大学", "where": "Beijing, China", "detail": "文艺学 · 硕士在读" },
-      { "year": "2024", "school": "浙江工业大学", "where": "Hangzhou, China", "detail": "汉语言文学 · 学士" }
+      { "year": "2026 -", "school": "中国社会科学院大学", "where": "Beijing, China", "detail": "文艺学 · 硕士在读" },
+      { "year": "2022 - 2026", "school": "浙江工业大学", "where": "Hangzhou, China", "detail": "汉语言文学 · 学士" }
     ],
     "contact": {
       "email": "cyberzhouwei@gmail.com",
