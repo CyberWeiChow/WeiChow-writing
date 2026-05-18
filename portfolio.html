@@ -514,15 +514,15 @@
               ${bioParas}
             </div>
           </div>
-          ${expRows ? `
-          <section class="bio-section">
-            <h2>Experience · 实习经历</h2>
-            <div class="exp-list">${expRows}</div>
-          </section>` : ''}
           ${eduRows ? `
           <section class="bio-section">
             <h2>Education · 教育</h2>
             <div class="edu-list">${eduRows}</div>
+          </section>` : ''}
+          ${expRows ? `
+          <section class="bio-section">
+            <h2>Experience · 实习经历</h2>
+            <div class="exp-list">${expRows}</div>
           </section>` : ''}
           ${cats.length ? `
           <section class="bio-section">
