@@ -212,6 +212,41 @@ TEMPLATE = r'''<!DOCTYPE html>
     .edu-info .where  { color: var(--muted); font-size: 13px; margin-left: 6px; }
     .edu-info .detail { color: var(--muted); font-size: 13px; margin-top: 4px; }
 
+    .exp-list {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      row-gap: 44px;
+      column-gap: 40px;
+    }
+    .exp-year { color: var(--muted); font-size: 13px; letter-spacing: 0.04em; padding-top: 4px; }
+    .exp-info .org { font-weight: 600; font-size: 16px; line-height: 1.4; }
+    .exp-info .role { color: var(--muted); font-size: 13px; margin-top: 4px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .exp-info ul {
+      list-style: none;
+      padding: 0;
+      margin: 14px 0 0;
+    }
+    .exp-info li {
+      position: relative;
+      padding-left: 16px;
+      font-size: 13.5px;
+      line-height: 1.7;
+      color: color-mix(in srgb, var(--ink) 88%, transparent);
+      margin-bottom: 8px;
+    }
+    .exp-info li::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      color: var(--muted);
+    }
+    .exp-info li:last-child { margin-bottom: 0; }
+    @media (max-width: 700px) {
+      .exp-list { grid-template-columns: 1fr; row-gap: 32px; }
+      .edu-list { grid-template-columns: 1fr; row-gap: 16px; }
+      .exp-year, .edu-year { font-size: 12px; }
+    }
+
     /* =============== CATEGORY (works list) =============== */
     .cat-page { padding: 80px 40px 120px; max-width: 1100px; margin: 0 auto; }
     .cat-page h1 {
@@ -517,6 +552,14 @@ TEMPLATE = r'''<!DOCTYPE html>
           <div class="detail">${escapeHtml(e.detail || '')}</div>
         </div>
       `).join('');
+      const expRows = (s.experience || []).map(e => `
+        <div class="exp-year">${escapeHtml(e.year)}</div>
+        <div class="exp-info">
+          <div class="org">${escapeHtml(e.org)}</div>
+          ${e.role ? `<div class="role">${escapeHtml(e.role)}</div>` : ''}
+          ${(e.highlights && e.highlights.length) ? `<ul>${e.highlights.map(h => `<li>${escapeHtml(h)}</li>`).join('')}</ul>` : ''}
+        </div>
+      `).join('');
       const photoStyle = s.photo ? `style="background-image:url('${escapeHtml(s.photo)}')"` : '';
       const photoClass = s.photo ? '' : 'placeholder';
       const cats = (MANIFEST.categories || []).filter(c => MANIFEST.works.some(w => w.category === c.id));
@@ -530,6 +573,11 @@ TEMPLATE = r'''<!DOCTYPE html>
               ${bioParas}
             </div>
           </div>
+          ${expRows ? `
+          <section class="bio-section">
+            <h2>Experience · 实习经历</h2>
+            <div class="exp-list">${expRows}</div>
+          </section>` : ''}
           ${eduRows ? `
           <section class="bio-section">
             <h2>Education · 教育</h2>
