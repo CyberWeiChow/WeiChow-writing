@@ -83,6 +83,11 @@ TEMPLATE = r'''<!DOCTYPE html>
       --rule: #d8d4cb;
       --hover: #000;
     }
+    :root {
+      --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+      --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+      --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+    }
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
@@ -93,10 +98,33 @@ TEMPLATE = r'''<!DOCTYPE html>
       font-weight: 400;
       -webkit-font-smoothing: antialiased;
       font-feature-settings: "kern", "liga", "ss01";
-      transition: background 0.3s ease, color 0.3s ease;
+      transition: background 220ms var(--ease-out), color 220ms var(--ease-out);
       min-height: 100vh;
     }
     a { color: inherit; text-decoration: none; }
+
+    /* ---- stagger container: fades children in one-by-one on mount ---- */
+    .fade-stagger > * {
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 520ms var(--ease-out), transform 520ms var(--ease-out);
+      transition-delay: calc(var(--i, 0) * 55ms);
+    }
+    .fade-stagger.mounted > * {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ---- reduced motion: keep fade, drop movement ---- */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 150ms !important;
+      }
+      .fade-stagger > * { transform: none !important; transition-delay: 0ms !important; }
+      .char { transform: none !important; }
+    }
     button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; padding: 0; }
 
     /* =============== TOP NAV =============== */
@@ -118,6 +146,11 @@ TEMPLATE = r'''<!DOCTYPE html>
     .topbar .brand {
       font-weight: 700;
       letter-spacing: 0.24em;
+      transition: opacity 180ms var(--ease-out), transform 140ms var(--ease-out);
+    }
+    .topbar .brand:active { transform: scale(0.97); }
+    @media (hover: hover) and (pointer: fine) {
+      .topbar .brand:hover { opacity: 0.7; }
     }
     .topbar nav {
       display: flex;
@@ -126,18 +159,25 @@ TEMPLATE = r'''<!DOCTYPE html>
     }
     .topbar nav a {
       color: var(--muted);
-      transition: color 0.2s;
+      transition: color 180ms var(--ease-out), transform 140ms var(--ease-out);
       font-weight: 400;
     }
-    .topbar nav a:hover, .topbar nav a.active { color: var(--hover); }
+    .topbar nav a.active { color: var(--hover); }
+    .topbar nav a:active { transform: scale(0.96); }
+    @media (hover: hover) and (pointer: fine) {
+      .topbar nav a:hover { color: var(--hover); }
+    }
     .topbar .theme-toggle {
       width: 28px; height: 28px;
       border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
       color: var(--muted);
-      transition: color 0.2s, transform 0.4s;
+      transition: color 180ms var(--ease-out), transform 200ms var(--ease-out);
     }
-    .topbar .theme-toggle:hover { color: var(--hover); transform: rotate(20deg); }
+    .topbar .theme-toggle:active { transform: scale(0.9) rotate(0deg); }
+    @media (hover: hover) and (pointer: fine) {
+      .topbar .theme-toggle:hover { color: var(--hover); transform: rotate(-18deg); }
+    }
 
     /* =============== BIO PAGE =============== */
     .bio-page { padding: 80px 40px 120px; max-width: 1200px; margin: 0 auto; }
@@ -273,7 +313,9 @@ TEMPLATE = r'''<!DOCTYPE html>
     .work-card {
       display: block;
       cursor: pointer;
+      transition: transform 180ms var(--ease-out);
     }
+    .work-card:active { transform: scale(0.985); }
     .work-cover {
       aspect-ratio: 4 / 3;
       background-color: var(--surface);
@@ -282,17 +324,21 @@ TEMPLATE = r'''<!DOCTYPE html>
       margin-bottom: 18px;
       overflow: hidden;
       position: relative;
-      transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: transform 280ms var(--ease-spring);
     }
-    .work-card:hover .work-cover { transform: scale(1.015); }
+    @media (hover: hover) and (pointer: fine) {
+      .work-card:hover .work-cover { transform: scale(1.015); }
+    }
     .work-cover::after {
       content: '';
       position: absolute;
       inset: 0;
       background: rgba(0,0,0,0);
-      transition: background 0.3s;
+      transition: background 220ms var(--ease-out);
     }
-    .work-card:hover .work-cover::after { background: rgba(0,0,0,0.15); }
+    @media (hover: hover) and (pointer: fine) {
+      .work-card:hover .work-cover::after { background: rgba(0,0,0,0.15); }
+    }
     .work-cover.no-image::before {
       content: attr(data-placeholder);
       position: absolute;
@@ -344,9 +390,12 @@ TEMPLATE = r'''<!DOCTYPE html>
       letter-spacing: 0.2em;
       text-transform: uppercase;
       margin-bottom: 56px;
-      transition: color 0.2s;
+      transition: color 180ms var(--ease-out), transform 140ms var(--ease-out), gap 220ms var(--ease-out);
     }
-    .reader .back:hover { color: var(--hover); }
+    .reader .back:active { transform: scale(0.97); }
+    @media (hover: hover) and (pointer: fine) {
+      .reader .back:hover { color: var(--hover); gap: 12px; }
+    }
     .reader .cat-tag {
       color: var(--muted);
       font-size: 11px;
@@ -454,15 +503,27 @@ TEMPLATE = r'''<!DOCTYPE html>
     .contact-row .value {
       font-size: 16px;
       cursor: pointer;
-      transition: color 0.2s;
+      transition: color 180ms var(--ease-out), transform 140ms var(--ease-out);
+      display: inline-block;
+      position: relative;
     }
-    .contact-row .value:hover { color: var(--hover); }
+    .contact-row .value:active { transform: scale(0.97); }
+    @media (hover: hover) and (pointer: fine) {
+      .contact-row .value:hover { color: var(--hover); }
+    }
     .contact-row .value.copied::after {
       content: '  · copied';
       color: var(--muted);
       font-size: 11px;
       letter-spacing: 0.15em;
       text-transform: uppercase;
+      animation: copyFade 1.5s var(--ease-out);
+    }
+    @keyframes copyFade {
+      0%   { opacity: 0; transform: translateY(2px); }
+      15%  { opacity: 1; transform: translateY(0); }
+      80%  { opacity: 1; }
+      100% { opacity: 0; }
     }
 
     /* =============== PROGRESS =============== */
@@ -554,14 +615,32 @@ TEMPLATE = r'''<!DOCTYPE html>
     function route() {
       const h = location.hash || '#/';
       const m = h.match(/^#\/read\/(.+)$/);
-      if (m) return showRead(decodeURIComponent(m[1]));
-      const tail = h.slice(2);
-      if (!tail || tail === 'bio') return showBio();
-      if (tail === 'contact') return showContact();
-      const cat = (MANIFEST.categories || []).find(c => c.id === tail);
-      if (cat) return showCategory(cat);
-      return showBio();
+      if (m) showRead(decodeURIComponent(m[1]));
+      else {
+        const tail = h.slice(2);
+        if (!tail || tail === 'bio') showBio();
+        else if (tail === 'contact') showContact();
+        else {
+          const cat = (MANIFEST.categories || []).find(c => c.id === tail);
+          if (cat) showCategory(cat);
+          else showBio();
+        }
+      }
+      mountStaggers($view);
     }
+
+    function mountStaggers(root) {
+      const containers = root.querySelectorAll('.fade-stagger');
+      containers.forEach(c => {
+        [...c.children].forEach((el, i) => el.style.setProperty('--i', i));
+      });
+      // Double rAF ensures the browser commits the opacity-0 state before
+      // we flip to mounted, so the transition actually plays.
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        containers.forEach(c => c.classList.add('mounted'));
+      }));
+    }
+
     window.addEventListener('hashchange', () => { window.scrollTo(0, 0); route(); });
     route();
 
@@ -591,10 +670,10 @@ TEMPLATE = r'''<!DOCTYPE html>
       const cats = (MANIFEST.categories || []).filter(c => MANIFEST.works.some(w => w.category === c.id));
 
       $view.innerHTML = `
-        <div class="bio-page">
+        <div class="bio-page fade-stagger">
           <div class="bio-hero">
             <div class="bio-portrait ${photoClass}" ${photoStyle}></div>
-            <div class="bio-content">
+            <div class="bio-content fade-stagger">
               <h1>${escapeHtml(s.title || '周未')}<span class="en">${escapeHtml(s.name_en || 'ZHOU WEI')}</span></h1>
               ${bioParas}
             </div>
@@ -632,10 +711,10 @@ TEMPLATE = r'''<!DOCTYPE html>
       document.title = cat.label + ' · ' + (MANIFEST.site.title || '周未');
       const items = MANIFEST.works.filter(w => w.category === cat.id);
       $view.innerHTML = `
-        <div class="cat-page">
+        <div class="cat-page fade-stagger">
           <h1>${escapeHtml(cat.label)}</h1>
           <p class="cat-sub">${items.length} pieces</p>
-          <div class="works-grid">
+          <div class="works-grid fade-stagger">
             ${items.map(w => {
               const hasCover = !!w.cover;
               const style = hasCover
@@ -681,9 +760,9 @@ TEMPLATE = r'''<!DOCTYPE html>
         </div>
       `).join('');
       $view.innerHTML = `
-        <div class="contact-page">
+        <div class="contact-page fade-stagger">
           <h1>Get in touch.</h1>
-          <div class="contact-list">${rows}</div>
+          <div class="contact-list fade-stagger">${rows}</div>
         </div>
       `;
       document.querySelectorAll('.contact-row .value').forEach(el => {
@@ -741,7 +820,7 @@ TEMPLATE = r'''<!DOCTYPE html>
         </div>` : '';
 
       $view.innerHTML = `
-        <article class="reader">
+        <article class="reader fade-stagger">
           <a class="back" href="#/${work.category || ''}">← back</a>
           ${cat ? `<div class="cat-tag">${escapeHtml(cat.label)}</div>` : ''}
           <h1 class="headline">${escapeHtml(work.title)}</h1>
