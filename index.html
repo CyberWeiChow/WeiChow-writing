@@ -289,52 +289,109 @@
       text-transform: uppercase;
       margin: 0 0 56px;
     }
-    /* =============== CD SHELF (works as record-shop browse) =============== */
-    .cat-stage {
-      margin-top: 24px;
-      display: grid;
-      grid-template-columns: 320px 1fr;
-      gap: 64px;
-      align-items: start;
+    /* =============== COVERFLOW (curved 3D carousel) =============== */
+    .coverflow { margin-top: 32px; }
+    .cf-stage {
+      position: relative;
+      height: 420px;
+      perspective: 1800px;
+      perspective-origin: 50% 55%;
+      overflow: hidden;
+      cursor: grab;
     }
-    .cd-preview {
-      position: sticky;
-      top: 110px;
-      display: grid;
-      gap: 22px;
-      min-height: 320px;
+    .cf-stage:active { cursor: grabbing; }
+    .cf-track {
+      position: absolute;
+      inset: 0;
+      transform-style: preserve-3d;
     }
-    .cd-preview-cover {
-      width: 320px;
-      height: 320px;
+    .cf-card {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 220px;
+      height: 300px;
+      margin: -150px 0 0 -110px;
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 520ms var(--ease-spring), box-shadow 320ms var(--ease-out);
+      transform-style: preserve-3d;
+      will-change: transform;
+      box-shadow:
+        0 18px 50px rgba(0,0,0,0.45),
+        0 4px 16px rgba(0,0,0,0.35),
+        0 0 0 1px rgba(255,255,255,0.04) inset;
+    }
+    .cf-card.active {
+      box-shadow:
+        0 32px 80px rgba(0,0,0,0.55),
+        0 8px 24px rgba(0,0,0,0.4),
+        0 0 0 1px rgba(255,255,255,0.06) inset;
+    }
+    .cf-cover {
+      position: absolute;
+      inset: 0;
       background-size: cover;
       background-position: center;
       background-color: var(--surface);
-      box-shadow: 0 24px 64px rgba(0,0,0,0.35), 0 4px 12px rgba(0,0,0,0.2);
-      transition: opacity 240ms var(--ease-out), transform 320ms var(--ease-spring);
     }
-    .cd-preview-meta .title {
-      font-size: 24px;
+    .cf-cover::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(115deg,
+        rgba(255,255,255,0.08) 0%,
+        rgba(255,255,255,0) 30%,
+        rgba(0,0,0,0) 70%,
+        rgba(0,0,0,0.35) 100%);
+      pointer-events: none;
+      transition: opacity 320ms var(--ease-out);
+    }
+    .cf-card.active .cf-cover::after { opacity: 0.5; }
+    /* subtle glow under the active card */
+    .cf-card.active::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      bottom: -28px;
+      width: 80%;
+      height: 18px;
+      transform: translateX(-50%);
+      background: radial-gradient(ellipse at center, rgba(0,0,0,0.5), transparent 70%);
+      filter: blur(8px);
+      pointer-events: none;
+    }
+
+    .cf-meta {
+      text-align: center;
+      margin-top: 40px;
+      min-height: 140px;
+      transition: opacity 220ms var(--ease-out), transform 320ms var(--ease-spring);
+    }
+    .cf-meta.swap { opacity: 0; transform: translateY(6px); }
+    .cf-meta h2 {
+      font-size: 26px;
       font-weight: 600;
       line-height: 1.3;
-      margin: 0 0 6px;
-      transition: opacity 220ms var(--ease-out);
+      margin: 0 0 10px;
+      letter-spacing: -0.005em;
     }
-    .cd-preview-meta .year {
+    .cf-meta .year {
       color: var(--muted);
       font-size: 11px;
-      letter-spacing: 0.22em;
+      letter-spacing: 0.24em;
       text-transform: uppercase;
-      margin-bottom: 14px;
+      margin: 0 0 16px;
     }
-    .cd-preview-meta .desc {
+    .cf-meta .desc {
       color: var(--muted);
-      font-size: 13.5px;
+      font-size: 14px;
       line-height: 1.7;
-      margin: 0 0 22px;
-      max-width: 360px;
+      max-width: 560px;
+      margin: 0 auto 24px;
     }
-    .cd-preview-meta .read-link {
+    .cf-meta .read-link {
       display: inline-flex;
       align-items: center;
       gap: 8px;
@@ -344,114 +401,36 @@
       color: var(--ink);
       border-bottom: 1px solid var(--ink);
       padding-bottom: 3px;
-      transition: color 180ms var(--ease-out), gap 220ms var(--ease-out), transform 140ms var(--ease-out);
+      transition: gap 220ms var(--ease-out), transform 140ms var(--ease-out), opacity 180ms var(--ease-out);
     }
-    .cd-preview-meta .read-link:active { transform: scale(0.97); }
+    .cf-meta .read-link:active { transform: scale(0.97); }
     @media (hover: hover) and (pointer: fine) {
-      .cd-preview-meta .read-link:hover { gap: 12px; }
+      .cf-meta .read-link:hover { gap: 14px; }
     }
-    .cd-preview.swap .cd-preview-cover { opacity: 0.4; transform: scale(0.985); }
-    .cd-preview.swap .cd-preview-meta { opacity: 0.6; }
 
-    /* Bookshelf: tilted upright slabs with simulated thickness */
-    .cd-shelf {
+    /* tiny dot indicators below */
+    .cf-dots {
       display: flex;
-      align-items: flex-end;
-      padding: 100px 80px 64px 96px;
-      perspective: 2000px;
-      perspective-origin: 35% 75%;
-      overflow-x: auto;
-      overflow-y: visible;
-      scrollbar-width: thin;
-      scrollbar-color: var(--rule) transparent;
-      list-style: none;
-      margin: 0;
-      position: relative;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 28px;
     }
-    /* the shelf line under the books */
-    .cd-shelf::after {
-      content: '';
-      position: absolute;
-      left: 60px;
-      right: 60px;
-      bottom: 56px;
-      height: 1px;
-      background: linear-gradient(to right, transparent, var(--rule) 8%, var(--rule) 92%, transparent);
-      transform: translateZ(-20px);
-      pointer-events: none;
-    }
-    .cd-shelf::-webkit-scrollbar { height: 6px; }
-    .cd-shelf::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 3px; }
-    .cd {
-      flex: 0 0 auto;
-      width: 132px;
-      height: 196px;                       /* 2:3 book aspect */
-      margin-right: -56px;                 /* moderate overlap — spines mostly visible */
-      position: relative;
+    .cf-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--rule);
       cursor: pointer;
-      transform: rotateY(-22deg) rotateX(0deg) translateZ(0);
-      transform-origin: 70% bottom;
-      transform-style: preserve-3d;
-      transition: transform 420ms var(--ease-spring), z-index 0s 420ms;
+      transition: background 200ms var(--ease-out), transform 200ms var(--ease-out);
+      border: none;
+      padding: 0;
     }
-    .cd:last-child { margin-right: 0; }
-    /* depth offset: subtle receding stagger */
-    .cd:nth-child(odd)  { transform: rotateY(-22deg) translateZ(-4px); }
-    .cd:nth-child(even) { transform: rotateY(-22deg) translateZ(0); }
-    .cd.active {
-      transform: rotateY(-6deg) translateZ(36px) translateY(-10px);
-      z-index: 20;
-      transition: transform 420ms var(--ease-spring), z-index 0s;
-    }
-    @media (hover: hover) and (pointer: fine) {
-      .cd:hover, .cd:focus-visible {
-        transform: rotateY(0deg) translateZ(110px) translateY(-26px) scale(1.04);
-        z-index: 100;
-        transition: transform 420ms var(--ease-spring), z-index 0s;
-      }
-    }
-    .cd:active { transform: rotateY(0deg) translateZ(95px) translateY(-20px) scale(1.0); }
-    .cd:focus-visible { outline: none; }
-    .cd-cover {
-      position: absolute;
-      inset: 0;
-      background-size: cover;
-      background-position: center;
-      background-color: var(--surface);
-      /* stacked right-edge shadows simulate book thickness;
-         drop shadow under suggests the book is standing */
-      box-shadow:
-        inset -2px 0 0 rgba(255,255,255,0.06),
-        2px 0 0 rgba(0,0,0,0.45),
-        5px 0 0 rgba(0,0,0,0.32),
-        8px 0 0 rgba(0,0,0,0.22),
-        11px 0 0 rgba(0,0,0,0.14),
-        14px 0 0 rgba(0,0,0,0.08),
-        12px 22px 40px rgba(0,0,0,0.45),
-        4px 4px 16px rgba(0,0,0,0.3);
-    }
-    /* lighting overlay: subtle gradient simulates light from upper-left */
-    .cd-cover::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(105deg,
-        rgba(255,255,255,0.06) 0%,
-        rgba(255,255,255,0) 35%,
-        rgba(0,0,0,0.18) 100%);
-      pointer-events: none;
-      transition: opacity 320ms var(--ease-out);
-    }
-    .cd:hover .cd-cover::after, .cd.active .cd-cover::after { opacity: 0.4; }
+    .cf-dot.active { background: var(--ink); transform: scale(1.4); }
+    .cf-dot:active { transform: scale(1.1); }
 
-    @media (max-width: 900px) {
-      .cat-stage { grid-template-columns: 1fr; gap: 32px; }
-      .cd-preview { position: static; }
-      .cd-preview-cover { width: 100%; max-width: 320px; height: auto; aspect-ratio: 1/1; }
-    }
-    @media (max-width: 600px) {
-      .cd-shelf { padding: 64px 16px 40px 48px; }
-      .cd { width: 108px; height: 160px; margin-right: -44px; }
+    @media (max-width: 700px) {
+      .cf-stage { height: 340px; }
+      .cf-card { width: 170px; height: 235px; margin: -117px 0 0 -85px; }
+      .cf-meta h2 { font-size: 22px; }
     }
 
     /* =============== READER =============== */
@@ -796,74 +775,106 @@
         return;
       }
 
+      const cardsHTML = items.map((w, i) => {
+        const bg = w.cover
+          ? `background-image:url('${w.cover}')`
+          : `background: linear-gradient(135deg, ${w.color || '#2a2a2a'}, ${shadeColor(w.color || '#2a2a2a', -30)})`;
+        return `<a class="cf-card" data-i="${i}" href="#/read/${encodeURIComponent(w.id)}" aria-label="${escapeHtml(w.title)}">
+          <div class="cf-cover" style="${bg}"></div>
+        </a>`;
+      }).join('');
+
+      const dotsHTML = items.map((_, i) => `<button class="cf-dot" data-i="${i}" aria-label="第 ${i+1} 篇"></button>`).join('');
+
       $view.innerHTML = `
         <div class="cat-page fade-stagger">
           <h1>${escapeHtml(cat.label)}</h1>
-          <p class="cat-sub">${items.length} pieces · hover to preview</p>
-          <div class="cat-stage">
-            <div class="cd-preview" id="cd-preview">
-              <div class="cd-preview-cover" id="cd-preview-cover"></div>
-              <div class="cd-preview-meta">
-                <div class="title" id="cd-preview-title"></div>
-                <div class="year" id="cd-preview-year"></div>
-                <div class="desc" id="cd-preview-desc"></div>
-                <a class="read-link" id="cd-preview-link" href="#">Read piece →</a>
-              </div>
+          <p class="cat-sub">${items.length} pieces · hover or use ← →</p>
+          <div class="coverflow">
+            <div class="cf-stage" id="cf-stage">
+              <div class="cf-track" id="cf-track">${cardsHTML}</div>
             </div>
-            <div class="cd-shelf fade-stagger" id="cd-shelf">
-              ${items.map((w, i) => {
-                const hasCover = !!w.cover;
-                const style = hasCover
-                  ? `background-image:url('${w.cover}')`
-                  : `background: linear-gradient(135deg, ${w.color || '#2a2a2a'}, ${shadeColor(w.color || '#2a2a2a', -30)})`;
-                return `<a class="cd" data-i="${i}" href="#/read/${encodeURIComponent(w.id)}" aria-label="${escapeHtml(w.title)}">
-                  <div class="cd-cover" style="${style}"></div>
-                </a>`;
-              }).join('')}
+            <div class="cf-meta" id="cf-meta">
+              <h2 id="cf-title"></h2>
+              <p class="year" id="cf-year"></p>
+              <p class="desc" id="cf-desc"></p>
+              <a class="read-link" id="cf-link" href="#">Read piece →</a>
             </div>
+            <div class="cf-dots">${dotsHTML}</div>
           </div>
         </div>
       `;
 
-      // Wire up preview interaction
-      const $cover = document.getElementById('cd-preview-cover');
-      const $title = document.getElementById('cd-preview-title');
-      const $year  = document.getElementById('cd-preview-year');
-      const $desc  = document.getElementById('cd-preview-desc');
-      const $link  = document.getElementById('cd-preview-link');
-      const $previewBox = document.getElementById('cd-preview');
-      const cds = [...document.querySelectorAll('#cd-shelf .cd')];
+      const $stage = document.getElementById('cf-stage');
+      const $meta = document.getElementById('cf-meta');
+      const $title = document.getElementById('cf-title');
+      const $year = document.getElementById('cf-year');
+      const $desc = document.getElementById('cf-desc');
+      const $link = document.getElementById('cf-link');
+      const cards = [...document.querySelectorAll('.cf-card')];
+      const dots = [...document.querySelectorAll('.cf-dot')];
 
-      let currentIdx = -1;
-      let swapTimer = null;
-      function setPreview(i) {
-        if (i === currentIdx || !items[i]) return;
-        currentIdx = i;
-        const w = items[i];
-        $previewBox.classList.add('swap');
-        clearTimeout(swapTimer);
-        swapTimer = setTimeout(() => {
-          if (w.cover) {
-            $cover.style.background = '';
-            $cover.style.backgroundImage = `url('${w.cover}')`;
+      let active = 0;
+      let metaTimer = null;
+
+      function layout(i) {
+        if (i < 0) i = 0;
+        if (i >= items.length) i = items.length - 1;
+        if (i === active && cards[i]?.classList.contains('active')) return;
+        active = i;
+        cards.forEach((card, j) => {
+          const o = j - i;
+          const abs = Math.abs(o);
+          const sign = Math.sign(o);
+          let x, z, ry, zi;
+          if (abs === 0) {
+            x = 0; z = 80; ry = 0; zi = 100;
+          } else if (abs === 1) {
+            x = sign * 180; z = -10; ry = sign * 42; zi = 90;
+          } else if (abs === 2) {
+            x = sign * 250; z = -70; ry = sign * 50; zi = 80;
           } else {
-            $cover.style.backgroundImage = '';
-            $cover.style.background = `linear-gradient(135deg, ${w.color || '#2a2a2a'}, ${shadeColor(w.color || '#2a2a2a', -30)})`;
+            x = sign * (290 + (abs - 3) * 30); z = -130 - (abs - 3) * 30; ry = sign * 56; zi = 80 - abs;
           }
+          card.style.transform = `translate3d(${x}px, 0, ${z}px) rotateY(${ry}deg)`;
+          card.style.zIndex = String(zi);
+          card.classList.toggle('active', j === i);
+        });
+        dots.forEach((d, j) => d.classList.toggle('active', j === i));
+
+        // Crossfade meta
+        const w = items[i];
+        $meta.classList.add('swap');
+        clearTimeout(metaTimer);
+        metaTimer = setTimeout(() => {
           $title.textContent = w.title;
-          $year.textContent  = w.year || '';
-          $desc.textContent  = w.subtitle || '';
+          $year.textContent = w.year || '';
+          $desc.textContent = w.subtitle || '';
           $link.href = '#/read/' + encodeURIComponent(w.id);
-          cds.forEach((el, j) => el.classList.toggle('active', j === i));
-          requestAnimationFrame(() => $previewBox.classList.remove('swap'));
-        }, 140);
+          requestAnimationFrame(() => $meta.classList.remove('swap'));
+        }, 160);
       }
 
-      cds.forEach((cd, i) => {
-        cd.addEventListener('mouseenter', () => setPreview(i));
-        cd.addEventListener('focus', () => setPreview(i));
+      cards.forEach((c, i) => {
+        c.addEventListener('mouseenter', () => layout(i));
+        c.addEventListener('focus', () => layout(i));
+        c.addEventListener('click', (e) => {
+          // If not yet active, intercept first click to bring to center
+          if (active !== i) { e.preventDefault(); layout(i); }
+        });
       });
-      setPreview(0);
+      dots.forEach((d, i) => d.addEventListener('click', () => layout(i)));
+
+      // Keyboard arrows when stage in focus area
+      function onKey(e) {
+        if (e.key === 'ArrowLeft')  { e.preventDefault(); layout(active - 1); }
+        if (e.key === 'ArrowRight') { e.preventDefault(); layout(active + 1); }
+      }
+      $stage.tabIndex = 0;
+      $stage.addEventListener('keydown', onKey);
+
+      // Initial layout
+      layout(0);
     }
 
     function shadeColor(hex, percent) {
