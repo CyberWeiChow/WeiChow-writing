@@ -348,148 +348,82 @@ TEMPLATE = r'''<!DOCTYPE html>
       text-transform: uppercase;
       margin: 0 0 56px;
     }
-    /* =============== COVERFLOW (curved 3D carousel) =============== */
-    .coverflow { margin-top: 32px; }
-    .cf-stage {
-      position: relative;
-      height: 420px;
-      perspective: 1800px;
-      perspective-origin: 50% 55%;
-      overflow: hidden;
-      cursor: grab;
+    /* =============== WORKS GRID (cover cards) =============== */
+    .works-grid {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 56px 40px;
     }
-    .cf-stage:active { cursor: grabbing; }
-    .cf-track {
-      position: absolute;
-      inset: 0;
-      transform-style: preserve-3d;
-    }
-    .cf-card {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 220px;
-      height: 300px;
-      margin: -150px 0 0 -110px;
-      border-radius: 16px;
-      overflow: hidden;
+    .work-card {
+      display: block;
       cursor: pointer;
-      transition: transform 520ms var(--ease-spring), box-shadow 320ms var(--ease-out);
-      transform-style: preserve-3d;
-      will-change: transform;
-      box-shadow:
-        0 18px 50px rgba(0,0,0,0.45),
-        0 4px 16px rgba(0,0,0,0.35),
-        0 0 0 1px rgba(255,255,255,0.04) inset;
+      transition: transform 180ms var(--ease-out);
     }
-    .cf-card.active {
-      box-shadow:
-        0 32px 80px rgba(0,0,0,0.55),
-        0 8px 24px rgba(0,0,0,0.4),
-        0 0 0 1px rgba(255,255,255,0.06) inset;
-    }
-    .cf-cover {
-      position: absolute;
-      inset: 0;
+    .work-card:active { transform: scale(0.985); }
+    .work-cover {
+      aspect-ratio: 4 / 3;
+      background-color: var(--surface);
       background-size: cover;
       background-position: center;
-      background-color: var(--surface);
+      margin-bottom: 18px;
+      overflow: hidden;
+      position: relative;
+      transition: transform 280ms var(--ease-spring);
     }
-    .cf-cover::after {
+    @media (hover: hover) and (pointer: fine) {
+      .work-card:hover .work-cover { transform: scale(1.015); }
+    }
+    .work-cover::after {
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(115deg,
-        rgba(255,255,255,0.08) 0%,
-        rgba(255,255,255,0) 30%,
-        rgba(0,0,0,0) 70%,
-        rgba(0,0,0,0.35) 100%);
-      pointer-events: none;
-      transition: opacity 320ms var(--ease-out);
+      background: rgba(0,0,0,0);
+      transition: background 220ms var(--ease-out);
     }
-    .cf-card.active .cf-cover::after { opacity: 0.5; }
-    /* subtle glow under the active card */
-    .cf-card.active::before {
-      content: '';
-      position: absolute;
-      left: 50%;
-      bottom: -28px;
-      width: 80%;
-      height: 18px;
-      transform: translateX(-50%);
-      background: radial-gradient(ellipse at center, rgba(0,0,0,0.5), transparent 70%);
-      filter: blur(8px);
-      pointer-events: none;
-    }
-
-    .cf-meta {
-      text-align: center;
-      margin-top: 40px;
-      min-height: 140px;
-      transition: opacity 220ms var(--ease-out), transform 320ms var(--ease-spring);
-    }
-    .cf-meta.swap { opacity: 0; transform: translateY(6px); }
-    .cf-meta h2 {
-      font-size: 26px;
-      font-weight: 600;
-      line-height: 1.3;
-      margin: 0 0 10px;
-      letter-spacing: -0.005em;
-    }
-    .cf-meta .year {
-      color: var(--muted);
-      font-size: 11px;
-      letter-spacing: 0.24em;
-      text-transform: uppercase;
-      margin: 0 0 16px;
-    }
-    .cf-meta .desc {
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.7;
-      max-width: 560px;
-      margin: 0 auto 24px;
-    }
-    .cf-meta .read-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 11px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--ink);
-      border-bottom: 1px solid var(--ink);
-      padding-bottom: 3px;
-      transition: gap 220ms var(--ease-out), transform 140ms var(--ease-out), opacity 180ms var(--ease-out);
-    }
-    .cf-meta .read-link:active { transform: scale(0.97); }
     @media (hover: hover) and (pointer: fine) {
-      .cf-meta .read-link:hover { gap: 14px; }
+      .work-card:hover .work-cover::after { background: rgba(0,0,0,0.15); }
     }
-
-    /* tiny dot indicators below */
-    .cf-dots {
+    .work-cover.no-image::before {
+      content: attr(data-placeholder);
+      position: absolute;
+      inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+    }
+    .work-meta {
       display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 28px;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 16px;
     }
-    .cf-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--rule);
-      cursor: pointer;
-      transition: background 200ms var(--ease-out), transform 200ms var(--ease-out);
-      border: none;
-      padding: 0;
+    .work-card .title {
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1.4;
+      color: var(--ink);
+      flex: 1;
     }
-    .cf-dot.active { background: var(--ink); transform: scale(1.4); }
-    .cf-dot:active { transform: scale(1.1); }
-
-    @media (max-width: 700px) {
-      .cf-stage { height: 340px; }
-      .cf-card { width: 170px; height: 235px; margin: -117px 0 0 -85px; }
-      .cf-meta h2 { font-size: 22px; }
+    .work-card .year {
+      color: var(--muted);
+      font-size: 13px;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+    }
+    .work-card .desc {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+      margin: 8px 0 0;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
 
     /* =============== READER =============== */
@@ -826,114 +760,32 @@ TEMPLATE = r'''<!DOCTYPE html>
       setActiveNav(cat.id);
       document.title = cat.label + ' · ' + (MANIFEST.site.title || '周未');
       const items = MANIFEST.works.filter(w => w.category === cat.id);
-      if (!items.length) {
-        $view.innerHTML = `<div class="cat-page fade-stagger">
-          <h1>${escapeHtml(cat.label)}</h1>
-          <p style="color:var(--muted);font-style:italic;margin-top:24px">尚无作品</p>
-        </div>`;
-        return;
-      }
-
-      const cardsHTML = items.map((w, i) => {
-        const bg = w.cover
-          ? `background-image:url('${w.cover}')`
-          : `background: linear-gradient(135deg, ${w.color || '#2a2a2a'}, ${shadeColor(w.color || '#2a2a2a', -30)})`;
-        return `<a class="cf-card" data-i="${i}" href="#/read/${encodeURIComponent(w.id)}" aria-label="${escapeHtml(w.title)}">
-          <div class="cf-cover" style="${bg}"></div>
-        </a>`;
-      }).join('');
-
-      const dotsHTML = items.map((_, i) => `<button class="cf-dot" data-i="${i}" aria-label="第 ${i+1} 篇"></button>`).join('');
-
       $view.innerHTML = `
         <div class="cat-page fade-stagger">
           <h1>${escapeHtml(cat.label)}</h1>
-          <p class="cat-sub">${items.length} pieces · hover or use ← →</p>
-          <div class="coverflow">
-            <div class="cf-stage" id="cf-stage">
-              <div class="cf-track" id="cf-track">${cardsHTML}</div>
-            </div>
-            <div class="cf-meta" id="cf-meta">
-              <h2 id="cf-title"></h2>
-              <p class="year" id="cf-year"></p>
-              <p class="desc" id="cf-desc"></p>
-              <a class="read-link" id="cf-link" href="#">Read piece →</a>
-            </div>
-            <div class="cf-dots">${dotsHTML}</div>
+          <p class="cat-sub">${items.length} pieces</p>
+          <div class="works-grid fade-stagger">
+            ${items.map(w => {
+              const hasCover = !!w.cover;
+              const style = hasCover
+                ? `style="background-image:url('${w.cover}')"`
+                : `style="background: linear-gradient(135deg, ${w.color || '#2a2a2a'}, ${shadeColor(w.color || '#2a2a2a', -30)})"`;
+              const cls = hasCover ? '' : 'no-image';
+              const placeholder = hasCover ? '' : `data-placeholder="${escapeHtml(w.title)}"`;
+              return `
+                <a class="work-card" href="#/read/${encodeURIComponent(w.id)}">
+                  <div class="work-cover ${cls}" ${style} ${placeholder}></div>
+                  <div class="work-meta">
+                    <span class="title">${escapeHtml(w.title)}</span>
+                    ${w.year ? `<span class="year">${escapeHtml(w.year)}</span>` : ''}
+                  </div>
+                  ${w.subtitle ? `<p class="desc">${escapeHtml(w.subtitle)}</p>` : ''}
+                </a>
+              `;
+            }).join('') || '<p style="color:var(--muted);font-style:italic">尚无作品</p>'}
           </div>
         </div>
       `;
-
-      const $stage = document.getElementById('cf-stage');
-      const $meta = document.getElementById('cf-meta');
-      const $title = document.getElementById('cf-title');
-      const $year = document.getElementById('cf-year');
-      const $desc = document.getElementById('cf-desc');
-      const $link = document.getElementById('cf-link');
-      const cards = [...document.querySelectorAll('.cf-card')];
-      const dots = [...document.querySelectorAll('.cf-dot')];
-
-      let active = 0;
-      let metaTimer = null;
-
-      function layout(i) {
-        if (i < 0) i = 0;
-        if (i >= items.length) i = items.length - 1;
-        if (i === active && cards[i]?.classList.contains('active')) return;
-        active = i;
-        cards.forEach((card, j) => {
-          const o = j - i;
-          const abs = Math.abs(o);
-          const sign = Math.sign(o);
-          let x, z, ry, zi;
-          if (abs === 0) {
-            x = 0; z = 80; ry = 0; zi = 100;
-          } else if (abs === 1) {
-            x = sign * 180; z = -10; ry = sign * 42; zi = 90;
-          } else if (abs === 2) {
-            x = sign * 250; z = -70; ry = sign * 50; zi = 80;
-          } else {
-            x = sign * (290 + (abs - 3) * 30); z = -130 - (abs - 3) * 30; ry = sign * 56; zi = 80 - abs;
-          }
-          card.style.transform = `translate3d(${x}px, 0, ${z}px) rotateY(${ry}deg)`;
-          card.style.zIndex = String(zi);
-          card.classList.toggle('active', j === i);
-        });
-        dots.forEach((d, j) => d.classList.toggle('active', j === i));
-
-        // Crossfade meta
-        const w = items[i];
-        $meta.classList.add('swap');
-        clearTimeout(metaTimer);
-        metaTimer = setTimeout(() => {
-          $title.textContent = w.title;
-          $year.textContent = w.year || '';
-          $desc.textContent = w.subtitle || '';
-          $link.href = '#/read/' + encodeURIComponent(w.id);
-          requestAnimationFrame(() => $meta.classList.remove('swap'));
-        }, 160);
-      }
-
-      cards.forEach((c, i) => {
-        c.addEventListener('mouseenter', () => layout(i));
-        c.addEventListener('focus', () => layout(i));
-        c.addEventListener('click', (e) => {
-          // If not yet active, intercept first click to bring to center
-          if (active !== i) { e.preventDefault(); layout(i); }
-        });
-      });
-      dots.forEach((d, i) => d.addEventListener('click', () => layout(i)));
-
-      // Keyboard arrows when stage in focus area
-      function onKey(e) {
-        if (e.key === 'ArrowLeft')  { e.preventDefault(); layout(active - 1); }
-        if (e.key === 'ArrowRight') { e.preventDefault(); layout(active + 1); }
-      }
-      $stage.tabIndex = 0;
-      $stage.addEventListener('keydown', onKey);
-
-      // Initial layout
-      layout(0);
     }
 
     function shadeColor(hex, percent) {
