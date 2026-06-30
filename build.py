@@ -252,21 +252,68 @@ TEMPLATE = r'''<!DOCTYPE html>
     .edu-info .where  { color: var(--muted); font-size: 13px; margin-left: 6px; }
     .edu-info .detail { color: var(--muted); font-size: 13px; margin-top: 4px; }
 
+    /* Timeline-style experience list */
     .exp-list {
-      display: grid;
-      grid-template-columns: 140px 1fr;
-      row-gap: 44px;
-      column-gap: 40px;
+      position: relative;
+      list-style: none;
+      padding: 8px 0 0 32px;
+      margin: 0;
     }
-    .exp-year { color: var(--muted); font-size: 13px; letter-spacing: 0.04em; padding-top: 4px; }
-    .exp-info .org { font-weight: 600; font-size: 16px; line-height: 1.4; }
-    .exp-info .role { color: var(--muted); font-size: 13px; margin-top: 4px; letter-spacing: 0.05em; text-transform: uppercase; }
-    .exp-info ul {
+    .exp-list::before {
+      content: '';
+      position: absolute;
+      left: 5px;
+      top: 14px;
+      bottom: 14px;
+      width: 1px;
+      background: var(--rule);
+    }
+    .exp-item {
+      position: relative;
+      padding-bottom: 52px;
+    }
+    .exp-item:last-child { padding-bottom: 0; }
+    .exp-item::before {
+      content: '';
+      position: absolute;
+      left: -32px;
+      top: 8px;
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 1.5px solid var(--ink);
+      transition: background 200ms var(--ease-out), transform 200ms var(--ease-out);
+    }
+    .exp-item:hover::before { background: var(--ink); transform: scale(1.15); }
+    .exp-item.current::before { background: var(--ink); }
+    .exp-year {
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+      font-variant-numeric: tabular-nums;
+    }
+    .exp-org { font-weight: 600; font-size: 16px; line-height: 1.4; }
+    .exp-where {
+      color: var(--muted);
+      font-size: 13px;
+      margin-left: 8px;
+      font-weight: 400;
+    }
+    .exp-role {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 4px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+    .exp-item ul {
       list-style: none;
       padding: 0;
       margin: 14px 0 0;
     }
-    .exp-info li {
+    .exp-item li {
       position: relative;
       padding-left: 16px;
       font-size: 13.5px;
@@ -274,17 +321,16 @@ TEMPLATE = r'''<!DOCTYPE html>
       color: color-mix(in srgb, var(--ink) 88%, transparent);
       margin-bottom: 8px;
     }
-    .exp-info li::before {
+    .exp-item li::before {
       content: '—';
       position: absolute;
       left: 0;
       color: var(--muted);
     }
-    .exp-info li:last-child { margin-bottom: 0; }
+    .exp-item li:last-child { margin-bottom: 0; }
     @media (max-width: 700px) {
-      .exp-list { grid-template-columns: 1fr; row-gap: 32px; }
       .edu-list { grid-template-columns: 1fr; row-gap: 16px; }
-      .exp-year, .edu-year { font-size: 12px; }
+      .edu-year { font-size: 12px; }
     }
 
     /* =============== CATEGORY (works list) =============== */
@@ -302,81 +348,131 @@ TEMPLATE = r'''<!DOCTYPE html>
       text-transform: uppercase;
       margin: 0 0 56px;
     }
-    .works-grid {
-      list-style: none;
-      padding: 0;
-      margin: 0;
+    /* =============== CD SHELF (works as record-shop browse) =============== */
+    .cat-stage {
+      margin-top: 24px;
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 56px 40px;
+      grid-template-columns: 320px 1fr;
+      gap: 64px;
+      align-items: start;
     }
-    .work-card {
-      display: block;
-      cursor: pointer;
-      transition: transform 180ms var(--ease-out);
+    .cd-preview {
+      position: sticky;
+      top: 110px;
+      display: grid;
+      gap: 22px;
+      min-height: 320px;
     }
-    .work-card:active { transform: scale(0.985); }
-    .work-cover {
-      aspect-ratio: 4 / 3;
-      background-color: var(--surface);
+    .cd-preview-cover {
+      width: 320px;
+      height: 320px;
       background-size: cover;
       background-position: center;
-      margin-bottom: 18px;
-      overflow: hidden;
-      position: relative;
-      transition: transform 280ms var(--ease-spring);
+      background-color: var(--surface);
+      box-shadow: 0 24px 64px rgba(0,0,0,0.35), 0 4px 12px rgba(0,0,0,0.2);
+      transition: opacity 240ms var(--ease-out), transform 320ms var(--ease-spring);
     }
-    @media (hover: hover) and (pointer: fine) {
-      .work-card:hover .work-cover { transform: scale(1.015); }
+    .cd-preview-meta .title {
+      font-size: 24px;
+      font-weight: 600;
+      line-height: 1.3;
+      margin: 0 0 6px;
+      transition: opacity 220ms var(--ease-out);
     }
-    .work-cover::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: rgba(0,0,0,0);
-      transition: background 220ms var(--ease-out);
-    }
-    @media (hover: hover) and (pointer: fine) {
-      .work-card:hover .work-cover::after { background: rgba(0,0,0,0.15); }
-    }
-    .work-cover.no-image::before {
-      content: attr(data-placeholder);
-      position: absolute;
-      inset: 0;
-      display: flex; align-items: center; justify-content: center;
+    .cd-preview-meta .year {
       color: var(--muted);
       font-size: 11px;
-      letter-spacing: 0.3em;
+      letter-spacing: 0.22em;
       text-transform: uppercase;
+      margin-bottom: 14px;
     }
-    .work-meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 16px;
+    .cd-preview-meta .desc {
+      color: var(--muted);
+      font-size: 13.5px;
+      line-height: 1.7;
+      margin: 0 0 22px;
+      max-width: 360px;
     }
-    .work-card .title {
-      font-size: 16px;
-      font-weight: 600;
-      line-height: 1.4;
+    .cd-preview-meta .read-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
       color: var(--ink);
-      flex: 1;
+      border-bottom: 1px solid var(--ink);
+      padding-bottom: 3px;
+      transition: color 180ms var(--ease-out), gap 220ms var(--ease-out), transform 140ms var(--ease-out);
     }
-    .work-card .year {
-      color: var(--muted);
-      font-size: 13px;
-      letter-spacing: 0.05em;
-      white-space: nowrap;
+    .cd-preview-meta .read-link:active { transform: scale(0.97); }
+    @media (hover: hover) and (pointer: fine) {
+      .cd-preview-meta .read-link:hover { gap: 12px; }
     }
-    .work-card .desc {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.55;
-      margin: 8px 0 0;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
+    .cd-preview.swap .cd-preview-cover { opacity: 0.4; transform: scale(0.985); }
+    .cd-preview.swap .cd-preview-meta { opacity: 0.6; }
+
+    .cd-shelf {
+      display: flex;
+      padding: 56px 24px 64px 60px;
+      perspective: 1600px;
+      perspective-origin: 50% 70%;
+      overflow-x: auto;
+      overflow-y: visible;
+      scrollbar-width: thin;
+      scrollbar-color: var(--rule) transparent;
+      list-style: none;
+      margin: 0;
+    }
+    .cd-shelf::-webkit-scrollbar { height: 6px; }
+    .cd-shelf::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 3px; }
+    .cd {
+      flex: 0 0 auto;
+      width: 152px;
+      height: 152px;
+      margin-right: -88px;
+      position: relative;
+      cursor: pointer;
+      transform: rotateY(-28deg) translateZ(0);
+      transform-origin: left center;
+      transform-style: preserve-3d;
+      transition: transform 380ms var(--ease-spring), z-index 0s 380ms;
+    }
+    .cd:last-child { margin-right: 0; }
+    .cd.active {
+      transform: rotateY(-8deg) translateZ(40px) translateY(-6px);
+      z-index: 20;
+      transition: transform 380ms var(--ease-spring), z-index 0s;
+    }
+    @media (hover: hover) and (pointer: fine) {
+      .cd:hover, .cd:focus-visible {
+        transform: rotateY(0deg) translateZ(80px) translateY(-12px) scale(1.04);
+        z-index: 100;
+        transition: transform 380ms var(--ease-spring), z-index 0s;
+      }
+    }
+    .cd:active { transform: rotateY(0deg) translateZ(70px) translateY(-8px) scale(1.0); }
+    .cd:focus-visible { outline: none; }
+    .cd-cover {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      background-color: var(--surface);
+      box-shadow:
+        -3px 0 0 rgba(0,0,0,0.18),
+        -1px 4px 16px rgba(0,0,0,0.35),
+        0 18px 32px rgba(0,0,0,0.25);
+    }
+
+    @media (max-width: 900px) {
+      .cat-stage { grid-template-columns: 1fr; gap: 32px; }
+      .cd-preview { position: static; }
+      .cd-preview-cover { width: 100%; max-width: 320px; height: auto; aspect-ratio: 1/1; }
+    }
+    @media (max-width: 600px) {
+      .cd-shelf { padding: 32px 8px 40px 32px; }
+      .cd { width: 120px; height: 120px; margin-right: -68px; }
     }
 
     /* =============== READER =============== */
@@ -657,14 +753,17 @@ TEMPLATE = r'''<!DOCTYPE html>
           <div class="detail">${escapeHtml(e.detail || '')}</div>
         </div>
       `).join('');
-      const expRows = (s.experience || []).map(e => `
-        <div class="exp-year">${escapeHtml(e.year)}</div>
-        <div class="exp-info">
-          <div class="org">${escapeHtml(e.org)}</div>
-          ${e.role ? `<div class="role">${escapeHtml(e.role)}</div>` : ''}
+      const today = new Date();
+      const expRows = (s.experience || []).map((e, idx) => {
+        const isCurrent = idx === 0; // first/newest entry gets filled marker
+        return `
+        <li class="exp-item${isCurrent ? ' current' : ''}">
+          <div class="exp-year">${escapeHtml(e.year)}</div>
+          <div class="exp-org">${escapeHtml(e.org)}${e.where ? `<span class="exp-where">${escapeHtml(e.where)}</span>` : ''}</div>
+          ${e.role ? `<div class="exp-role">${escapeHtml(e.role)}</div>` : ''}
           ${(e.highlights && e.highlights.length) ? `<ul>${e.highlights.map(h => `<li>${escapeHtml(h)}</li>`).join('')}</ul>` : ''}
-        </div>
-      `).join('');
+        </li>`;
+      }).join('');
       const photoStyle = s.photo ? `style="background-image:url('${escapeHtml(s.photo)}')"` : '';
       const photoClass = s.photo ? '' : 'placeholder';
       const cats = (MANIFEST.categories || []).filter(c => MANIFEST.works.some(w => w.category === c.id));
@@ -686,7 +785,7 @@ TEMPLATE = r'''<!DOCTYPE html>
           ${expRows ? `
           <section class="bio-section">
             <h2>Experience · 实习经历</h2>
-            <div class="exp-list">${expRows}</div>
+            <ol class="exp-list">${expRows}</ol>
           </section>` : ''}
           ${cats.length ? `
           <section class="bio-section">
@@ -710,32 +809,82 @@ TEMPLATE = r'''<!DOCTYPE html>
       setActiveNav(cat.id);
       document.title = cat.label + ' · ' + (MANIFEST.site.title || '周未');
       const items = MANIFEST.works.filter(w => w.category === cat.id);
+      if (!items.length) {
+        $view.innerHTML = `<div class="cat-page fade-stagger">
+          <h1>${escapeHtml(cat.label)}</h1>
+          <p style="color:var(--muted);font-style:italic;margin-top:24px">尚无作品</p>
+        </div>`;
+        return;
+      }
+
       $view.innerHTML = `
         <div class="cat-page fade-stagger">
           <h1>${escapeHtml(cat.label)}</h1>
-          <p class="cat-sub">${items.length} pieces</p>
-          <div class="works-grid fade-stagger">
-            ${items.map(w => {
-              const hasCover = !!w.cover;
-              const style = hasCover
-                ? `style="background-image:url('${w.cover}')"`
-                : `style="background: linear-gradient(135deg, ${w.color || '#2a2a2a'}, ${shadeColor(w.color || '#2a2a2a', -30)})"`;
-              const cls = hasCover ? '' : 'no-image';
-              const placeholder = hasCover ? '' : `data-placeholder="${escapeHtml(w.title)}"`;
-              return `
-                <a class="work-card" href="#/read/${encodeURIComponent(w.id)}">
-                  <div class="work-cover ${cls}" ${style} ${placeholder}></div>
-                  <div class="work-meta">
-                    <span class="title">${escapeHtml(w.title)}</span>
-                    ${w.year ? `<span class="year">${escapeHtml(w.year)}</span>` : ''}
-                  </div>
-                  ${w.subtitle ? `<p class="desc">${escapeHtml(w.subtitle)}</p>` : ''}
-                </a>
-              `;
-            }).join('') || '<p style="color:var(--muted);font-style:italic">尚无作品</p>'}
+          <p class="cat-sub">${items.length} pieces · hover to preview</p>
+          <div class="cat-stage">
+            <div class="cd-preview" id="cd-preview">
+              <div class="cd-preview-cover" id="cd-preview-cover"></div>
+              <div class="cd-preview-meta">
+                <div class="title" id="cd-preview-title"></div>
+                <div class="year" id="cd-preview-year"></div>
+                <div class="desc" id="cd-preview-desc"></div>
+                <a class="read-link" id="cd-preview-link" href="#">Read piece →</a>
+              </div>
+            </div>
+            <div class="cd-shelf fade-stagger" id="cd-shelf">
+              ${items.map((w, i) => {
+                const hasCover = !!w.cover;
+                const style = hasCover
+                  ? `background-image:url('${w.cover}')`
+                  : `background: linear-gradient(135deg, ${w.color || '#2a2a2a'}, ${shadeColor(w.color || '#2a2a2a', -30)})`;
+                return `<a class="cd" data-i="${i}" href="#/read/${encodeURIComponent(w.id)}" aria-label="${escapeHtml(w.title)}">
+                  <div class="cd-cover" style="${style}"></div>
+                </a>`;
+              }).join('')}
+            </div>
           </div>
         </div>
       `;
+
+      // Wire up preview interaction
+      const $cover = document.getElementById('cd-preview-cover');
+      const $title = document.getElementById('cd-preview-title');
+      const $year  = document.getElementById('cd-preview-year');
+      const $desc  = document.getElementById('cd-preview-desc');
+      const $link  = document.getElementById('cd-preview-link');
+      const $previewBox = document.getElementById('cd-preview');
+      const cds = [...document.querySelectorAll('#cd-shelf .cd')];
+
+      let currentIdx = -1;
+      let swapTimer = null;
+      function setPreview(i) {
+        if (i === currentIdx || !items[i]) return;
+        currentIdx = i;
+        const w = items[i];
+        $previewBox.classList.add('swap');
+        clearTimeout(swapTimer);
+        swapTimer = setTimeout(() => {
+          if (w.cover) {
+            $cover.style.background = '';
+            $cover.style.backgroundImage = `url('${w.cover}')`;
+          } else {
+            $cover.style.backgroundImage = '';
+            $cover.style.background = `linear-gradient(135deg, ${w.color || '#2a2a2a'}, ${shadeColor(w.color || '#2a2a2a', -30)})`;
+          }
+          $title.textContent = w.title;
+          $year.textContent  = w.year || '';
+          $desc.textContent  = w.subtitle || '';
+          $link.href = '#/read/' + encodeURIComponent(w.id);
+          cds.forEach((el, j) => el.classList.toggle('active', j === i));
+          requestAnimationFrame(() => $previewBox.classList.remove('swap'));
+        }, 140);
+      }
+
+      cds.forEach((cd, i) => {
+        cd.addEventListener('mouseenter', () => setPreview(i));
+        cd.addEventListener('focus', () => setPreview(i));
+      });
+      setPreview(0);
     }
 
     function shadeColor(hex, percent) {
