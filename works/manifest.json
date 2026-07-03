@@ -10,24 +10,41 @@
       "Traversing the realms of creative writing, cultural criticism, and financial journalism, his work explores the intersection of personal experience with historical memory, cultural structures, and business landscapes."
     ],
     "photo": "photo.jpg",
-    "education": [
-      { "year": "2026 -", "school": "中国社会科学院大学", "where": "Beijing, China", "detail": "文艺学 · 硕士在读" },
-      { "year": "2022 - 2026", "school": "浙江工业大学", "where": "Hangzhou, China", "detail": "汉语言文学 · 学士" }
-    ],
-    "experience": [
+    "journey": [
+      {
+        "year": "2026.09 –",
+        "city": "北京",
+        "cityEn": "Beijing",
+        "org": "中国社会科学院大学 (UCASS)",
+        "role": "文艺学 · 硕士研究生",
+        "type": "education"
+      },
       {
         "year": "2026.06 – 2026.08",
+        "city": "上海",
+        "cityEn": "Shanghai",
         "org": "阳狮中国 · PR & Communications",
-        "where": "Shanghai",
         "role": "Copy Intern",
+        "type": "work",
         "highlights": [
           "（内容待定）"
         ]
       },
       {
+        "year": "2026.06",
+        "city": "香港",
+        "cityEn": "Hong Kong",
+        "org": "第十届「本科生人文社科学术会议」",
+        "role": "论文宣读",
+        "type": "event"
+      },
+      {
         "year": "2024.11 – 2025.02",
-        "org": "浙江日报报业集团 · 浙商杂志",
+        "city": "杭州",
+        "cityEn": "Hangzhou",
+        "org": "《浙商》杂志",
         "role": "实习记者",
+        "type": "work",
         "highlights": [
           "会议采写：受邀报道 2024 中国并购年会、2024《浙商》年会、SHETO（香港驻沪经贸办）营商讲座等重要会议，转载于浙商杂志全媒体矩阵，平均浏览量超 18,000+。",
           "稿件撰写：产出《深度｜52 万家退市创历史新高！市值管理第一枪打响，7 万亿浙股军团弹药充足吗？》等 15 篇专业报道（平均深度 3,000 字），内容涵盖上市企业观察与政策解读，具独立选题与深度写作能力。",
@@ -36,8 +53,11 @@
       },
       {
         "year": "2024.09 – 2025.01",
+        "city": "杭州",
+        "cityEn": "Hangzhou",
         "org": "浙江工业大学",
-        "role": "应用汉语助教",
+        "role": "留学生《实用汉语》助教",
+        "type": "work",
         "highlights": [
           "独立授课：负责留学生汉语实践课程的教学工作，独立承担全英文课堂主持，辅助教师进行理论课程教学。",
           "课程开发：自主设计并优化课程大纲，引入多元文化素材丰富教学内容，提升课堂互动率。",
@@ -45,13 +65,20 @@
         ]
       },
       {
-        "year": "2024.08 – 2024.09",
-        "org": "ABC 美好社会资讯社训练营",
-        "role": "项目组成员（PC）",
-        "highlights": [
-          "行业洞察：负责收集和整理相关行业资料，深入分析线上营销内容，通过组织优势与目标人群的交叉分析，拆解 50+ 同赛道账号线上营销内容，构建全面的营销框架；协助完成 3 次企业访谈，提供以「内容＋产品＋策略」为核心的系统性策略建议。",
-          "项目研究与方案整理：参与咨询项目前期定性与定量研究，协助设计研究框架，分析调研结果并提出策略性建议；响应项目经理反馈，迭代 4 版方案，最终咨询方案荣获「最佳项目组」奖（四组第一）。"
-        ]
+        "year": "2023.07 – 2023.11",
+        "city": "杭州",
+        "cityEn": "Hangzhou",
+        "org": "第19届杭州亚运会及第4届亚残运会",
+        "role": "转播服务志愿者",
+        "type": "event"
+      },
+      {
+        "year": "2022 – 2026",
+        "city": "杭州",
+        "cityEn": "Hangzhou",
+        "org": "浙江工业大学",
+        "role": "汉语言文学 · 学士",
+        "type": "education"
       }
     ],
     "contact": {

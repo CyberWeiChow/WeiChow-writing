@@ -472,6 +472,186 @@ TEMPLATE = r'''<!DOCTYPE html>
       overflow: hidden;
     }
 
+    /* =============== VIEWPORT PAGES (menu-switched, no long scroll) =============== */
+    body:not(.reader-mode) { overflow: hidden; height: 100dvh; }
+    .page {
+      height: calc(100dvh - 65px);
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+    .bio-fit {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+    }
+    .bio-fit .bio-hero {
+      max-width: 1080px;
+      margin: 0;
+    }
+    .contact-fit {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .contact-fit .contact-page { padding: 40px; width: min(720px, 92vw); }
+    .works-page {
+      display: flex;
+      align-items: center;
+    }
+    .works-inner {
+      width: min(1100px, 94vw);
+      margin: 0 auto;
+      padding: 24px 0 48px;
+    }
+
+    /* =============== EXPERIENCE MAP =============== */
+    .exp-page { position: relative; overflow: hidden; }
+    .map-wrap {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 3vh 2vw 3vh 4vw;
+    }
+    .map-wrap svg {
+      height: 94%;
+      max-width: 68vw;
+    }
+    .china-path {
+      fill: color-mix(in srgb, var(--surface) 72%, transparent);
+      stroke: var(--rule);
+      stroke-width: 1.2;
+      stroke-linejoin: round;
+    }
+    .pin { transform-box: fill-box; }
+    .pin-dot {
+      fill: var(--muted);
+      transform-box: fill-box;
+      transform-origin: center;
+      transition: transform 260ms var(--ease-spring), fill 200ms var(--ease-out);
+    }
+    .pin-ring {
+      fill: none;
+      stroke: var(--muted);
+      stroke-width: 1;
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: pinBreathe 3s var(--ease-out) infinite;
+      opacity: 0;
+    }
+    @keyframes pinBreathe {
+      0%   { transform: scale(0.35); opacity: 0.55; }
+      70%  { transform: scale(1.15); opacity: 0; }
+      100% { transform: scale(1.15); opacity: 0; }
+    }
+    .pin-label {
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      font-size: 13px;
+      fill: var(--muted);
+      opacity: 0;
+      transition: opacity 240ms var(--ease-out);
+    }
+    .pin.active .pin-dot { fill: var(--ink); transform: scale(1.7); }
+    .pin.active .pin-ring { stroke: var(--ink); }
+    .pin.active .pin-label { opacity: 1; fill: var(--ink); }
+    @media (hover: hover) and (pointer: fine) {
+      .pin:hover .pin-dot { fill: var(--ink); transform: scale(1.5); }
+      .pin:hover .pin-label { opacity: 1; }
+    }
+
+    .journey-panel {
+      position: absolute;
+      top: 28px;
+      right: 32px;
+      bottom: 28px;
+      width: min(420px, 88vw);
+      overflow-y: auto;
+      background: color-mix(in srgb, var(--bg) 55%, transparent);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--rule);
+      scrollbar-width: thin;
+      scrollbar-color: var(--rule) transparent;
+    }
+    .journey-panel::-webkit-scrollbar { width: 5px; }
+    .journey-panel::-webkit-scrollbar-thumb { background: var(--rule); }
+    .j-card {
+      padding: 20px 26px;
+      cursor: pointer;
+      border-bottom: 1px solid color-mix(in srgb, var(--rule) 55%, transparent);
+      transition: background 220ms var(--ease-out);
+      position: relative;
+    }
+    .j-card:last-child { border-bottom: none; }
+    .j-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 2px;
+      background: var(--ink);
+      transform: scaleY(0);
+      transform-origin: top;
+      transition: transform 280ms var(--ease-out);
+    }
+    .j-card.active { background: color-mix(in srgb, var(--ink) 5%, transparent); }
+    .j-card.active::before { transform: scaleY(1); }
+    .j-card:active { background: color-mix(in srgb, var(--ink) 9%, transparent); }
+    .j-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .j-year {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+    }
+    .j-city {
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .j-org {
+      font-size: 14.5px;
+      font-weight: 600;
+      line-height: 1.45;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+    .j-role {
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+    .j-type {
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      margin-left: 10px;
+      opacity: 0.7;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 900px) {
+      .map-wrap { justify-content: center; padding: 2vh 4vw 42vh; }
+      .map-wrap svg { max-width: 92vw; height: auto; }
+      .journey-panel {
+        top: auto;
+        left: 16px; right: 16px; bottom: 16px;
+        height: 42vh;
+        width: auto;
+      }
+    }
+
     /* =============== STRATA (ink-line layers, works grow from the line) =============== */
     .strata-hint {
       color: var(--muted);
@@ -979,6 +1159,7 @@ TEMPLATE = r'''<!DOCTYPE html>
     function route() {
       const h = location.hash || '#/';
       const m = h.match(/^#\/read\/(.+)$/);
+      document.body.classList.toggle('reader-mode', !!m);
       if (m) {
         window.scrollTo(0, 0);
         showRead(decodeURIComponent(m[1]));
@@ -986,7 +1167,12 @@ TEMPLATE = r'''<!DOCTYPE html>
         return;
       }
       const tail = h.slice(2);
-      showHome(tail || null);
+      const isCat = (MANIFEST.categories || []).some(c => c.id === tail);
+      if (tail === 'experience') showExperience();
+      else if (tail === 'works' || isCat) showWorks(isCat ? tail : null);
+      else if (tail === 'contact') showContact();
+      else showBio();
+      mountStaggers($view);
     }
 
     function mountStaggers(root) {
@@ -1002,65 +1188,144 @@ TEMPLATE = r'''<!DOCTYPE html>
     }
 
     window.addEventListener('hashchange', route);
-    route();
+    // NOTE: initial route() is invoked at the very end of this script,
+    // after all view functions and their constants are initialized.
 
-    // ---- HOME (single continuous page: bio + strata + contact) ----
-    function showHome(target) {
-      const isCat = target && (MANIFEST.categories || []).some(c => c.id === target);
-      const navKey = isCat || target === 'works' ? 'works'
-        : (target === 'experience' || target === 'contact') ? target
-        : 'bio';
-      setActiveNav(navKey);
+    // ---- BIO (single-screen page) ----
+    function showBio() {
+      setActiveNav('bio');
       document.title = (MANIFEST.site.title || '周未');
-
-      if (!document.getElementById('home-root')) {
-        renderHome();
-        mountStaggers($view);
-        drawInkLines();
-        wireHome();
-        // Re-measure once webfonts arrive: label widths shift when the
-        // serif face replaces the fallback, and the line gap must follow.
-        document.fonts.ready.then(() => drawInkLines());
-      }
-
-      if (isCat) {
-        openStratum(target);
-        setTimeout(() => {
-          document.getElementById('stratum-' + target)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 80);
-      } else if (target === 'works') {
-        document.getElementById('writing-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      } else if (target === 'experience') {
-        document.getElementById('experience-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      } else if (target === 'contact') {
-        document.getElementById('contact-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      } else {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    }
-
-    function renderHome() {
       const s = MANIFEST.site || {};
       const bioParas = (s.bio || []).map(p => `<p class="bio-para">${escapeHtml(p)}</p>`).join('');
-      const eduRows = (s.education || []).map(e => `
-        <div class="edu-year">${escapeHtml(e.year)}</div>
-        <div class="edu-info">
-          <div><span class="school">${escapeHtml(e.school)}</span><span class="where">${escapeHtml(e.where || '')}</span></div>
-          <div class="detail">${escapeHtml(e.detail || '')}</div>
-        </div>
-      `).join('');
-      const expRows = (s.experience || []).map((e, idx) => {
-        const isCurrent = idx === 0;
-        return `
-        <li class="exp-item${isCurrent ? ' current' : ''}">
-          <div class="exp-year">${escapeHtml(e.year)}</div>
-          <div class="exp-org">${escapeHtml(e.org)}${e.where ? `<span class="exp-where">${escapeHtml(e.where)}</span>` : ''}</div>
-          ${e.role ? `<div class="exp-role">${escapeHtml(e.role)}</div>` : ''}
-          ${(e.highlights && e.highlights.length) ? `<ul>${e.highlights.map(h => `<li>${escapeHtml(h)}</li>`).join('')}</ul>` : ''}
-        </li>`;
-      }).join('');
       const photoStyle = s.photo ? `style="background-image:url('${escapeHtml(s.photo)}')"` : '';
       const photoClass = s.photo ? '' : 'placeholder';
+      $view.innerHTML = `
+        <div class="page bio-fit">
+          <div class="bio-hero fade-stagger">
+            <div class="bio-portrait ${photoClass}" ${photoStyle}></div>
+            <div class="bio-content fade-stagger">
+              <h1>${escapeHtml(s.title || '周未')}<span class="en">${escapeHtml(s.name_en || 'ZHOU WEI')}</span></h1>
+              ${s.tagline ? `<p class="bio-tagline">${escapeHtml(s.tagline)}</p>` : ''}
+              ${bioParas}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // ---- EXPERIENCE (minimal China map + frosted journey panel) ----
+    const CITY_XY = {
+      'Beijing':   [116.4, 39.9],
+      'Shanghai':  [121.47, 31.23],
+      'Hangzhou':  [120.15, 30.28],
+      'Hong Kong': [114.17, 22.32],
+    };
+    // Rough China outline (lon,lat), minimal aesthetic — no admin borders.
+    const CHINA_OUTLINE = [
+      [73.5,39.5],[74.8,42],[79,43],[82,45.5],[85.5,47],[87.5,49],[90.5,47.7],
+      [96,42.7],[100.5,42.5],[104.5,41.7],[108.5,42.4],[111.9,43.7],[115,45],
+      [117.5,46.6],[119.8,47.5],[119.3,50],[121,53.3],[123.5,53.5],[126,52.8],
+      [127.6,50.2],[130.5,48.8],[134.7,48.4],[134.5,47.4],[133,45.1],[131,44.9],
+      [130.4,42.7],[128.1,41.4],[124.4,40],[121.7,38.9],[117.8,39.2],[119.3,37.1],
+      [122.6,37.4],[119.2,34.8],[120.9,32.7],[121.9,31],[120.1,27.9],[118,24.6],
+      [115.8,22.8],[113.6,22.2],[111.9,21.5],[110.4,20.4],[108.6,21.8],[106.7,22.8],
+      [104.5,22.8],[102,22.4],[101.7,21.15],[99.9,21.5],[97.6,23.9],[98.7,25.8],
+      [98.3,27.6],[96.1,29.2],[94,29.3],[91.5,27.9],[89,28.1],[85.5,28.3],
+      [82,30.2],[79.5,32],[78.3,34.6],[75.9,36.7],[74.5,37.1]
+    ];
+    function projCN(lon, lat) {
+      const x = (lon - 72) / (136 - 72) * 1000;
+      const y = (55 - lat) / (55 - 17) * 760;
+      return [x, y];
+    }
+    function chinaPathD() {
+      const pts = CHINA_OUTLINE.map(([lo, la]) => projCN(lo, la));
+      let d = `M${pts[0][0].toFixed(1)},${pts[0][1].toFixed(1)}`;
+      for (let i = 1; i < pts.length - 1; i++) {
+        const mx = (pts[i][0] + pts[i + 1][0]) / 2;
+        const my = (pts[i][1] + pts[i + 1][1]) / 2;
+        d += ` Q${pts[i][0].toFixed(1)},${pts[i][1].toFixed(1)} ${mx.toFixed(1)},${my.toFixed(1)}`;
+      }
+      d += ' Z';
+      return d;
+    }
+
+    function showExperience() {
+      setActiveNav('experience');
+      document.title = 'Experience · ' + (MANIFEST.site.title || '周未');
+      const journey = MANIFEST.site.journey || [];
+
+      const TYPE_LABEL = { work: 'Work', education: 'Education', event: 'Event' };
+      const cardsHTML = journey.map((j, i) => `
+        <div class="j-card" data-i="${i}" data-city="${escapeHtml(j.cityEn)}">
+          <div class="j-top">
+            <span class="j-year">${escapeHtml(j.year)}</span>
+            <span class="j-city">${escapeHtml(j.city)} · ${escapeHtml(j.cityEn)}</span>
+          </div>
+          <div class="j-org">${escapeHtml(j.org)}</div>
+          <div class="j-role">${escapeHtml(j.role)}${j.type ? `<span class="j-type">${TYPE_LABEL[j.type] || ''}</span>` : ''}</div>
+        </div>
+      `).join('');
+
+      // One pin per distinct city.
+      const cities = [...new Set(journey.map(j => j.cityEn))];
+      const pinsHTML = cities.map(cityEn => {
+        const [lon, lat] = CITY_XY[cityEn] || [104, 35];
+        const [x, y] = projCN(lon, lat);
+        return `
+          <g class="pin" data-city="${escapeHtml(cityEn)}" transform="translate(${x.toFixed(1)},${y.toFixed(1)})">
+            <circle class="pin-hit" r="26" fill="transparent"/>
+            <circle class="pin-ring" r="14"/>
+            <circle class="pin-dot" r="4.5"/>
+            <text class="pin-label" x="12" y="4">${escapeHtml(cityEn)}</text>
+          </g>`;
+      }).join('');
+
+      $view.innerHTML = `
+        <div class="page exp-page">
+          <div class="map-wrap" aria-hidden="true">
+            <svg viewBox="0 0 1000 760" preserveAspectRatio="xMidYMid meet">
+              <path class="china-path" d="${chinaPathD()}"/>
+              ${pinsHTML}
+            </svg>
+          </div>
+          <aside class="journey-panel fade-stagger">${cardsHTML}</aside>
+        </div>
+      `;
+
+      const cards = [...document.querySelectorAll('.j-card')];
+      const pins = [...document.querySelectorAll('.pin')];
+
+      function activateCity(cityEn, sourceCardIdx) {
+        pins.forEach(p => p.classList.toggle('active', p.dataset.city === cityEn));
+        cards.forEach((c, i) => {
+          const on = sourceCardIdx != null ? i === sourceCardIdx : c.dataset.city === cityEn;
+          c.classList.toggle('active', on);
+        });
+      }
+
+      cards.forEach((card, i) => {
+        card.addEventListener('mouseenter', () => activateCity(card.dataset.city, i));
+        card.addEventListener('click', () => activateCity(card.dataset.city, i));
+      });
+      pins.forEach(pin => {
+        pin.addEventListener('click', () => {
+          const cityEn = pin.dataset.city;
+          activateCity(cityEn, null);
+          const first = cards.find(c => c.dataset.city === cityEn);
+          first?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        });
+        pin.style.cursor = 'pointer';
+      });
+
+      // Default: newest entry active.
+      if (cards.length) activateCity(cards[0].dataset.city, 0);
+    }
+
+    // ---- WORKS (strata page) ----
+    function showWorks(openCat) {
+      setActiveNav('works');
+      document.title = 'Works · ' + (MANIFEST.site.title || '周未');
 
       const cats = (MANIFEST.categories || []).filter(c => MANIFEST.works.some(w => w.category === c.id));
       const labelPos = ['12%', '44%', '72%'];
@@ -1094,47 +1359,57 @@ TEMPLATE = r'''<!DOCTYPE html>
         </section>`;
       }).join('');
 
-      const contact = MANIFEST.site.contact || {};
-      const contactRows = Object.entries(contact).map(([k, v]) => `
+      $view.innerHTML = `
+        <div class="page works-page">
+          <div class="works-inner fade-stagger">
+            <p class="strata-hint">点击墨线，翻开每一层</p>
+            <div class="strata">${strataHTML}</div>
+          </div>
+        </div>
+      `;
+
+      drawInkLines();
+      document.fonts.ready.then(() => drawInkLines());
+
+      document.querySelectorAll('.stratum-line').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const st = btn.closest('.stratum');
+          const catId = st.dataset.cat;
+          const willOpen = !st.classList.contains('open');
+          openStratum(willOpen ? catId : null);
+          history.replaceState(null, '', willOpen ? '#/' + catId : '#/works');
+        });
+      });
+
+      if (openCat) openStratum(openCat);
+    }
+
+    // ---- CONTACT (single-screen page) ----
+    function showContact() {
+      setActiveNav('contact');
+      document.title = 'Contact · ' + (MANIFEST.site.title || '周未');
+      const c = MANIFEST.site.contact || {};
+      const rows = Object.entries(c).map(([k, v]) => `
         <div class="contact-row">
           <div class="label">${escapeHtml(k)}</div>
           <div class="value" data-copy="${escapeHtml(v)}">${escapeHtml(v)}</div>
         </div>
       `).join('');
-
       $view.innerHTML = `
-        <div class="bio-page" id="home-root">
-          <div class="fade-stagger">
-            <div class="bio-hero">
-              <div class="bio-portrait ${photoClass}" ${photoStyle}></div>
-              <div class="bio-content fade-stagger">
-                <h1>${escapeHtml(s.title || '周未')}<span class="en">${escapeHtml(s.name_en || 'ZHOU WEI')}</span></h1>
-                ${s.tagline ? `<p class="bio-tagline">${escapeHtml(s.tagline)}</p>` : ''}
-                ${bioParas}
-              </div>
-            </div>
-            ${eduRows ? `
-            <section class="bio-section">
-              <h2>Education · 教育</h2>
-              <div class="edu-list">${eduRows}</div>
-            </section>` : ''}
-            ${expRows ? `
-            <section class="bio-section" id="experience-section">
-              <h2>Experience · 实习经历</h2>
-              <ol class="exp-list">${expRows}</ol>
-            </section>` : ''}
-            <section class="bio-section" id="writing-section">
-              <h2>Writing · 写作</h2>
-              <p class="strata-hint">点击墨线，翻开每一层</p>
-              <div class="strata">${strataHTML}</div>
-            </section>
-            <section class="bio-section" id="contact-section">
-              <h2>Contact · 联系</h2>
-              <div class="contact-list">${contactRows}</div>
-            </section>
+        <div class="page contact-fit">
+          <div class="contact-page fade-stagger">
+            <h1>Get in touch.</h1>
+            <div class="contact-list fade-stagger">${rows}</div>
           </div>
         </div>
       `;
+      document.querySelectorAll('.contact-row .value').forEach(el => {
+        el.addEventListener('click', () => {
+          navigator.clipboard.writeText(el.dataset.copy);
+          el.classList.add('copied');
+          setTimeout(() => el.classList.remove('copied'), 1500);
+        });
+      });
     }
 
     // Hand-drawn ink line generator with an optional gap (for the label).
@@ -1200,7 +1475,7 @@ TEMPLATE = r'''<!DOCTYPE html>
     window.addEventListener('resize', () => {
       clearTimeout(inkResizeTimer);
       inkResizeTimer = setTimeout(() => {
-        if (document.getElementById('home-root')) drawInkLines();
+        if (document.querySelector('.stratum')) drawInkLines();
       }, 120);
     });
 
@@ -1209,32 +1484,6 @@ TEMPLATE = r'''<!DOCTYPE html>
         const open = st.dataset.cat === catId;
         st.classList.toggle('open', open);
         st.querySelector('.stratum-line')?.setAttribute('aria-expanded', open ? 'true' : 'false');
-      });
-    }
-
-    function wireHome() {
-      document.querySelectorAll('.stratum-line').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const st = btn.closest('.stratum');
-          const catId = st.dataset.cat;
-          const willOpen = !st.classList.contains('open');
-          openStratum(willOpen ? catId : null);
-          if (willOpen) {
-            setActiveNav(catId);
-            history.replaceState(null, '', '#/' + catId);
-            setTimeout(() => st.scrollIntoView({ behavior: 'smooth', block: 'center' }), 80);
-          } else {
-            setActiveNav('bio');
-            history.replaceState(null, '', '#/');
-          }
-        });
-      });
-      document.querySelectorAll('#home-root .contact-row .value').forEach(el => {
-        el.addEventListener('click', () => {
-          navigator.clipboard.writeText(el.dataset.copy);
-          el.classList.add('copied');
-          setTimeout(() => el.classList.remove('copied'), 1500);
-        });
       });
     }
 
@@ -1337,6 +1586,9 @@ TEMPLATE = r'''<!DOCTYPE html>
         '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
       }[c]));
     }
+
+    // Kick off the initial view now that everything above is initialized.
+    route();
   </script>
 </body>
 </html>
