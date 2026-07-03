@@ -39,6 +39,82 @@ site = manifest.get('site', {})
 if site.get('photo'):
     site['photo'] = inline_image(site['photo'])
 
+# ---------- world map (Natural Earth 110m via world-atlas, public domain) ----------
+# Decoded at build time into projected SVG path strings, cropped to East Asia.
+# Projection must mirror the JS projCN(): equirectangular with cos(35°) x-scale.
+PROJ_K = 15.24
+PROJ_LON0, PROJ_LAT1 = 68.0, 58.0
+PROJ_XSCALE = 0.82
+
+def proj_cn(lon, lat):
+    return ((lon - PROJ_LON0) * PROJ_XSCALE * PROJ_K, (PROJ_LAT1 - lat) * PROJ_K)
+
+def build_world_paths():
+    src = ROOT / 'assets' / 'world-110m.json'
+    if not src.exists():
+        print('! assets/world-110m.json 不存在，地图退回手绘轮廓')
+        return []
+    topo = json.loads(src.read_text(encoding='utf-8'))
+    tr = topo.get('transform', {})
+    scale = tr.get('scale', [1, 1])
+    translate = tr.get('translate', [0, 0])
+
+    decoded = []
+    for arc in topo['arcs']:
+        pts, x, y = [], 0, 0
+        for dx, dy in arc:
+            x += dx
+            y += dy
+            pts.append((x * scale[0] + translate[0], y * scale[1] + translate[1]))
+        decoded.append(pts)
+
+    def ring_points(arc_ids):
+        ring = []
+        for ai in arc_ids:
+            pts = decoded[ai] if ai >= 0 else list(reversed(decoded[~ai]))
+            ring.extend(pts[1:] if ring else pts)
+        return ring
+
+    # Crop window (lon/lat) slightly larger than the viewBox region.
+    LON_MIN, LON_MAX, LAT_MIN, LAT_MAX = 55.0, 160.0, -5.0, 65.0
+
+    paths = []
+    for geom in topo['objects']['countries']['geometries']:
+        gtype = geom.get('type')
+        poly_sets = geom.get('arcs', [])
+        if gtype == 'Polygon':
+            poly_sets = [poly_sets]
+        elif gtype != 'MultiPolygon':
+            continue
+        d_parts = []
+        for polygon in poly_sets:
+            for ring_arcs in polygon:
+                ring = ring_points(ring_arcs)
+                if not ring:
+                    continue
+                lons = [p[0] for p in ring]
+                lats = [p[1] for p in ring]
+                if max(lons) < LON_MIN or min(lons) > LON_MAX:
+                    continue
+                if max(lats) < LAT_MIN or min(lats) > LAT_MAX:
+                    continue
+                cmds, last = [], None
+                for lon, lat in ring:
+                    x, y = proj_cn(lon, lat)
+                    pt = (round(x, 1), round(y, 1))
+                    if pt == last:
+                        continue
+                    cmds.append(('M' if not cmds else 'L') + f'{pt[0]},{pt[1]}')
+                    last = pt
+                if len(cmds) >= 3:
+                    d_parts.append(''.join(cmds) + 'Z')
+        if d_parts:
+            paths.append(''.join(d_parts))
+    print(f'✓ 世界地图已生成（{len(paths)} 个国家/地区，裁剪至东亚区域）')
+    return paths
+
+world_paths = build_world_paths()
+
 # Inline each work's cover image as a data URL.
 for w in manifest.get('works', []):
     if w.get('cover'):
@@ -519,10 +595,10 @@ TEMPLATE = r'''<!DOCTYPE html>
       height: 94%;
       max-width: 68vw;
     }
-    .china-path {
-      fill: color-mix(in srgb, var(--surface) 72%, transparent);
-      stroke: var(--rule);
-      stroke-width: 1.2;
+    .country {
+      fill: color-mix(in srgb, var(--ink) 7%, var(--bg));
+      stroke: var(--bg);
+      stroke-width: 0.8;
       stroke-linejoin: round;
     }
     .pin { transform-box: fill-box; }
@@ -567,7 +643,7 @@ TEMPLATE = r'''<!DOCTYPE html>
       top: 28px;
       right: 32px;
       bottom: 28px;
-      width: min(420px, 88vw);
+      width: min(480px, 88vw);
       overflow-y: auto;
       background: color-mix(in srgb, var(--bg) 55%, transparent);
       backdrop-filter: blur(16px);
@@ -640,6 +716,26 @@ TEMPLATE = r'''<!DOCTYPE html>
       opacity: 0.7;
       text-transform: uppercase;
     }
+    .j-hl {
+      list-style: none;
+      padding: 0;
+      margin: 12px 0 0;
+    }
+    .j-hl li {
+      position: relative;
+      padding-left: 15px;
+      font-size: 12.5px;
+      line-height: 1.7;
+      color: color-mix(in srgb, var(--ink) 82%, transparent);
+      margin-bottom: 7px;
+    }
+    .j-hl li::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      color: var(--muted);
+    }
+    .j-hl li:last-child { margin-bottom: 0; }
 
     @media (max-width: 900px) {
       .map-wrap { justify-content: center; padding: 2vh 4vw 42vh; }
@@ -1114,6 +1210,7 @@ TEMPLATE = r'''<!DOCTYPE html>
   <script>
     const MANIFEST = __MANIFEST_JSON__;
     const WORKS = __WORKS_JSON__;
+    const WORLD_PATHS = __WORLD_PATHS__;
 
     const BYLINE = {
       creative:  { prefix: '', suffix: '' },
@@ -1220,34 +1317,10 @@ TEMPLATE = r'''<!DOCTYPE html>
       'Hangzhou':  [120.15, 30.28],
       'Hong Kong': [114.17, 22.32],
     };
-    // Rough China outline (lon,lat), minimal aesthetic — no admin borders.
-    const CHINA_OUTLINE = [
-      [73.5,39.5],[74.8,42],[79,43],[82,45.5],[85.5,47],[87.5,49],[90.5,47.7],
-      [96,42.7],[100.5,42.5],[104.5,41.7],[108.5,42.4],[111.9,43.7],[115,45],
-      [117.5,46.6],[119.8,47.5],[119.3,50],[121,53.3],[123.5,53.5],[126,52.8],
-      [127.6,50.2],[130.5,48.8],[134.7,48.4],[134.5,47.4],[133,45.1],[131,44.9],
-      [130.4,42.7],[128.1,41.4],[124.4,40],[121.7,38.9],[117.8,39.2],[119.3,37.1],
-      [122.6,37.4],[119.2,34.8],[120.9,32.7],[121.9,31],[120.1,27.9],[118,24.6],
-      [115.8,22.8],[113.6,22.2],[111.9,21.5],[110.4,20.4],[108.6,21.8],[106.7,22.8],
-      [104.5,22.8],[102,22.4],[101.7,21.15],[99.9,21.5],[97.6,23.9],[98.7,25.8],
-      [98.3,27.6],[96.1,29.2],[94,29.3],[91.5,27.9],[89,28.1],[85.5,28.3],
-      [82,30.2],[79.5,32],[78.3,34.6],[75.9,36.7],[74.5,37.1]
-    ];
+    // Equirectangular projection, cos(35°)-corrected; must mirror build.py's proj_cn().
     function projCN(lon, lat) {
-      const x = (lon - 72) / (136 - 72) * 1000;
-      const y = (55 - lat) / (55 - 17) * 760;
-      return [x, y];
-    }
-    function chinaPathD() {
-      const pts = CHINA_OUTLINE.map(([lo, la]) => projCN(lo, la));
-      let d = `M${pts[0][0].toFixed(1)},${pts[0][1].toFixed(1)}`;
-      for (let i = 1; i < pts.length - 1; i++) {
-        const mx = (pts[i][0] + pts[i + 1][0]) / 2;
-        const my = (pts[i][1] + pts[i + 1][1]) / 2;
-        d += ` Q${pts[i][0].toFixed(1)},${pts[i][1].toFixed(1)} ${mx.toFixed(1)},${my.toFixed(1)}`;
-      }
-      d += ' Z';
-      return d;
+      const K = 15.24;
+      return [(lon - 68) * 0.82 * K, (58 - lat) * K];
     }
 
     function showExperience() {
@@ -1264,6 +1337,7 @@ TEMPLATE = r'''<!DOCTYPE html>
           </div>
           <div class="j-org">${escapeHtml(j.org)}</div>
           <div class="j-role">${escapeHtml(j.role)}${j.type ? `<span class="j-type">${TYPE_LABEL[j.type] || ''}</span>` : ''}</div>
+          ${(j.highlights && j.highlights.length) ? `<ul class="j-hl">${j.highlights.map(h => `<li>${escapeHtml(h)}</li>`).join('')}</ul>` : ''}
         </div>
       `).join('');
 
@@ -1281,11 +1355,13 @@ TEMPLATE = r'''<!DOCTYPE html>
           </g>`;
       }).join('');
 
+      const countriesHTML = WORLD_PATHS.map(d => `<path class="country" d="${d}"/>`).join('');
+
       $view.innerHTML = `
         <div class="page exp-page">
           <div class="map-wrap" aria-hidden="true">
-            <svg viewBox="0 0 1000 760" preserveAspectRatio="xMidYMid meet">
-              <path class="china-path" d="${chinaPathD()}"/>
+            <svg viewBox="0 0 1000 762" preserveAspectRatio="xMidYMid meet">
+              <g class="countries">${countriesHTML}</g>
               ${pinsHTML}
             </svg>
           </div>
@@ -1597,6 +1673,7 @@ TEMPLATE = r'''<!DOCTYPE html>
 html = TEMPLATE
 html = html.replace('__MANIFEST_JSON__', json.dumps(manifest, ensure_ascii=False))
 html = html.replace('__WORKS_JSON__', json.dumps(works_text, ensure_ascii=False))
+html = html.replace('__WORLD_PATHS__', json.dumps(world_paths))
 OUT.write_text(html, encoding='utf-8')
 
 size_kb = OUT.stat().st_size / 1024
