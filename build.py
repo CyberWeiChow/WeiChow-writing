@@ -65,23 +65,25 @@ TEMPLATE = r'''<!DOCTYPE html>
   <title>周未</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
   <style>
     :root[data-theme="dark"] {
-      --bg: #0c0c0c;
-      --surface: #161616;
-      --ink: #e8e4dc;
-      --muted: #808080;
-      --rule: #1f1f1f;
+      --bg: #0f0e0d;
+      --surface: #1a1917;
+      --ink: #ece7dd;
+      --muted: #9a9285;
+      --rule: #272522;
       --hover: #ffffff;
+      --accent: #c4b49a;
     }
     :root[data-theme="light"] {
-      --bg: #f7f5f0;
-      --surface: #efece4;
-      --ink: #1a1714;
-      --muted: #8a8278;
-      --rule: #d8d4cb;
+      --bg: #f5f2eb;
+      --surface: #ede8dd;
+      --ink: #1f1c17;
+      --muted: #948b7d;
+      --rule: #ddd7ca;
       --hover: #000;
+      --accent: #8a7d6b;
     }
     :root {
       --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
@@ -123,7 +125,6 @@ TEMPLATE = r'''<!DOCTYPE html>
         transition-duration: 150ms !important;
       }
       .fade-stagger > * { transform: none !important; transition-delay: 0ms !important; }
-      .char { transform: none !important; }
     }
     button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; padding: 0; }
 
@@ -135,37 +136,52 @@ TEMPLATE = r'''<!DOCTYPE html>
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 22px 40px;
-      background: color-mix(in srgb, var(--bg) 90%, transparent);
-      backdrop-filter: blur(10px);
+      padding: 24px 48px;
+      background: color-mix(in srgb, var(--bg) 92%, transparent);
+      backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--rule);
       font-size: 12px;
-      letter-spacing: 0.18em;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
     }
     .topbar .brand {
-      font-weight: 700;
-      letter-spacing: 0.24em;
+      font-weight: 500;
+      letter-spacing: 0.28em;
       transition: opacity 180ms var(--ease-out), transform 140ms var(--ease-out);
     }
     .topbar .brand:active { transform: scale(0.97); }
     @media (hover: hover) and (pointer: fine) {
-      .topbar .brand:hover { opacity: 0.7; }
+      .topbar .brand:hover { opacity: 0.65; }
     }
     .topbar nav {
       display: flex;
       align-items: center;
-      gap: 36px;
+      gap: 42px;
     }
     .topbar nav a {
       color: var(--muted);
       transition: color 180ms var(--ease-out), transform 140ms var(--ease-out);
       font-weight: 400;
+      position: relative;
+    }
+    .topbar nav a::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -6px;
+      width: 100%;
+      height: 1px;
+      background: currentColor;
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 300ms var(--ease-out);
     }
     .topbar nav a.active { color: var(--hover); }
+    .topbar nav a.active::after { transform: scaleX(1); transform-origin: left; }
     .topbar nav a:active { transform: scale(0.96); }
     @media (hover: hover) and (pointer: fine) {
       .topbar nav a:hover { color: var(--hover); }
+      .topbar nav a:hover::after { transform: scaleX(1); transform-origin: left; }
     }
     .topbar .theme-toggle {
       width: 28px; height: 28px;
@@ -180,13 +196,13 @@ TEMPLATE = r'''<!DOCTYPE html>
     }
 
     /* =============== BIO PAGE =============== */
-    .bio-page { padding: 80px 40px 120px; max-width: 1200px; margin: 0 auto; }
+    .bio-page { padding: 120px 48px 160px; max-width: 1280px; margin: 0 auto; }
     .bio-hero {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 80px;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 96px;
       align-items: start;
-      margin-bottom: 120px;
+      margin-bottom: 140px;
     }
     .bio-portrait {
       aspect-ratio: 1 / 1;
@@ -206,49 +222,61 @@ TEMPLATE = r'''<!DOCTYPE html>
       letter-spacing: 0.3em;
     }
     .bio-content h1 {
-      font-size: 38px;
-      font-weight: 600;
-      margin: 0 0 18px;
-      letter-spacing: -0.005em;
-      line-height: 1.15;
+      font-family: 'Noto Serif SC', 'Cormorant Garamond', serif;
+      font-size: 56px;
+      font-weight: 500;
+      margin: 0 0 28px;
+      letter-spacing: 0.02em;
+      line-height: 1.05;
     }
     .bio-content h1 .en {
       display: block;
+      font-family: 'Cormorant Garamond', 'Inter', serif;
       font-size: 18px;
       font-weight: 400;
       color: var(--muted);
-      letter-spacing: 0.25em;
-      margin-top: 14px;
+      letter-spacing: 0.22em;
+      margin-top: 20px;
       text-transform: uppercase;
     }
+    .bio-tagline {
+      font-family: 'Cormorant Garamond', 'Noto Serif SC', serif;
+      font-size: 20px;
+      font-style: italic;
+      color: var(--accent);
+      margin: 0 0 36px;
+      letter-spacing: 0.02em;
+    }
     .bio-content .bio-para {
-      font-size: 15.5px;
-      line-height: 1.75;
-      color: color-mix(in srgb, var(--ink) 90%, transparent);
-      margin: 0 0 16px;
-      max-width: 480px;
+      font-size: 16px;
+      line-height: 1.85;
+      color: color-mix(in srgb, var(--ink) 85%, transparent);
+      margin: 0 0 18px;
+      max-width: 520px;
     }
     .bio-content .bio-para:last-child { margin-bottom: 0; }
 
     .bio-section {
       border-top: 1px solid var(--rule);
-      padding-top: 56px;
-      margin-bottom: 80px;
+      padding-top: 64px;
+      margin-bottom: 100px;
     }
     .bio-section h2 {
-      font-size: 22px;
-      font-weight: 600;
-      margin: 0 0 36px;
-      letter-spacing: -0.005em;
+      font-family: 'Cormorant Garamond', 'Noto Serif SC', serif;
+      font-size: 30px;
+      font-weight: 500;
+      margin: 0 0 40px;
+      letter-spacing: 0.02em;
+      font-style: italic;
     }
     .edu-list {
       display: grid;
-      grid-template-columns: 80px 1fr;
-      row-gap: 24px;
-      column-gap: 40px;
+      grid-template-columns: 100px 1fr;
+      row-gap: 28px;
+      column-gap: 48px;
     }
-    .edu-year { color: var(--muted); font-size: 13px; letter-spacing: 0.04em; padding-top: 2px; }
-    .edu-info .school { font-weight: 600; font-size: 15px; }
+    .edu-year { color: var(--muted); font-size: 13px; letter-spacing: 0.06em; padding-top: 2px; font-variant-numeric: tabular-nums; }
+    .edu-info .school { font-weight: 600; font-size: 16px; }
     .edu-info .where  { color: var(--muted); font-size: 13px; margin-left: 6px; }
     .edu-info .detail { color: var(--muted); font-size: 13px; margin-top: 4px; }
 
@@ -334,19 +362,33 @@ TEMPLATE = r'''<!DOCTYPE html>
     }
 
     /* =============== CATEGORY (works list) =============== */
-    .cat-page { padding: 80px 40px 120px; max-width: 1100px; margin: 0 auto; }
+    .cat-page { padding: 120px 48px 160px; max-width: 1300px; margin: 0 auto; }
     .cat-page h1 {
-      font-size: 48px;
-      font-weight: 600;
-      margin: 0 0 8px;
-      letter-spacing: -0.015em;
+      font-family: 'Cormorant Garamond', 'Noto Serif SC', serif;
+      font-size: 72px;
+      font-weight: 500;
+      margin: 0 0 14px;
+      letter-spacing: 0.01em;
+      line-height: 1.0;
     }
     .cat-page .cat-sub {
+      color: var(--accent);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      font-style: italic;
+      letter-spacing: 0.04em;
+      margin: 0 0 72px;
+    }
+    .cat-divider {
+      height: 14px;
+      margin: 0 0 72px;
       color: var(--muted);
-      font-size: 13px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      margin: 0 0 56px;
+      opacity: 0.45;
+    }
+    .cat-divider svg {
+      width: 100%;
+      height: 100%;
+      display: block;
     }
     /* =============== WORKS GRID (cover cards) =============== */
     .works-grid {
@@ -354,13 +396,13 @@ TEMPLATE = r'''<!DOCTYPE html>
       padding: 0;
       margin: 0;
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 56px 40px;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 64px 44px;
     }
     .work-card {
       display: block;
       cursor: pointer;
-      transition: transform 180ms var(--ease-out);
+      transition: transform 220ms var(--ease-out);
     }
     .work-card:active { transform: scale(0.985); }
     .work-cover {
@@ -368,23 +410,24 @@ TEMPLATE = r'''<!DOCTYPE html>
       background-color: var(--surface);
       background-size: cover;
       background-position: center;
-      margin-bottom: 18px;
+      margin-bottom: 22px;
       overflow: hidden;
       position: relative;
-      transition: transform 280ms var(--ease-spring);
+      transition: transform 500ms var(--ease-out), filter 400ms var(--ease-out);
+      filter: grayscale(12%) contrast(98%);
     }
     @media (hover: hover) and (pointer: fine) {
-      .work-card:hover .work-cover { transform: scale(1.015); }
+      .work-card:hover .work-cover { transform: scale(1.02); filter: grayscale(0%) contrast(100%); }
     }
     .work-cover::after {
       content: '';
       position: absolute;
       inset: 0;
       background: rgba(0,0,0,0);
-      transition: background 220ms var(--ease-out);
+      transition: background 300ms var(--ease-out);
     }
     @media (hover: hover) and (pointer: fine) {
-      .work-card:hover .work-cover::after { background: rgba(0,0,0,0.15); }
+      .work-card:hover .work-cover::after { background: rgba(0,0,0,0.1); }
     }
     .work-cover.no-image::before {
       content: attr(data-placeholder);
@@ -401,33 +444,172 @@ TEMPLATE = r'''<!DOCTYPE html>
       justify-content: space-between;
       align-items: baseline;
       gap: 16px;
+      margin-bottom: 8px;
     }
     .work-card .title {
-      font-size: 16px;
+      font-family: 'Noto Serif SC', serif;
+      font-size: 17px;
       font-weight: 600;
-      line-height: 1.4;
+      line-height: 1.45;
       color: var(--ink);
       flex: 1;
     }
     .work-card .year {
       color: var(--muted);
-      font-size: 13px;
-      letter-spacing: 0.05em;
+      font-size: 12px;
+      letter-spacing: 0.08em;
       white-space: nowrap;
+      font-variant-numeric: tabular-nums;
     }
     .work-card .desc {
       color: var(--muted);
       font-size: 13px;
-      line-height: 1.55;
-      margin: 8px 0 0;
+      line-height: 1.6;
+      margin: 0;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
 
-    /* =============== READER =============== */
-    .reader { max-width: 720px; margin: 0 auto; padding: 80px 40px 140px; position: relative; }
+    /* =============== STRATA (ink-line layers, works grow from the line) =============== */
+    .strata-hint {
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      margin: -20px 0 40px;
+      font-style: italic;
+    }
+    .stratum { position: relative; }
+    .stratum-works {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 640ms var(--ease-in-out);
+    }
+    .stratum.open .stratum-works { grid-template-rows: 1fr; }
+    .stratum-works > .inner { overflow: hidden; min-height: 0; }
+    .works-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 32px;
+      padding: 56px 12px 40px;
+      flex-wrap: wrap;
+    }
+    .soil-card {
+      width: 190px;
+      display: block;
+      opacity: 0;
+      transform: translateY(52px);
+      transition:
+        opacity 420ms var(--ease-out),
+        transform 560ms var(--ease-spring);
+      transition-delay: calc(var(--i, 0) * 75ms);
+    }
+    .stratum.open .soil-card {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .soil-card:active { transform: translateY(0) scale(0.98); }
+    .soil-cover {
+      aspect-ratio: 3 / 4;
+      background-size: cover;
+      background-position: center;
+      background-color: var(--surface);
+      box-shadow: 0 14px 36px rgba(0,0,0,0.35), 0 3px 10px rgba(0,0,0,0.25);
+      position: relative;
+      overflow: hidden;
+      transition: transform 280ms var(--ease-spring), box-shadow 280ms var(--ease-out);
+    }
+    @media (hover: hover) and (pointer: fine) {
+      .soil-card:hover .soil-cover {
+        transform: translateY(-8px);
+        box-shadow: 0 24px 48px rgba(0,0,0,0.45), 0 6px 14px rgba(0,0,0,0.3);
+      }
+    }
+    .soil-cover.no-image::before {
+      content: attr(data-placeholder);
+      position: absolute;
+      inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255,248,235,0.85);
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      padding: 12px;
+      text-align: center;
+      line-height: 1.8;
+    }
+    .soil-title {
+      margin-top: 12px;
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.5;
+      color: var(--ink);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .stratum-line {
+      position: relative;
+      display: block;
+      width: 100%;
+      height: 44px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+    .stratum-line svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+    .stratum-line path.ink {
+      fill: none;
+      stroke: var(--ink);
+      stroke-width: 1.1;
+      opacity: 0.55;
+      transition: opacity 220ms var(--ease-out);
+    }
+    .stratum-line path.echo { opacity: 0.18; stroke-width: 1; }
+    .stratum:hover .stratum-line path.main,
+    .stratum.open .stratum-line path.main { opacity: 0.95; }
+    .stratum:hover .stratum-line path.echo,
+    .stratum.open .stratum-line path.echo { opacity: 0.35; }
+    .stratum-label {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-54%);
+      background: var(--bg);
+      padding: 0 16px;
+      font-size: 12px;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+      transition: color 200ms var(--ease-out), background 220ms var(--ease-out), letter-spacing 300ms var(--ease-out);
+    }
+    .stratum:hover .stratum-label, .stratum.open .stratum-label {
+      color: var(--ink);
+      letter-spacing: 0.32em;
+    }
+    .stratum-label .count {
+      font-size: 10px;
+      color: var(--muted);
+      margin-left: 10px;
+      vertical-align: super;
+    }
+    .stratum-line:active .stratum-label { transform: translateY(-54%) scale(0.97); }
+
+    @media (max-width: 700px) {
+      .works-row { gap: 20px; padding: 40px 4px 28px; }
+      .soil-card { width: calc(50% - 10px); }
+    }
+
+    /* =============== READER (base) =============== */
+    .reader { max-width: 720px; margin: 0 auto; padding: 100px 48px 160px; position: relative; }
     .reader .back {
       display: inline-flex;
       align-items: center;
@@ -436,7 +618,7 @@ TEMPLATE = r'''<!DOCTYPE html>
       font-size: 11px;
       letter-spacing: 0.2em;
       text-transform: uppercase;
-      margin-bottom: 56px;
+      margin-bottom: 64px;
       transition: color 180ms var(--ease-out), transform 140ms var(--ease-out), gap 220ms var(--ease-out);
     }
     .reader .back:active { transform: scale(0.97); }
@@ -444,26 +626,28 @@ TEMPLATE = r'''<!DOCTYPE html>
       .reader .back:hover { color: var(--hover); gap: 12px; }
     }
     .reader .cat-tag {
-      color: var(--muted);
-      font-size: 11px;
-      letter-spacing: 0.25em;
+      color: var(--accent);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 13px;
+      font-style: italic;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
-      margin-bottom: 18px;
+      margin-bottom: 22px;
     }
     .reader h1.headline {
-      font-family: 'Noto Serif SC', 'Inter', serif;
-      font-size: 32px;
+      font-family: 'Noto Serif SC', 'Cormorant Garamond', serif;
+      font-size: 34px;
       font-weight: 500;
       line-height: 1.35;
-      margin: 0 0 14px;
+      margin: 0 0 16px;
       letter-spacing: 0.005em;
     }
     .reader .lede {
-      font-family: 'Noto Serif SC', 'Inter', serif;
+      font-family: 'Noto Serif SC', 'Cormorant Garamond', serif;
       color: var(--muted);
       font-size: 16px;
       line-height: 1.75;
-      margin: 0 0 16px;
+      margin: 0 0 18px;
       font-style: italic;
     }
     .reader .byline {
@@ -477,9 +661,9 @@ TEMPLATE = r'''<!DOCTYPE html>
     }
     .paper-meta {
       margin: 0 0 48px;
-      padding: 24px 26px;
+      padding: 26px 28px;
       border: 1px solid var(--rule);
-      background: color-mix(in srgb, var(--surface) 60%, transparent);
+      background: color-mix(in srgb, var(--surface) 55%, transparent);
     }
     .paper-meta .meta-block + .meta-block { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--rule); }
     .paper-meta .meta-label {
@@ -501,20 +685,9 @@ TEMPLATE = r'''<!DOCTYPE html>
       color: var(--muted);
     }
 
-    .reader-body {
-      font-family: 'Noto Serif SC', 'Inter', serif;
-      font-size: 17px;
-      line-height: 1.95;
-      color: var(--ink);
-    }
-    .reader-body .para {
-      margin: 0 0 1.1em;
-    }
-    .char {
-      display: inline-block;
-      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-      will-change: transform;
-    }
+    /* ---- shared reader body base ---- */
+    .reader-body { color: var(--ink); }
+    .reader-body .para { margin: 0 0 1.1em; }
     .reader-end {
       margin-top: 80px;
       text-align: center;
@@ -523,14 +696,153 @@ TEMPLATE = r'''<!DOCTYPE html>
       letter-spacing: 0.4em;
     }
 
-    /* =============== CONTACT =============== */
-    .contact-page { padding: 120px 40px; max-width: 720px; margin: 0 auto; }
-    .contact-page h1 {
-      font-size: 56px;
+    /* ============ CREATIVE WRITING ============ */
+    .reader-variant-creative .reader-body {
+      font-family: 'Noto Serif SC', 'Inter', serif;
+      font-size: 18px;
+      line-height: 2.15;
+      letter-spacing: 0.01em;
+      color: color-mix(in srgb, var(--ink) 94%, transparent);
+    }
+    .reader-variant-creative .byline {
+      margin-bottom: 64px;
+      padding-bottom: 32px;
+      border-bottom-style: double;
+    }
+    .reader-variant-creative .lede {
+      color: color-mix(in srgb, var(--ink) 70%, transparent);
+      font-size: 17px;
+      line-height: 1.85;
+    }
+    .reader-variant-creative .reader-end { font-style: italic; letter-spacing: 0.5em; }
+
+    /* ============ CRITICISM ============ */
+    .reader-variant-criticism .reader-body {
+      font-family: 'Noto Serif SC', 'Inter', serif;
+      font-size: 16.5px;
+      line-height: 1.9;
+      letter-spacing: 0.005em;
+      color: var(--ink);
+      text-align: justify;
+    }
+    .reader-variant-criticism .byline {
+      padding-bottom: 24px;
+      margin-bottom: 48px;
+    }
+    .reader-variant-criticism h1.headline {
+      font-size: 28px;
       font-weight: 600;
-      margin: 0 0 56px;
-      letter-spacing: -0.02em;
-      line-height: 1.1;
+    }
+    .reader-variant-criticism .lede {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.8;
+      font-style: normal;
+    }
+
+    /* ============ FINANCIAL NEWS ============ */
+    .reader-variant-news .reader-body {
+      font-family: 'Noto Sans SC', 'Inter', -apple-system, sans-serif;
+      font-size: 16px;
+      line-height: 1.82;
+      letter-spacing: 0;
+      color: var(--ink);
+    }
+    .reader-variant-news h1.headline {
+      font-family: 'Noto Sans SC', 'Inter', -apple-system, sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+    .reader-variant-news .byline {
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      font-size: 10px;
+      padding-bottom: 20px;
+      margin-bottom: 44px;
+      border-bottom-width: 2px;
+    }
+    .reader-variant-news .lede {
+      font-family: 'Noto Sans SC', 'Inter', sans-serif;
+      font-size: 15px;
+      line-height: 1.75;
+      font-style: normal;
+      color: var(--muted);
+      border-left: 3px solid var(--rule);
+      padding-left: 16px;
+    }
+    .reader-variant-news .reader-body .para {
+      margin: 0 0 0.85em;
+    }
+
+    /* ============ READING TIME + BACK TO TOP ============ */
+    .reader-meta-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 56px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--rule);
+    }
+    .reader-meta-bar .reading-time {
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .reader-meta-bar .reading-time::before {
+      content: '';
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--muted);
+      opacity: 0.45;
+    }
+    .reader-meta-bar .word-count {
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+    }
+    .back-to-top {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 1px solid var(--rule);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted);
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(12px);
+      transition: opacity 260ms var(--ease-out), transform 260ms var(--ease-out), color 180ms var(--ease-out), background 180ms var(--ease-out);
+      z-index: 60;
+      font-size: 14px;
+    }
+    .back-to-top.visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+    .back-to-top:active { transform: scale(0.92); }
+    @media (hover: hover) and (pointer: fine) {
+      .back-to-top:hover { color: var(--hover); background: var(--bg); }
+    }
+
+    /* =============== CONTACT =============== */
+    .contact-page { padding: 140px 48px; max-width: 760px; margin: 0 auto; }
+    .contact-page h1 {
+      font-family: 'Cormorant Garamond', 'Noto Serif SC', serif;
+      font-size: 64px;
+      font-weight: 500;
+      margin: 0 0 64px;
+      letter-spacing: 0.01em;
+      line-height: 1.05;
+      font-style: italic;
     }
     .contact-row {
       display: grid;
@@ -586,13 +898,13 @@ TEMPLATE = r'''<!DOCTYPE html>
 
     /* =============== MOBILE =============== */
     @media (max-width: 900px) {
-      .topbar { padding: 16px 20px; gap: 16px; }
-      .topbar nav { gap: 18px; }
-      .bio-hero { grid-template-columns: 1fr; gap: 40px; }
+      .topbar { padding: 18px 24px; gap: 16px; }
+      .topbar nav { gap: 22px; }
+      .bio-hero { grid-template-columns: 1fr; gap: 48px; }
       .bio-portrait { max-width: 360px; }
-      .bio-content h1 { font-size: 32px; }
-      .cat-page h1 { font-size: 36px; }
-      .reader { padding: 56px 24px 100px; }
+      .bio-content h1 { font-size: 42px; }
+      .cat-page h1 { font-size: 48px; }
+      .reader { padding: 72px 28px 120px; }
     }
     @media (max-width: 600px) {
       .topbar nav a { display: none; }
@@ -600,6 +912,10 @@ TEMPLATE = r'''<!DOCTYPE html>
       .topbar.menu-open nav a { display: inline-flex; }
       .topbar.menu-open { flex-wrap: wrap; }
       .topbar.menu-open nav { width: 100%; flex-direction: column; align-items: flex-start; gap: 16px; padding: 16px 0; }
+      .bio-page { padding: 80px 24px 120px; }
+      .cat-page { padding: 80px 24px 120px; }
+      .works-grid { grid-template-columns: 1fr; }
+      .contact-page h1 { font-size: 44px; }
     }
   </style>
 </head>
@@ -662,18 +978,14 @@ TEMPLATE = r'''<!DOCTYPE html>
     function route() {
       const h = location.hash || '#/';
       const m = h.match(/^#\/read\/(.+)$/);
-      if (m) showRead(decodeURIComponent(m[1]));
-      else {
-        const tail = h.slice(2);
-        if (!tail || tail === 'bio') showBio();
-        else if (tail === 'contact') showContact();
-        else {
-          const cat = (MANIFEST.categories || []).find(c => c.id === tail);
-          if (cat) showCategory(cat);
-          else showBio();
-        }
+      if (m) {
+        window.scrollTo(0, 0);
+        showRead(decodeURIComponent(m[1]));
+        mountStaggers($view);
+        return;
       }
-      mountStaggers($view);
+      const tail = h.slice(2);
+      showHome(tail || null);
     }
 
     function mountStaggers(root) {
@@ -688,13 +1000,36 @@ TEMPLATE = r'''<!DOCTYPE html>
       }));
     }
 
-    window.addEventListener('hashchange', () => { window.scrollTo(0, 0); route(); });
+    window.addEventListener('hashchange', route);
     route();
 
-    // ---- BIO ----
-    function showBio() {
-      setActiveNav('bio');
+    // ---- HOME (single continuous page: bio + strata + contact) ----
+    function showHome(target) {
+      const isCat = target && (MANIFEST.categories || []).some(c => c.id === target);
+      setActiveNav(isCat ? target : (target === 'contact' ? 'contact' : 'bio'));
       document.title = (MANIFEST.site.title || '周未');
+
+      if (!document.getElementById('home-root')) {
+        renderHome();
+        mountStaggers($view);
+        drawInkLines();
+        wireHome();
+      }
+
+      if (isCat) {
+        openStratum(target);
+        // Wait a beat for expansion to begin, then bring it into view.
+        setTimeout(() => {
+          document.getElementById('stratum-' + target)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 80);
+      } else if (target === 'contact') {
+        document.getElementById('contact-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    function renderHome() {
       const s = MANIFEST.site || {};
       const bioParas = (s.bio || []).map(p => `<p class="bio-para">${escapeHtml(p)}</p>`).join('');
       const eduRows = (s.education || []).map(e => `
@@ -704,9 +1039,8 @@ TEMPLATE = r'''<!DOCTYPE html>
           <div class="detail">${escapeHtml(e.detail || '')}</div>
         </div>
       `).join('');
-      const today = new Date();
       const expRows = (s.experience || []).map((e, idx) => {
-        const isCurrent = idx === 0; // first/newest entry gets filled marker
+        const isCurrent = idx === 0;
         return `
         <li class="exp-item${isCurrent ? ' current' : ''}">
           <div class="exp-year">${escapeHtml(e.year)}</div>
@@ -717,75 +1051,144 @@ TEMPLATE = r'''<!DOCTYPE html>
       }).join('');
       const photoStyle = s.photo ? `style="background-image:url('${escapeHtml(s.photo)}')"` : '';
       const photoClass = s.photo ? '' : 'placeholder';
+
       const cats = (MANIFEST.categories || []).filter(c => MANIFEST.works.some(w => w.category === c.id));
+      const labelPos = ['12%', '44%', '72%'];
+      const strataHTML = cats.map((c, ci) => {
+        const items = MANIFEST.works.filter(w => w.category === c.id);
+        const cards = items.map((w, i) => {
+          const hasCover = !!w.cover;
+          const style = hasCover
+            ? `style="--i:${i};background-image:url('${w.cover}')"`
+            : `style="--i:${i};background: linear-gradient(135deg, ${w.color || '#2a2a2a'}, ${shadeColor(w.color || '#2a2a2a', -30)})"`;
+          return `
+            <a class="soil-card" href="#/read/${encodeURIComponent(w.id)}" style="--i:${i}">
+              <div class="soil-cover${hasCover ? '' : ' no-image'}" ${style} ${hasCover ? '' : `data-placeholder="${escapeHtml(w.title)}"`}></div>
+              <div class="soil-title">${escapeHtml(w.title)}</div>
+            </a>`;
+        }).join('');
+        return `
+        <section class="stratum" id="stratum-${c.id}" data-cat="${c.id}">
+          <div class="stratum-works"><div class="inner">
+            <div class="works-row">${cards}</div>
+          </div></div>
+          <button class="stratum-line" aria-expanded="false" aria-label="${escapeHtml(c.label)}">
+            <svg viewBox="0 0 1000 44" preserveAspectRatio="none">
+              <path class="ink main" d="" />
+              <path class="ink echo" d="" />
+            </svg>
+            <span class="stratum-label" style="left:${labelPos[ci % labelPos.length]}">
+              ${escapeHtml(c.label)}<span class="count">${items.length}</span>
+            </span>
+          </button>
+        </section>`;
+      }).join('');
+
+      const contact = MANIFEST.site.contact || {};
+      const contactRows = Object.entries(contact).map(([k, v]) => `
+        <div class="contact-row">
+          <div class="label">${escapeHtml(k)}</div>
+          <div class="value" data-copy="${escapeHtml(v)}">${escapeHtml(v)}</div>
+        </div>
+      `).join('');
 
       $view.innerHTML = `
-        <div class="bio-page fade-stagger">
-          <div class="bio-hero">
-            <div class="bio-portrait ${photoClass}" ${photoStyle}></div>
-            <div class="bio-content fade-stagger">
-              <h1>${escapeHtml(s.title || '周未')}<span class="en">${escapeHtml(s.name_en || 'ZHOU WEI')}</span></h1>
-              ${bioParas}
+        <div class="bio-page" id="home-root">
+          <div class="fade-stagger">
+            <div class="bio-hero">
+              <div class="bio-portrait ${photoClass}" ${photoStyle}></div>
+              <div class="bio-content fade-stagger">
+                <h1>${escapeHtml(s.title || '周未')}<span class="en">${escapeHtml(s.name_en || 'ZHOU WEI')}</span></h1>
+                ${s.tagline ? `<p class="bio-tagline">${escapeHtml(s.tagline)}</p>` : ''}
+                ${bioParas}
+              </div>
             </div>
+            ${eduRows ? `
+            <section class="bio-section">
+              <h2>Education · 教育</h2>
+              <div class="edu-list">${eduRows}</div>
+            </section>` : ''}
+            ${expRows ? `
+            <section class="bio-section">
+              <h2>Experience · 实习经历</h2>
+              <ol class="exp-list">${expRows}</ol>
+            </section>` : ''}
+            <section class="bio-section" id="writing-section">
+              <h2>Writing · 写作</h2>
+              <p class="strata-hint">点击墨线，翻开每一层</p>
+              <div class="strata">${strataHTML}</div>
+            </section>
+            <section class="bio-section" id="contact-section">
+              <h2>Contact · 联系</h2>
+              <div class="contact-list">${contactRows}</div>
+            </section>
           </div>
-          ${eduRows ? `
-          <section class="bio-section">
-            <h2>Education · 教育</h2>
-            <div class="edu-list">${eduRows}</div>
-          </section>` : ''}
-          ${expRows ? `
-          <section class="bio-section">
-            <h2>Experience · 实习经历</h2>
-            <ol class="exp-list">${expRows}</ol>
-          </section>` : ''}
-          ${cats.length ? `
-          <section class="bio-section">
-            <h2>Selected Writing · 写作</h2>
-            <div class="edu-list">
-              ${cats.map(c => `
-                <div class="edu-year"></div>
-                <div class="edu-info">
-                  <div><a href="#/${c.id}" class="school" style="text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:4px">${escapeHtml(c.label)}</a></div>
-                  <div class="detail">${MANIFEST.works.filter(w => w.category === c.id).length} 篇</div>
-                </div>
-              `).join('')}
-            </div>
-          </section>` : ''}
         </div>
       `;
     }
 
-    // ---- CATEGORY ----
-    function showCategory(cat) {
-      setActiveNav(cat.id);
-      document.title = cat.label + ' · ' + (MANIFEST.site.title || '周未');
-      const items = MANIFEST.works.filter(w => w.category === cat.id);
-      $view.innerHTML = `
-        <div class="cat-page fade-stagger">
-          <h1>${escapeHtml(cat.label)}</h1>
-          <p class="cat-sub">${items.length} pieces</p>
-          <div class="works-grid fade-stagger">
-            ${items.map(w => {
-              const hasCover = !!w.cover;
-              const style = hasCover
-                ? `style="background-image:url('${w.cover}')"`
-                : `style="background: linear-gradient(135deg, ${w.color || '#2a2a2a'}, ${shadeColor(w.color || '#2a2a2a', -30)})"`;
-              const cls = hasCover ? '' : 'no-image';
-              const placeholder = hasCover ? '' : `data-placeholder="${escapeHtml(w.title)}"`;
-              return `
-                <a class="work-card" href="#/read/${encodeURIComponent(w.id)}">
-                  <div class="work-cover ${cls}" ${style} ${placeholder}></div>
-                  <div class="work-meta">
-                    <span class="title">${escapeHtml(w.title)}</span>
-                    ${w.year ? `<span class="year">${escapeHtml(w.year)}</span>` : ''}
-                  </div>
-                  ${w.subtitle ? `<p class="desc">${escapeHtml(w.subtitle)}</p>` : ''}
-                </a>
-              `;
-            }).join('') || '<p style="color:var(--muted);font-style:italic">尚无作品</p>'}
-          </div>
-        </div>
-      `;
+    // Hand-drawn ink line generator: gentle noise polyline smoothed with midpoints.
+    function inkPathD(seed, amp) {
+      let rnd = seed;
+      const rand = () => { rnd = (rnd * 9301 + 49297) % 233280; return rnd / 233280 - 0.5; };
+      const pts = [];
+      const steps = 18;
+      for (let i = 0; i <= steps; i++) {
+        pts.push([1000 * i / steps, 22 + rand() * amp]);
+      }
+      let d = `M${pts[0][0]},${pts[0][1].toFixed(1)}`;
+      for (let i = 1; i < pts.length - 1; i++) {
+        const mx = (pts[i][0] + pts[i + 1][0]) / 2;
+        const my = (pts[i][1] + pts[i + 1][1]) / 2;
+        d += ` Q${pts[i][0].toFixed(1)},${pts[i][1].toFixed(1)} ${mx.toFixed(1)},${my.toFixed(1)}`;
+      }
+      const last = pts[pts.length - 1];
+      d += ` L${last[0]},${last[1].toFixed(1)}`;
+      return d;
+    }
+
+    function drawInkLines() {
+      document.querySelectorAll('.stratum').forEach((st, i) => {
+        const main = st.querySelector('path.main');
+        const echo = st.querySelector('path.echo');
+        const seed = 7919 * (i + 1);
+        if (main) main.setAttribute('d', inkPathD(seed, 14));
+        if (echo) echo.setAttribute('d', inkPathD(seed + 431, 18));
+      });
+    }
+
+    function openStratum(catId) {
+      document.querySelectorAll('.stratum').forEach(st => {
+        const open = st.dataset.cat === catId;
+        st.classList.toggle('open', open);
+        st.querySelector('.stratum-line')?.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    }
+
+    function wireHome() {
+      document.querySelectorAll('.stratum-line').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const st = btn.closest('.stratum');
+          const catId = st.dataset.cat;
+          const willOpen = !st.classList.contains('open');
+          openStratum(willOpen ? catId : null);
+          if (willOpen) {
+            setActiveNav(catId);
+            history.replaceState(null, '', '#/' + catId);
+            setTimeout(() => st.scrollIntoView({ behavior: 'smooth', block: 'center' }), 80);
+          } else {
+            setActiveNav('bio');
+            history.replaceState(null, '', '#/');
+          }
+        });
+      });
+      document.querySelectorAll('#home-root .contact-row .value').forEach(el => {
+        el.addEventListener('click', () => {
+          navigator.clipboard.writeText(el.dataset.copy);
+          el.classList.add('copied');
+          setTimeout(() => el.classList.remove('copied'), 1500);
+        });
+      });
     }
 
     function shadeColor(hex, percent) {
@@ -796,32 +1199,6 @@ TEMPLATE = r'''<!DOCTYPE html>
       g = Math.max(0, Math.min(255, Math.round(g * f)));
       b = Math.max(0, Math.min(255, Math.round(b * f)));
       return '#' + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
-    }
-
-    // ---- CONTACT ----
-    function showContact() {
-      setActiveNav('contact');
-      document.title = 'Contact · ' + (MANIFEST.site.title || '周未');
-      const c = MANIFEST.site.contact || {};
-      const rows = Object.entries(c).map(([k, v]) => `
-        <div class="contact-row">
-          <div class="label">${escapeHtml(k)}</div>
-          <div class="value" data-copy="${escapeHtml(v)}">${escapeHtml(v)}</div>
-        </div>
-      `).join('');
-      $view.innerHTML = `
-        <div class="contact-page fade-stagger">
-          <h1>Get in touch.</h1>
-          <div class="contact-list fade-stagger">${rows}</div>
-        </div>
-      `;
-      document.querySelectorAll('.contact-row .value').forEach(el => {
-        el.addEventListener('click', () => {
-          navigator.clipboard.writeText(el.dataset.copy);
-          el.classList.add('copied');
-          setTimeout(() => el.classList.remove('copied'), 1500);
-        });
-      });
     }
 
     // ---- READER ----
@@ -854,6 +1231,11 @@ TEMPLATE = r'''<!DOCTYPE html>
       }
       paragraphs = rest.map(p => '　　' + p);
 
+      // Reading-time estimate (from raw paragraphs, before adding indent)
+      const rawCharCount = rest.join('').replace(/\s/g, '').length;
+      const wpm = /[\u4e00-\u9fff]/.test(rest.join('')) ? 350 : 200;
+      const estMinutes = Math.max(1, Math.round(rawCharCount / wpm));
+
       const showLede = work.subtitle && !abstractText;
       const paperMeta = (abstractText || keywordsText) ? `
         <div class="paper-meta">
@@ -870,93 +1252,38 @@ TEMPLATE = r'''<!DOCTYPE html>
         </div>` : '';
 
       $view.innerHTML = `
-        <article class="reader fade-stagger">
+        <article class="reader reader-variant-${work.category} fade-stagger">
           <a class="back" href="#/${work.category || ''}">← back</a>
           ${cat ? `<div class="cat-tag">${escapeHtml(cat.label)}</div>` : ''}
           <h1 class="headline">${escapeHtml(work.title)}</h1>
           ${showLede ? `<p class="lede">${escapeHtml(work.subtitle)}</p>` : ''}
           <p class="byline">${escapeHtml(bylineText)}</p>
+          <div class="reader-meta-bar">
+            <span class="reading-time">${estMinutes} min read</span>
+            <span class="word-count">${rawCharCount.toLocaleString()} 字</span>
+          </div>
           ${paperMeta}
           <div class="reader-body" id="reader-body">
-            ${paragraphs.map(p => `<p class="para">${charsToSpans(p)}</p>`).join('')}
+            ${paragraphs.map(p => `<p class="para">${escapeHtml(p)}</p>`).join('')}
           </div>
           <div class="reader-end">— Fin —</div>
         </article>
       `;
-      requestAnimationFrame(cacheCharPositions);
     }
 
-    function charsToSpans(text) {
-      return Array.from(text).map(c => {
-        if (/\s|　/.test(c)) return escapeHtml(c);
-        return `<span class="char">${escapeHtml(c)}</span>`;
-      }).join('');
-    }
+    // ---- scroll: progress bar + back-to-top ----
+    const $btt = document.createElement('div');
+    $btt.className = 'back-to-top';
+    $btt.innerHTML = '↑';
+    $btt.title = '返回顶部';
+    $btt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    document.body.appendChild($btt);
 
-    // ---- mouse dodge ----
-    let mouseX = -99999, mouseY = -99999;
-    let charCache = [];
-    let rafScheduled = false;
-    const DODGE_RADIUS = 95;
-    const DODGE_MAX = 16;
-
-    function cacheCharPositions() {
-      charCache = [];
-      const els = document.querySelectorAll('.reader-body .char');
-      const sx = window.scrollX, sy = window.scrollY;
-      for (const el of els) {
-        const r = el.getBoundingClientRect();
-        charCache.push({ el, cx: r.left + r.width/2 + sx, cy: r.top + r.height/2 + sy, dodged: false });
-      }
-      scheduleDodge();
-    }
-
-    function scheduleDodge() {
-      if (rafScheduled) return;
-      rafScheduled = true;
-      requestAnimationFrame(updateDodge);
-    }
-
-    function updateDodge() {
-      rafScheduled = false;
-      if (!charCache.length) return;
-      const r2 = DODGE_RADIUS * DODGE_RADIUS;
-      const minY = window.scrollY - DODGE_RADIUS;
-      const maxY = window.scrollY + window.innerHeight + DODGE_RADIUS;
-      for (const c of charCache) {
-        if (c.cy < minY || c.cy > maxY) {
-          if (c.dodged) { c.el.style.transform = ''; c.dodged = false; }
-          continue;
-        }
-        const dx = c.cx - mouseX, dy = c.cy - mouseY;
-        const d2 = dx*dx + dy*dy;
-        if (d2 > r2) {
-          if (c.dodged) { c.el.style.transform = ''; c.dodged = false; }
-          continue;
-        }
-        const d = Math.sqrt(d2) || 0.001;
-        const f = 1 - d / DODGE_RADIUS;
-        const push = DODGE_MAX * f * f;
-        c.el.style.transform = `translate(${(dx/d*push).toFixed(2)}px, ${(dy/d*push).toFixed(2)}px)`;
-        c.dodged = true;
-      }
-    }
-
-    window.addEventListener('mousemove', e => { mouseX = e.pageX; mouseY = e.pageY; scheduleDodge(); });
-    window.addEventListener('mouseleave', () => { mouseX = mouseY = -99999; scheduleDodge(); });
     window.addEventListener('scroll', () => {
       const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
       $progress.style.width = (window.scrollY / max * 100) + '%';
-      scheduleDodge();
+      $btt.classList.toggle('visible', window.scrollY > 400);
     }, { passive: true });
-
-    let resizeTimer;
-    window.addEventListener('resize', () => {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(() => {
-        if (document.querySelector('.reader-body')) cacheCharPositions();
-      }, 120);
-    });
 
     function escapeHtml(s) {
       return String(s).replace(/[&<>"']/g, c => ({
