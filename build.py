@@ -581,27 +581,30 @@ TEMPLATE = r'''<!DOCTYPE html>
     .stratum-label {
       position: absolute;
       top: 50%;
-      transform: translateY(-54%);
-      background: var(--bg);
-      padding: 0 16px;
-      font-size: 12px;
-      letter-spacing: 0.26em;
-      text-transform: uppercase;
+      transform: translateY(-50%);
+      font-family: 'Noto Serif SC', serif;
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: 0.42em;
       color: var(--muted);
       white-space: nowrap;
-      transition: color 200ms var(--ease-out), background 220ms var(--ease-out), letter-spacing 300ms var(--ease-out);
+      line-height: 1;
+      transition: color 220ms var(--ease-out), transform 300ms var(--ease-spring);
     }
     .stratum:hover .stratum-label, .stratum.open .stratum-label {
       color: var(--ink);
-      letter-spacing: 0.32em;
+      transform: translateY(-50%) translateY(-1px);
     }
     .stratum-label .count {
-      font-size: 10px;
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      font-size: 11px;
       color: var(--muted);
-      margin-left: 10px;
-      vertical-align: super;
+      margin-left: 12px;
+      letter-spacing: 0;
+      vertical-align: 0.5em;
     }
-    .stratum-line:active .stratum-label { transform: translateY(-54%) scale(0.97); }
+    .stratum-line:active .stratum-label { transform: translateY(-50%) scale(0.97); }
 
     @media (max-width: 700px) {
       .works-row { gap: 20px; padding: 40px 4px 28px; }
@@ -946,12 +949,10 @@ TEMPLATE = r'''<!DOCTYPE html>
     $brand.textContent = (MANIFEST.site.title || '周未') + ' · ' + (MANIFEST.site.name_en || 'ZHOU WEI');
 
     function buildNav() {
-      const cats = (MANIFEST.categories || []).map(c =>
-        `<a href="#/${c.id}" data-route="${c.id}">${escapeHtml(c.label)}</a>`
-      ).join('');
       $nav.innerHTML = `
         <a href="#/" data-route="bio">Bio</a>
-        ${cats}
+        <a href="#/experience" data-route="experience">Experience</a>
+        <a href="#/works" data-route="works">Works</a>
         <a href="#/contact" data-route="contact">Contact</a>
         <button class="theme-toggle" id="theme-toggle" aria-label="切换主题">◐</button>
       `;
@@ -1006,7 +1007,10 @@ TEMPLATE = r'''<!DOCTYPE html>
     // ---- HOME (single continuous page: bio + strata + contact) ----
     function showHome(target) {
       const isCat = target && (MANIFEST.categories || []).some(c => c.id === target);
-      setActiveNav(isCat ? target : (target === 'contact' ? 'contact' : 'bio'));
+      const navKey = isCat || target === 'works' ? 'works'
+        : (target === 'experience' || target === 'contact') ? target
+        : 'bio';
+      setActiveNav(navKey);
       document.title = (MANIFEST.site.title || '周未');
 
       if (!document.getElementById('home-root')) {
@@ -1014,14 +1018,20 @@ TEMPLATE = r'''<!DOCTYPE html>
         mountStaggers($view);
         drawInkLines();
         wireHome();
+        // Re-measure once webfonts arrive: label widths shift when the
+        // serif face replaces the fallback, and the line gap must follow.
+        document.fonts.ready.then(() => drawInkLines());
       }
 
       if (isCat) {
         openStratum(target);
-        // Wait a beat for expansion to begin, then bring it into view.
         setTimeout(() => {
           document.getElementById('stratum-' + target)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }, 80);
+      } else if (target === 'works') {
+        document.getElementById('writing-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else if (target === 'experience') {
+        document.getElementById('experience-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       } else if (target === 'contact') {
         document.getElementById('contact-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       } else {
@@ -1109,7 +1119,7 @@ TEMPLATE = r'''<!DOCTYPE html>
               <div class="edu-list">${eduRows}</div>
             </section>` : ''}
             ${expRows ? `
-            <section class="bio-section">
+            <section class="bio-section" id="experience-section">
               <h2>Experience · 实习经历</h2>
               <ol class="exp-list">${expRows}</ol>
             </section>` : ''}
@@ -1127,35 +1137,72 @@ TEMPLATE = r'''<!DOCTYPE html>
       `;
     }
 
-    // Hand-drawn ink line generator: gentle noise polyline smoothed with midpoints.
-    function inkPathD(seed, amp) {
+    // Hand-drawn ink line generator with an optional gap (for the label).
+    // Draws two segments: [0, gapStart] and [gapEnd, 1000], easing the line
+    // toward the label's baseline at the gap edges so text feels "threaded".
+    function inkPathD(seed, amp, gapStart, gapEnd) {
       let rnd = seed;
       const rand = () => { rnd = (rnd * 9301 + 49297) % 233280; return rnd / 233280 - 0.5; };
-      const pts = [];
-      const steps = 18;
-      for (let i = 0; i <= steps; i++) {
-        pts.push([1000 * i / steps, 22 + rand() * amp]);
+      const segs = [];
+      if (gapStart == null || gapEnd == null || gapEnd <= gapStart) {
+        segs.push([0, 1000]);
+      } else {
+        if (gapStart > 8) segs.push([0, gapStart]);
+        if (gapEnd < 992) segs.push([gapEnd, 1000]);
       }
-      let d = `M${pts[0][0]},${pts[0][1].toFixed(1)}`;
-      for (let i = 1; i < pts.length - 1; i++) {
-        const mx = (pts[i][0] + pts[i + 1][0]) / 2;
-        const my = (pts[i][1] + pts[i + 1][1]) / 2;
-        d += ` Q${pts[i][0].toFixed(1)},${pts[i][1].toFixed(1)} ${mx.toFixed(1)},${my.toFixed(1)}`;
+      let d = '';
+      for (const [x0, x1] of segs) {
+        const len = x1 - x0;
+        const steps = Math.max(4, Math.round(len / 55));
+        const pts = [];
+        for (let i = 0; i <= steps; i++) {
+          const x = x0 + len * i / steps;
+          // Flatten noise near gap edges so the line "settles" beside the text.
+          const nearGap = Math.min(
+            gapStart != null ? Math.abs(x - gapStart) : 1e9,
+            gapEnd != null ? Math.abs(x - gapEnd) : 1e9
+          );
+          const damp = nearGap < 70 ? nearGap / 70 : 1;
+          pts.push([x, 22 + rand() * amp * damp]);
+        }
+        d += ` M${pts[0][0].toFixed(1)},${pts[0][1].toFixed(1)}`;
+        for (let i = 1; i < pts.length - 1; i++) {
+          const mx = (pts[i][0] + pts[i + 1][0]) / 2;
+          const my = (pts[i][1] + pts[i + 1][1]) / 2;
+          d += ` Q${pts[i][0].toFixed(1)},${pts[i][1].toFixed(1)} ${mx.toFixed(1)},${my.toFixed(1)}`;
+        }
+        const last = pts[pts.length - 1];
+        d += ` L${last[0].toFixed(1)},${last[1].toFixed(1)}`;
       }
-      const last = pts[pts.length - 1];
-      d += ` L${last[0]},${last[1].toFixed(1)}`;
-      return d;
+      return d.trim();
     }
 
     function drawInkLines() {
       document.querySelectorAll('.stratum').forEach((st, i) => {
+        const line = st.querySelector('.stratum-line');
+        const label = st.querySelector('.stratum-label');
         const main = st.querySelector('path.main');
         const echo = st.querySelector('path.echo');
+        if (!line || !label || !main) return;
+        const W = line.clientWidth || 1000;
+        const lr = label.getBoundingClientRect();
+        const cr = line.getBoundingClientRect();
+        const pad = 20;
+        const gapStart = Math.max(0, ((lr.left - cr.left - pad) / W) * 1000);
+        const gapEnd = Math.min(1000, ((lr.right - cr.left + pad) / W) * 1000);
         const seed = 7919 * (i + 1);
-        if (main) main.setAttribute('d', inkPathD(seed, 14));
-        if (echo) echo.setAttribute('d', inkPathD(seed + 431, 18));
+        main.setAttribute('d', inkPathD(seed, 12, gapStart, gapEnd));
+        if (echo) echo.setAttribute('d', inkPathD(seed + 431, 16, gapStart, gapEnd));
       });
     }
+
+    let inkResizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(inkResizeTimer);
+      inkResizeTimer = setTimeout(() => {
+        if (document.getElementById('home-root')) drawInkLines();
+      }, 120);
+    });
 
     function openStratum(catId) {
       document.querySelectorAll('.stratum').forEach(st => {
