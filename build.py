@@ -904,6 +904,15 @@ TEMPLATE = r'''<!DOCTYPE html>
     .stratum:hover .stratum-label, .stratum.open .stratum-label {
       color: var(--ink);
     }
+    .stratum-label.pos-0 { left: 12%; }
+    .stratum-label.pos-1 { left: 44%; }
+    .stratum-label.pos-2 { left: 72%; }
+    @media (max-width: 600px) {
+      .stratum-label { font-size: 13px; letter-spacing: 0.3em; }
+      .stratum-label.pos-0 { left: 6%; }
+      .stratum-label.pos-1 { left: 34%; }
+      .stratum-label.pos-2 { left: 56%; }
+    }
     .stratum-label .lch {
       display: inline-block;
       will-change: transform;
@@ -1229,18 +1238,49 @@ TEMPLATE = r'''<!DOCTYPE html>
     @media (max-width: 900px) {
       .topbar { padding: 18px 24px; gap: 16px; }
       .topbar nav { gap: 22px; }
-      .bio-hero { grid-template-columns: 1fr; gap: 48px; }
-      .bio-portrait { max-width: 360px; }
+      .bio-hero { grid-template-columns: 1fr; gap: 40px; }
+      .bio-portrait { max-width: 300px; }
       .bio-content h1 { font-size: 42px; }
       .cat-page h1 { font-size: 48px; }
       .reader { padding: 72px 28px 120px; }
     }
     @media (max-width: 600px) {
-      .topbar nav a { display: none; }
-      .topbar nav a.theme-toggle, .topbar nav .menu-btn { display: inline-flex; }
-      .topbar.menu-open nav a { display: inline-flex; }
-      .topbar.menu-open { flex-wrap: wrap; }
-      .topbar.menu-open nav { width: 100%; flex-direction: column; align-items: flex-start; gap: 16px; padding: 16px 0; }
+      /* Two-row topbar: brand row on top (toggle pinned right), nav links row below. */
+      .topbar {
+        flex-wrap: wrap;
+        row-gap: 12px;
+        padding: 14px 20px;
+      }
+      .topbar .brand {
+        white-space: nowrap;
+        font-size: 11px;
+        letter-spacing: 0.18em;
+      }
+      .topbar nav {
+        order: 3;
+        width: 100%;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .topbar nav a {
+        font-size: 10.5px;
+        letter-spacing: 0.14em;
+        white-space: nowrap;
+      }
+      .topbar nav .theme-toggle {
+        position: absolute;
+        top: 10px;
+        right: 16px;
+      }
+      /* page height accounts for the taller two-row topbar */
+      .page { height: calc(100dvh - 96px); }
+
+      /* Bio: top-anchor so nothing is cropped; photo smaller so the name shows sooner. */
+      .bio-fit { align-items: flex-start; padding: 24px 24px 48px; }
+      .bio-fit .bio-hero { margin: 0 auto; }
+      .bio-portrait { max-width: 220px; }
+      .bio-content h1 { font-size: 36px; }
+
       .bio-page { padding: 80px 24px 120px; }
       .cat-page { padding: 80px 24px 120px; }
       .works-grid { grid-template-columns: 1fr; }
@@ -1460,7 +1500,8 @@ TEMPLATE = r'''<!DOCTYPE html>
       document.title = 'Works · ' + (MANIFEST.site.title || '周未');
 
       const cats = (MANIFEST.categories || []).filter(c => MANIFEST.works.some(w => w.category === c.id));
-      const labelPos = ['12%', '44%', '72%'];
+      // Label positions come from CSS classes (pos-0/1/2) so media queries can
+      // pull them inward on narrow screens.
       const strataHTML = cats.map((c, ci) => {
         const items = MANIFEST.works.filter(w => w.category === c.id);
         const cards = items.map((w, i) => {
@@ -1486,7 +1527,7 @@ TEMPLATE = r'''<!DOCTYPE html>
               <path class="ink s2" d="" />
               <path class="ink s3" d="" />
             </svg>
-            <span class="stratum-label" style="left:${labelPos[ci % labelPos.length]}">
+            <span class="stratum-label pos-${ci % 3}">
               ${Array.from(c.label).map(ch => `<span class="lch">${escapeHtml(ch)}</span>`).join('')}<span class="count">${items.length}</span>
             </span>
           </button>
