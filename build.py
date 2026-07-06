@@ -275,18 +275,18 @@ TEMPLATE = r'''<!DOCTYPE html>
     .bio-page { padding: 120px 48px 160px; max-width: 1280px; margin: 0 auto; }
     .bio-hero {
       display: grid;
-      grid-template-columns: 0.9fr 1.1fr;
-      gap: 96px;
-      align-items: start;
+      grid-template-columns: minmax(300px, 380px) 1fr;
+      gap: 80px;
+      align-items: stretch;
       margin-bottom: 140px;
     }
     .bio-portrait {
-      aspect-ratio: 1 / 1;
       background: var(--surface);
       background-size: cover;
       background-position: center;
       position: relative;
       overflow: hidden;
+      min-height: 500px;
     }
     .bio-portrait.placeholder::after {
       content: '〔 portrait 〕';
@@ -297,38 +297,62 @@ TEMPLATE = r'''<!DOCTYPE html>
       font-size: 13px;
       letter-spacing: 0.3em;
     }
+    .bio-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 8px 0;
+    }
     .bio-content h1 {
       font-family: 'Noto Serif SC', 'Cormorant Garamond', serif;
-      font-size: 56px;
+      font-size: 52px;
       font-weight: 500;
-      margin: 0 0 28px;
-      letter-spacing: 0.02em;
+      margin: 0 0 18px;
+      letter-spacing: 0.04em;
       line-height: 1.05;
+      display: flex;
+      align-items: baseline;
+      gap: 20px;
+      flex-wrap: wrap;
     }
     .bio-content h1 .en {
-      display: block;
       font-family: 'Cormorant Garamond', 'Inter', serif;
-      font-size: 18px;
+      font-size: 15px;
       font-weight: 400;
       color: var(--muted);
-      letter-spacing: 0.22em;
-      margin-top: 20px;
+      letter-spacing: 0.32em;
       text-transform: uppercase;
+      transform: translateY(-4px);
     }
     .bio-tagline {
       font-family: 'Cormorant Garamond', 'Noto Serif SC', serif;
-      font-size: 20px;
+      font-size: 19px;
       font-style: italic;
       color: var(--accent);
-      margin: 0 0 36px;
+      margin: 0 0 0;
       letter-spacing: 0.02em;
     }
+    .bio-rule {
+      width: 48px;
+      height: 1px;
+      background: var(--rule);
+      margin: 32px 0 36px;
+    }
     .bio-content .bio-para {
-      font-size: 16px;
-      line-height: 1.85;
-      color: color-mix(in srgb, var(--ink) 85%, transparent);
-      margin: 0 0 18px;
-      max-width: 520px;
+      font-family: 'Noto Serif SC', serif;
+      font-size: 15.5px;
+      line-height: 2;
+      color: color-mix(in srgb, var(--ink) 88%, transparent);
+      margin: 0 0 22px;
+      max-width: 560px;
+    }
+    .bio-content .bio-para.latin {
+      font-family: 'Cormorant Garamond', 'EB Garamond', serif;
+      font-style: italic;
+      font-size: 14.5px;
+      line-height: 1.75;
+      color: var(--muted);
+      margin: -12px 0 26px;
     }
     .bio-content .bio-para:last-child { margin-bottom: 0; }
 
@@ -559,11 +583,12 @@ TEMPLATE = r'''<!DOCTYPE html>
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 40px;
+      padding: 48px 56px;
     }
     .bio-fit .bio-hero {
-      max-width: 1080px;
+      width: min(1020px, 100%);
       margin: 0;
+      margin-bottom: 0;
     }
     .contact-fit {
       display: flex;
@@ -1293,7 +1318,12 @@ TEMPLATE = r'''<!DOCTYPE html>
       setActiveNav('bio');
       document.title = (MANIFEST.site.title || '周未');
       const s = MANIFEST.site || {};
-      const bioParas = (s.bio || []).map(p => `<p class="bio-para">${escapeHtml(p)}</p>`).join('');
+      // Latin-only paragraphs render as italic translations, visually subordinate
+      // to the Chinese paragraph they follow.
+      const isLatin = (t) => !/[一-鿿]/.test(t);
+      const bioParas = (s.bio || []).map(p =>
+        `<p class="bio-para${isLatin(p) ? ' latin' : ''}">${escapeHtml(p)}</p>`
+      ).join('');
       const photoStyle = s.photo ? `style="background-image:url('${escapeHtml(s.photo)}')"` : '';
       const photoClass = s.photo ? '' : 'placeholder';
       $view.innerHTML = `
@@ -1303,6 +1333,7 @@ TEMPLATE = r'''<!DOCTYPE html>
             <div class="bio-content fade-stagger">
               <h1>${escapeHtml(s.title || '周未')}<span class="en">${escapeHtml(s.name_en || 'ZHOU WEI')}</span></h1>
               ${s.tagline ? `<p class="bio-tagline">${escapeHtml(s.tagline)}</p>` : ''}
+              <div class="bio-rule"></div>
               ${bioParas}
             </div>
           </div>
