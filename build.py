@@ -882,7 +882,8 @@ TEMPLATE = r'''<!DOCTYPE html>
     .stratum-label {
       position: absolute;
       top: 50%;
-      transform: translateY(-50%);
+      /* Characters stand ON the wire: text bottom rests at the line's rest height. */
+      transform: translateY(calc(-100% + 3px));
       font-family: 'Noto Serif SC', serif;
       font-size: 15px;
       font-weight: 500;
@@ -890,11 +891,15 @@ TEMPLATE = r'''<!DOCTYPE html>
       color: var(--muted);
       white-space: nowrap;
       line-height: 1;
-      transition: color 220ms var(--ease-out), transform 300ms var(--ease-spring);
+      transition: color 220ms var(--ease-out);
     }
     .stratum:hover .stratum-label, .stratum.open .stratum-label {
       color: var(--ink);
-      transform: translateY(-50%) translateY(-1px);
+    }
+    .stratum-label .lch {
+      display: inline-block;
+      will-change: transform;
+      transform-origin: 50% 100%;
     }
     .stratum-label .count {
       font-family: 'EB Garamond', serif;
@@ -905,7 +910,6 @@ TEMPLATE = r'''<!DOCTYPE html>
       letter-spacing: 0;
       vertical-align: 0.5em;
     }
-    .stratum-line:active .stratum-label { transform: translateY(-50%) scale(0.97); }
 
     @media (max-width: 700px) {
       .works-row { gap: 20px; padding: 40px 4px 28px; }
@@ -1460,7 +1464,7 @@ TEMPLATE = r'''<!DOCTYPE html>
               <path class="ink echo" d="" />
             </svg>
             <span class="stratum-label" style="left:${labelPos[ci % labelPos.length]}">
-              ${escapeHtml(c.label)}<span class="count">${items.length}</span>
+              ${Array.from(c.label).map(ch => `<span class="lch">${escapeHtml(ch)}</span>`).join('')}<span class="count">${items.length}</span>
             </span>
           </button>
         </section>`;
@@ -1475,15 +1479,16 @@ TEMPLATE = r'''<!DOCTYPE html>
         </div>
       `;
 
-      drawInkLines();
-      document.fonts.ready.then(() => drawInkLines());
+      initInkLife();
+      document.fonts.ready.then(() => initInkLife());
 
       document.querySelectorAll('.stratum-line').forEach(btn => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', (e) => {
           const st = btn.closest('.stratum');
           const catId = st.dataset.cat;
           const willOpen = !st.classList.contains('open');
           openStratum(willOpen ? catId : null);
+          inkPulse(st, e.clientX);
           history.replaceState(null, '', willOpen ? '#/' + catId : '#/works');
         });
       });
@@ -1519,70 +1524,143 @@ TEMPLATE = r'''<!DOCTYPE html>
       });
     }
 
-    // Hand-drawn ink line generator with an optional gap (for the label).
-    // Draws two segments: [0, gapStart] and [gapEnd, 1000], easing the line
-    // toward the label's baseline at the gap edges so text feels "threaded".
-    function inkPathD(seed, amp, gapStart, gapEnd) {
-      let rnd = seed;
-      const rand = () => { rnd = (rnd * 9301 + 49297) % 233280; return rnd / 233280 - 0.5; };
-      const segs = [];
-      if (gapStart == null || gapEnd == null || gapEnd <= gapStart) {
-        segs.push([0, 1000]);
-      } else {
-        if (gapStart > 8) segs.push([0, gapStart]);
-        if (gapEnd < 992) segs.push([gapEnd, 1000]);
+    // ===== Living ink lines =====
+    // Lines undulate continuously; a click sends a ripple outward from the
+    // click point; label characters ride the line like clothes on a wire.
+    const REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let inkRAF = null;
+    let inkStrata = [];
+
+    function lineYAt(s, x, t) {
+      // Two drifting sine layers = calm hand-held wobble.
+      let y = 22
+        + Math.sin(x * 0.006 + t * 0.55 + s.ph1) * 2.4 * s.amp
+        + Math.sin(x * 0.014 - t * 0.38 + s.ph2) * 1.5 * s.amp;
+      // Traveling ripples from clicks: a ridge expands both ways and rings down.
+      for (const p of s.pulses) {
+        const dt = t - p.t0;
+        if (dt < 0 || dt > 2.6) continue;
+        const dist = Math.abs(x - p.x);
+        const g = Math.exp(-Math.pow(dist - dt * 340, 2) / 5200);
+        y += g * Math.sin(dt * 13) * 10 * Math.exp(-dt * 1.7);
       }
-      let d = '';
-      for (const [x0, x1] of segs) {
-        const len = x1 - x0;
-        const steps = Math.max(4, Math.round(len / 55));
-        const pts = [];
-        for (let i = 0; i <= steps; i++) {
-          const x = x0 + len * i / steps;
-          // Flatten noise near gap edges so the line "settles" beside the text.
-          const nearGap = Math.min(
-            gapStart != null ? Math.abs(x - gapStart) : 1e9,
-            gapEnd != null ? Math.abs(x - gapEnd) : 1e9
-          );
-          const damp = nearGap < 70 ? nearGap / 70 : 1;
-          pts.push([x, 22 + rand() * amp * damp]);
-        }
-        d += ` M${pts[0][0].toFixed(1)},${pts[0][1].toFixed(1)}`;
-        for (let i = 1; i < pts.length - 1; i++) {
-          const mx = (pts[i][0] + pts[i + 1][0]) / 2;
-          const my = (pts[i][1] + pts[i + 1][1]) / 2;
-          d += ` Q${pts[i][0].toFixed(1)},${pts[i][1].toFixed(1)} ${mx.toFixed(1)},${my.toFixed(1)}`;
-        }
-        const last = pts[pts.length - 1];
-        d += ` L${last[0].toFixed(1)},${last[1].toFixed(1)}`;
-      }
-      return d.trim();
+      return y;
     }
 
-    function drawInkLines() {
-      document.querySelectorAll('.stratum').forEach((st, i) => {
-        const line = st.querySelector('.stratum-line');
+    function inkFrame(now) {
+      const t = now / 1000;
+      let alive = false;
+      for (const s of inkStrata) {
+        if (!document.contains(s.main)) continue;
+        alive = true;
+        s.amp += (s.targetAmp - s.amp) * 0.06;
+        s.pulses = s.pulses.filter(p => t - p.t0 < 2.6);
+
+        for (const path of [s.main, s.echo]) {
+          if (!path) continue;
+          const off = path === s.echo ? 1.7 : 0;
+          const steps = 26;
+          let d = '';
+          const pts = [];
+          for (let i = 0; i <= steps; i++) {
+            const x = 1000 * i / steps;
+            pts.push([x, lineYAt(s, x, t + off)]);
+          }
+          d = `M${pts[0][0].toFixed(1)},${pts[0][1].toFixed(1)}`;
+          for (let i = 1; i < pts.length - 1; i++) {
+            const mx = (pts[i][0] + pts[i + 1][0]) / 2;
+            const my = (pts[i][1] + pts[i + 1][1]) / 2;
+            d += ` Q${pts[i][0].toFixed(1)},${pts[i][1].toFixed(1)} ${mx.toFixed(1)},${my.toFixed(1)}`;
+          }
+          const last = pts[pts.length - 1];
+          d += ` L${last[0].toFixed(1)},${last[1].toFixed(1)}`;
+          path.setAttribute('d', d);
+        }
+
+        // Characters ride the line: translate each to the wire's local height,
+        // tilt slightly with the local slope.
+        const scaleY = s.svgH / 44;
+        for (const ch of s.chars) {
+          const dy = (lineYAt(s, ch.x, t) - 22) * scaleY;
+          const slope = (lineYAt(s, ch.x + 14, t) - lineYAt(s, ch.x - 14, t)) * scaleY / 28;
+          const deg = Math.atan(slope) * 57.3 * 0.55;
+          ch.el.style.transform = `translateY(${dy.toFixed(2)}px) rotate(${deg.toFixed(2)}deg)`;
+        }
+      }
+      inkRAF = alive ? requestAnimationFrame(inkFrame) : null;
+    }
+
+    function initInkLife() {
+      if (inkRAF) { cancelAnimationFrame(inkRAF); inkRAF = null; }
+      inkStrata = [...document.querySelectorAll('.stratum')].map((st, i) => {
+        const lineBtn = st.querySelector('.stratum-line');
         const label = st.querySelector('.stratum-label');
-        const main = st.querySelector('path.main');
-        const echo = st.querySelector('path.echo');
-        if (!line || !label || !main) return;
-        const W = line.clientWidth || 1000;
-        const lr = label.getBoundingClientRect();
-        const cr = line.getBoundingClientRect();
-        const pad = 20;
-        const gapStart = Math.max(0, ((lr.left - cr.left - pad) / W) * 1000);
-        const gapEnd = Math.min(1000, ((lr.right - cr.left + pad) / W) * 1000);
-        const seed = 7919 * (i + 1);
-        main.setAttribute('d', inkPathD(seed, 12, gapStart, gapEnd));
-        if (echo) echo.setAttribute('d', inkPathD(seed + 431, 16, gapStart, gapEnd));
+        const svg = st.querySelector('svg');
+        const cr = lineBtn.getBoundingClientRect();
+        const W = cr.width || 1000;
+        const chars = [...label.querySelectorAll('.lch')].map(el => {
+          const r = el.getBoundingClientRect();
+          return { el, x: ((r.left + r.width / 2) - cr.left) / W * 1000 };
+        });
+        return {
+          main: st.querySelector('path.main'),
+          echo: st.querySelector('path.echo'),
+          svgH: svg.clientHeight || 44,
+          chars,
+          ph1: i * 2.1 + 0.7,
+          ph2: i * 4.3 + 1.9,
+          amp: 1,
+          targetAmp: 1,
+          pulses: [],
+          el: st,
+        };
       });
+      if (!inkStrata.length) return;
+
+      if (REDUCED_MOTION) {
+        // Draw one calm static frame; no loop, no bobbing.
+        const t = 1.234;
+        for (const s of inkStrata) {
+          const steps = 26;
+          const pts = [];
+          for (let i = 0; i <= steps; i++) {
+            const x = 1000 * i / steps;
+            pts.push([x, lineYAt(s, x, t)]);
+          }
+          let d = `M${pts[0][0].toFixed(1)},${pts[0][1].toFixed(1)}`;
+          for (let i = 1; i < pts.length - 1; i++) {
+            const mx = (pts[i][0] + pts[i + 1][0]) / 2;
+            const my = (pts[i][1] + pts[i + 1][1]) / 2;
+            d += ` Q${pts[i][0].toFixed(1)},${pts[i][1].toFixed(1)} ${mx.toFixed(1)},${my.toFixed(1)}`;
+          }
+          s.main.setAttribute('d', d);
+          if (s.echo) s.echo.setAttribute('d', d);
+        }
+        return;
+      }
+
+      // Hover/open drive amplitude targets.
+      for (const s of inkStrata) {
+        s.el.addEventListener('mouseenter', () => { s.targetAmp = s.el.classList.contains('open') ? 1.7 : 2.3; });
+        s.el.addEventListener('mouseleave', () => { s.targetAmp = s.el.classList.contains('open') ? 1.5 : 1; });
+      }
+      inkRAF = requestAnimationFrame(inkFrame);
+    }
+
+    function inkPulse(stEl, clientX) {
+      const s = inkStrata.find(k => k.el === stEl);
+      if (!s) return;
+      const cr = stEl.querySelector('.stratum-line').getBoundingClientRect();
+      const x = clientX != null ? (clientX - cr.left) / cr.width * 1000 : 500;
+      s.pulses.push({ x, t0: performance.now() / 1000 });
+      s.targetAmp = stEl.classList.contains('open') ? 1.5 : 1;
     }
 
     let inkResizeTimer;
     window.addEventListener('resize', () => {
       clearTimeout(inkResizeTimer);
       inkResizeTimer = setTimeout(() => {
-        if (document.querySelector('.stratum')) drawInkLines();
+        if (document.querySelector('.stratum')) initInkLife();
       }, 120);
     });
 
