@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-打包成单个 portfolio.html。双击打开 / 邮件附件均可。
+打包成单个 index.html（GitHub Pages 直接服务）。
+同时输出 portfolio.html 供本地双击预览。
 用法：
     cd ~/Documents/GitHub/WeiChow\ writing
     python3 build.py
@@ -9,11 +10,13 @@
 import base64
 import json
 import mimetypes
+import shutil
 from pathlib import Path
 
 ROOT = Path(__file__).parent
 WORKS_DIR = ROOT / 'works'
-OUT = ROOT / 'portfolio.html'
+OUT = ROOT / 'index.html'       # GitHub Pages serves index.html by default
+OUT_COPY = ROOT / 'portfolio.html'  # keep a copy for local preview
 
 def inline_image(path_str):
     """Convert a local image path to a base64 data URL. Skip if URL or empty."""
@@ -2246,9 +2249,10 @@ html = html.replace('__WORKS_JSON__', json.dumps(works_text, ensure_ascii=False)
 html = html.replace('__WORLD_PATHS__', json.dumps(world_paths))
 html = html.replace('__OG_IMAGE__', site.get('photo', ''))
 OUT.write_text(html, encoding='utf-8')
+shutil.copy2(OUT, OUT_COPY)  # also update portfolio.html for local preview
 
 size_kb = OUT.stat().st_size / 1024
 print(f'✓ 已生成 {OUT.name}（{size_kb:.1f} KB）')
 print(f'  路径：{OUT}')
 print(f'  共打包 {len(works_text)} 篇作品')
-print(f'  双击打开即可。')
+print(f'  index.html → GitHub Pages  |  portfolio.html → 本地预览')
