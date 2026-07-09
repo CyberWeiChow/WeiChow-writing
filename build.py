@@ -138,7 +138,25 @@ TEMPLATE = r'''<!DOCTYPE html>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>周未</title>
+  <title>周未 · ZHOU WEI</title>
+  <meta name="description" content="周未 — 写作者与批评者，跨越创意写作、文化批评与财经新闻三种语境。" />
+  <meta name="author" content="周未 ZHOU WEI" />
+
+  <!-- Favicon: 「未」字 SVG data URI -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23f5f2eb'/%3E%3Ctext x='32' y='46' font-family='Noto Serif SC, serif' font-size='38' font-weight='500' text-anchor='middle' fill='%231f1c17'%3E%E6%9C%AA%3C/text%3E%3C/svg%3E" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23f5f2eb'/%3E%3Ctext x='32' y='46' font-family='Noto Serif SC, serif' font-size='38' font-weight='500' text-anchor='middle' fill='%231f1c17'%3E%E6%9C%AA%3C/text%3E%3C/svg%3E" />
+
+  <!-- Open Graph / Twitter Card -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="周未 · ZHOU WEI" />
+  <meta property="og:title" content="周未 · ZHOU WEI" />
+  <meta property="og:description" content="周未 — 写作者与批评者，跨越创意写作、文化批评与财经新闻三种语境。" />
+  <meta property="og:image" content="__OG_IMAGE__" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="周未 · ZHOU WEI" />
+  <meta name="twitter:description" content="周未 — 写作者与批评者，跨越创意写作、文化批评与财经新闻三种语境。" />
+  <meta name="twitter:image" content="__OG_IMAGE__" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -1113,6 +1131,215 @@ TEMPLATE = r'''<!DOCTYPE html>
       margin: 0 0 0.85em;
     }
 
+    /* ============ TOC (Table of Contents) ============ */
+    .reader-toc {
+      display: none;
+      position: fixed;
+      top: 110px;
+      left: calc(50% + 380px);
+      width: 190px;
+      max-height: calc(100vh - 160px);
+      overflow-y: auto;
+      font-size: 12px;
+      line-height: 1.6;
+      scrollbar-width: thin;
+      scrollbar-color: var(--rule) transparent;
+      z-index: 20;
+    }
+    .reader-toc::-webkit-scrollbar { width: 3px; }
+    .reader-toc::-webkit-scrollbar-thumb { background: var(--rule); }
+    .reader-toc .toc-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 16px;
+      letter-spacing: 0.08em;
+    }
+    .reader-toc ol {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      border-left: 1px solid var(--rule);
+    }
+    .reader-toc li { margin: 0; }
+    .reader-toc a {
+      display: block;
+      padding: 5px 0 5px 14px;
+      color: var(--muted);
+      line-height: 1.5;
+      border-left: 2px solid transparent;
+      margin-left: -1px;
+      transition: color 180ms var(--ease-out), border-color 180ms var(--ease-out);
+    }
+    .reader-toc a.active {
+      color: var(--ink);
+      border-left-color: var(--accent);
+    }
+    @media (hover: hover) and (pointer: fine) {
+      .reader-toc a:hover { color: var(--hover); }
+    }
+    @media (min-width: 1280px) {
+      .reader-toc { display: block; }
+    }
+
+    /* Section headings inside reader-body */
+    .reader-body h2.toc-heading {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 20px;
+      font-weight: 600;
+      margin: 2.4em 0 0.9em;
+      letter-spacing: 0.02em;
+      scroll-margin-top: 100px;
+      line-height: 1.4;
+    }
+    .reader-variant-criticism .reader-body h2.toc-heading {
+      font-size: 18px;
+    }
+    .reader-variant-news .reader-body h2.toc-heading {
+      font-family: 'Noto Sans SC', sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    /* ============ PREV / NEXT NAVIGATION ============ */
+    .reader-nav {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      margin-top: 72px;
+      padding-top: 40px;
+      border-top: 1px solid var(--rule);
+    }
+    .reader-nav > a {
+      flex: 1;
+      max-width: 48%;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: color 180ms var(--ease-out), transform 140ms var(--ease-out);
+    }
+    .reader-nav > a:active { transform: scale(0.98); }
+    @media (hover: hover) and (pointer: fine) {
+      .reader-nav > a:hover { color: var(--hover); }
+    }
+    .reader-nav a.next { text-align: right; align-items: flex-end; }
+    .reader-nav .nav-label {
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .reader-nav .nav-title {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 15px;
+      font-weight: 500;
+      line-height: 1.45;
+    }
+
+    /* ============ RELATED ARTICLES ============ */
+    .reader-related {
+      margin-top: 64px;
+      padding-top: 40px;
+      border-top: 1px solid var(--rule);
+    }
+    .reader-related .related-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 18px;
+      color: var(--muted);
+      margin: 0 0 24px;
+      letter-spacing: 0.04em;
+    }
+    .reader-related .related-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+    }
+    .reader-related .related-item {
+      display: block;
+      padding: 18px 20px;
+      border: 1px solid var(--rule);
+      transition: border-color 200ms var(--ease-out), background 200ms var(--ease-out), transform 140ms var(--ease-out);
+    }
+    .reader-related .related-item:active { transform: scale(0.98); }
+    @media (hover: hover) and (pointer: fine) {
+      .reader-related .related-item:hover {
+        border-color: var(--muted);
+        background: color-mix(in srgb, var(--surface) 50%, transparent);
+      }
+    }
+    .reader-related .ri-year {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .reader-related .ri-title {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.45;
+      color: var(--ink);
+    }
+    .reader-related .ri-desc {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 6px;
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* ============ SHARE BAR ============ */
+    .share-bar {
+      margin-top: 32px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .share-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 18px;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1px solid var(--rule);
+      background: transparent;
+      cursor: pointer;
+      transition: color 180ms var(--ease-out), border-color 180ms var(--ease-out), transform 120ms var(--ease-out);
+    }
+    .share-btn:active { transform: scale(0.96); }
+    @media (hover: hover) and (pointer: fine) {
+      .share-btn:hover { color: var(--hover); border-color: var(--muted); }
+    }
+    .share-btn.copied { color: var(--accent); border-color: var(--accent); }
+    .share-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+    .share-qr {
+      display: none;
+      margin-top: 20px;
+      padding: 20px;
+      border: 1px solid var(--rule);
+      background: #fff;
+      max-width: 220px;
+    }
+    .share-qr.visible { display: block; }
+    .share-qr img { display: block; width: 180px; height: 180px; }
+    .share-qr .qr-hint {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: #888;
+      text-align: center;
+      margin-top: 10px;
+      text-transform: uppercase;
+    }
+
     /* ============ READING TIME + BACK TO TOP ============ */
     .reader-meta-bar {
       display: flex;
@@ -1243,6 +1470,7 @@ TEMPLATE = r'''<!DOCTYPE html>
       .bio-content h1 { font-size: 42px; }
       .cat-page h1 { font-size: 48px; }
       .reader { padding: 72px 28px 120px; }
+      .reader-related .related-list { grid-template-columns: 1fr; }
     }
     @media (max-width: 600px) {
       /* Two-row topbar: brand row on top (toggle pinned right), nav links row below. */
@@ -1285,6 +1513,10 @@ TEMPLATE = r'''<!DOCTYPE html>
       .cat-page { padding: 80px 24px 120px; }
       .works-grid { grid-template-columns: 1fr; }
       .contact-page h1 { font-size: 44px; }
+      .reader-nav { gap: 16px; }
+      .reader-nav .nav-title { font-size: 13px; }
+      .share-qr { max-width: 180px; }
+      .share-qr img { width: 140px; height: 140px; }
     }
   </style>
 </head>
@@ -1345,6 +1577,8 @@ TEMPLATE = r'''<!DOCTYPE html>
 
     function route() {
       const h = location.hash || '#/';
+      // Ignore in-page anchors (e.g. #sec-0) that aren't route hashes
+      if (h !== '#' && !h.startsWith('#/')) return;
       const m = h.match(/^#\/read\/(.+)$/);
       document.body.classList.toggle('reader-mode', !!m);
       if (m) {
@@ -1381,7 +1615,7 @@ TEMPLATE = r'''<!DOCTYPE html>
     // ---- BIO (single-screen page) ----
     function showBio() {
       setActiveNav('bio');
-      document.title = (MANIFEST.site.title || '周未');
+      updateMeta({});
       const s = MANIFEST.site || {};
       // Latin-only paragraphs render as italic translations, visually subordinate
       // to the Chinese paragraph they follow.
@@ -1421,7 +1655,7 @@ TEMPLATE = r'''<!DOCTYPE html>
 
     function showExperience() {
       setActiveNav('experience');
-      document.title = 'Experience · ' + (MANIFEST.site.title || '周未');
+      updateMeta({ title: 'Experience · ' + (MANIFEST.site.title || '周未') });
       const journey = MANIFEST.site.journey || [];
 
       const TYPE_LABEL = { work: 'Work', education: 'Education', event: 'Event' };
@@ -1497,7 +1731,7 @@ TEMPLATE = r'''<!DOCTYPE html>
     // ---- WORKS (strata page) ----
     function showWorks(openCat) {
       setActiveNav('works');
-      document.title = 'Works · ' + (MANIFEST.site.title || '周未');
+      updateMeta({ title: 'Works · ' + (MANIFEST.site.title || '周未') });
 
       const cats = (MANIFEST.categories || []).filter(c => MANIFEST.works.some(w => w.category === c.id));
       // Label positions come from CSS classes (pos-0/1/2) so media queries can
@@ -1563,7 +1797,7 @@ TEMPLATE = r'''<!DOCTYPE html>
     // ---- CONTACT (single-screen page) ----
     function showContact() {
       setActiveNav('contact');
-      document.title = 'Contact · ' + (MANIFEST.site.title || '周未');
+      updateMeta({ title: 'Contact · ' + (MANIFEST.site.title || '周未') });
       const c = MANIFEST.site.contact || {};
       const rows = Object.entries(c).map(([k, v]) => `
         <div class="contact-row">
@@ -1739,13 +1973,26 @@ TEMPLATE = r'''<!DOCTYPE html>
       return '#' + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
     }
 
+    // ---- dynamic OG/meta tags ----
+    function updateMeta(opts) {
+      const title = opts.title || ((MANIFEST.site.title || '周未') + ' · ' + (MANIFEST.site.name_en || 'ZHOU WEI'));
+      const desc  = opts.desc  || '周未 — 写作者与批评者，跨越创意写作、文化批评与财经新闻三种语境。';
+      const img   = opts.img   || (MANIFEST.site.photo || '');
+      document.title = title;
+      const set = (sel, val) => { const el = document.querySelector(sel); if (el) el.setAttribute('content', val); };
+      set('meta[property="og:title"]', title);
+      set('meta[property="og:description"]', desc);
+      set('meta[property="og:image"]', img);
+      set('meta[name="twitter:title"]', title);
+      set('meta[name="twitter:description"]', desc);
+      set('meta[name="twitter:image"]', img);
+    }
+
     // ---- READER ----
     function showRead(id) {
       const work = MANIFEST.works.find(w => w.id === id);
       if (!work) { location.hash = '#/'; return; }
       setActiveNav(work.category);
-      document.title = work.title;
-
       const cat = (MANIFEST.categories || []).find(c => c.id === work.category);
       const by = BYLINE[work.category] || BYLINE.creative;
       const bylineText = (by.prefix || '') + '周未' + (by.suffix || '');
@@ -1769,6 +2016,18 @@ TEMPLATE = r'''<!DOCTYPE html>
       }
       paragraphs = rest.map(p => '　　' + p);
 
+      // Detect section headings for TOC (Chinese numeral, 第X章, 【...】 patterns)
+      const HEADING_RE = /^[一二三四五六七八九十]{1,3}[、.．]|^第[一二三四五六七八九十百千\d]+[章节部分编]|^【[^】]+】$/;
+      const headings = [];
+      const bodyItems = rest.map(p => {
+        if (p.length < 50 && HEADING_RE.test(p)) {
+          const hid = 'sec-' + headings.length;
+          headings.push({ id: hid, text: p });
+          return { type: 'h', id: hid, text: p };
+        }
+        return { type: 'p', text: '　　' + p };
+      });
+
       // Reading-time estimate (from raw paragraphs, before adding indent)
       const rawCharCount = rest.join('').replace(/\s/g, '').length;
       const wpm = /[\u4e00-\u9fff]/.test(rest.join('')) ? 350 : 200;
@@ -1789,7 +2048,31 @@ TEMPLATE = r'''<!DOCTYPE html>
             </div>` : ''}
         </div>` : '';
 
+      // Prev/next navigation within same category
+      const catWorks = MANIFEST.works.filter(w => w.category === work.category);
+      const curIdx = catWorks.findIndex(w => w.id === id);
+      const prevWork = curIdx > 0 ? catWorks[curIdx - 1] : null;
+      const nextWork = curIdx >= 0 && curIdx < catWorks.length - 1 ? catWorks[curIdx + 1] : null;
+
+      // Related works (same category, excluding current)
+      const related = MANIFEST.works
+        .filter(w => w.category === work.category && w.id !== id)
+        .slice(0, 3);
+
+      // TOC (only if 3+ headings)
+      const showTOC = headings.length >= 3;
+
+      // Update OG/meta for sharing
+      const ogDesc = work.subtitle || abstractText || `${cat ? cat.label + ' · ' : ''}${rawCharCount.toLocaleString()}字 · ${estMinutes} min read`;
+      const ogImg = work.cover || (MANIFEST.site.photo || '');
+      updateMeta({ title: work.title + ' · 周未', desc: ogDesc, img: ogImg });
+
       $view.innerHTML = `
+        ${showTOC ? `
+        <nav class="reader-toc" id="reader-toc">
+          <div class="toc-title">Contents</div>
+          <ol>${headings.map((h, i) => `<li><a href="#${h.id}" data-toc-target="${h.id}" class="${i === 0 ? 'active' : ''}">${escapeHtml(h.text)}</a></li>`).join('')}</ol>
+        </nav>` : ''}
         <article class="reader reader-variant-${work.category} fade-stagger">
           <a class="back" href="#/${work.category || ''}">← back</a>
           ${cat ? `<div class="cat-tag">${escapeHtml(cat.label)}</div>` : ''}
@@ -1802,11 +2085,86 @@ TEMPLATE = r'''<!DOCTYPE html>
           </div>
           ${paperMeta}
           <div class="reader-body" id="reader-body">
-            ${paragraphs.map(p => `<p class="para">${renderProse(p)}</p>`).join('')}
+            ${bodyItems.map(item => item.type === 'h' ? `<h2 class="toc-heading" id="${item.id}">${escapeHtml(item.text)}</h2>` : `<p class="para">${renderProse(item.text)}</p>`).join('')}
           </div>
           <div class="reader-end">— Fin —</div>
+          <div class="share-bar">
+            <button class="share-btn" id="share-copy" aria-label="复制链接">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              <span>复制链接</span>
+            </button>
+            <button class="share-btn" id="share-qr-btn" aria-label="二维码">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3M21 14v7M14 21h3"/></svg>
+              <span>二维码</span>
+            </button>
+          </div>
+          <div class="share-qr" id="share-qr">
+            <img id="qr-img" alt="QR Code" />
+            <p class="qr-hint">扫码在手机上阅读</p>
+          </div>
+          ${related.length ? `
+          <div class="reader-related">
+            <p class="related-title">More from ${escapeHtml(cat ? cat.label : '')}</p>
+            <div class="related-list">
+              ${related.map(w => `
+                <a class="related-item" href="#/read/${encodeURIComponent(w.id)}">
+                  <div class="ri-year">${escapeHtml(w.year || '')}</div>
+                  <div class="ri-title">${escapeHtml(w.title)}</div>
+                  ${w.subtitle ? `<div class="ri-desc">${escapeHtml(w.subtitle)}</div>` : ''}
+                </a>
+              `).join('')}
+            </div>
+          </div>` : ''}
+          ${(prevWork || nextWork) ? `
+          <div class="reader-nav">
+            ${prevWork ? `<a class="prev" href="#/read/${encodeURIComponent(prevWork.id)}"><span class="nav-label">← Previous</span><span class="nav-title">${escapeHtml(prevWork.title)}</span></a>` : '<span></span>'}
+            ${nextWork ? `<a class="next" href="#/read/${encodeURIComponent(nextWork.id)}"><span class="nav-label">Next →</span><span class="nav-title">${escapeHtml(nextWork.title)}</span></a>` : ''}
+          </div>` : ''}
         </article>
       `;
+      initTOCTracking();
+      initShare();
+    }
+
+    // ---- share: copy link + QR code ----
+    function initShare() {
+      const copyBtn = document.getElementById('share-copy');
+      const qrBtn = document.getElementById('share-qr-btn');
+      const qrBox = document.getElementById('share-qr');
+      const qrImg = document.getElementById('qr-img');
+
+      if (copyBtn) {
+        copyBtn.addEventListener('click', async () => {
+          const url = window.location.href;
+          try {
+            await navigator.clipboard.writeText(url);
+          } catch {
+            // Fallback for older browsers
+            const ta = document.createElement('textarea');
+            ta.value = url;
+            ta.style.position = 'fixed'; ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+          }
+          const label = copyBtn.querySelector('span');
+          const orig = label.textContent;
+          label.textContent = '已复制 ✓';
+          copyBtn.classList.add('copied');
+          setTimeout(() => { label.textContent = orig; copyBtn.classList.remove('copied'); }, 2000);
+        });
+      }
+
+      if (qrBtn && qrBox && qrImg) {
+        qrBtn.addEventListener('click', () => {
+          const isVisible = qrBox.classList.toggle('visible');
+          if (isVisible && !qrImg.src) {
+            const url = encodeURIComponent(window.location.href);
+            qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=8&data=${url}`;
+          }
+        });
+      }
     }
 
     // Wrap 「…」 dialogue runs so speech carries its own voice on the page.
@@ -1820,6 +2178,39 @@ TEMPLATE = r'''<!DOCTYPE html>
       }
       out += escapeHtml(text.slice(last));
       return out;
+    }
+
+    // ---- TOC scroll tracking via IntersectionObserver ----
+    let tocObserver = null;
+    function initTOCTracking() {
+      if (tocObserver) { tocObserver.disconnect(); tocObserver = null; }
+      const toc = document.getElementById('reader-toc');
+      if (!toc) return;
+      const links = [...toc.querySelectorAll('a[data-toc-target]')];
+      const targets = links.map(l => document.getElementById(l.dataset.tocTarget)).filter(Boolean);
+      if (!targets.length) return;
+      tocObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const id = entry.target.id;
+            links.forEach(l => l.classList.toggle('active', l.dataset.tocTarget === id));
+          }
+        });
+      }, { rootMargin: '-100px 0px -70% 0px' });
+      targets.forEach(t => tocObserver.observe(t));
+
+      // Click handler: smooth-scroll instead of changing location.hash
+      links.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const target = document.getElementById(link.dataset.tocTarget);
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            links.forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
+          }
+        });
+      });
     }
 
     // ---- scroll: progress bar + back-to-top ----
@@ -1853,6 +2244,7 @@ html = TEMPLATE
 html = html.replace('__MANIFEST_JSON__', json.dumps(manifest, ensure_ascii=False))
 html = html.replace('__WORKS_JSON__', json.dumps(works_text, ensure_ascii=False))
 html = html.replace('__WORLD_PATHS__', json.dumps(world_paths))
+html = html.replace('__OG_IMAGE__', site.get('photo', ''))
 OUT.write_text(html, encoding='utf-8')
 
 size_kb = OUT.stat().st_size / 1024
