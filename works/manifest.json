@@ -65,14 +65,6 @@
         ]
       },
       {
-        "year": "2023.07 – 2023.11",
-        "city": "杭州",
-        "cityEn": "Hangzhou",
-        "org": "第19届杭州亚运会及第4届亚残运会",
-        "role": "转播服务志愿者",
-        "type": "event"
-      },
-      {
         "year": "2022 – 2026",
         "city": "杭州",
         "cityEn": "Hangzhou",
@@ -86,12 +78,104 @@
       "wechat": "Cyberzhouwei"
     }
   },
+  "media": {
+    "accounts": [
+      {
+        "platform": "wechat",
+        "name": "周未",
+        "handle": "微信公众号",
+        "bio": "写作、阅读与日常观察",
+        "followers": "待填写"
+      },
+      {
+        "platform": "xiaohongshu",
+        "name": "周未",
+        "handle": "@Cyberzhouwei",
+        "bio": "文字生活 / 读书笔记 / 城市漫游",
+        "followers": "待填写"
+      }
+    ],
+    "posts": [
+      {
+        "id": "wx-sample-1",
+        "platform": "wechat",
+        "title": "示例标题 · 请替换为真实公众号文章",
+        "subtitle": "这里是副标题或摘要，可在 manifest.json 中修改",
+        "date": "2026.06",
+        "cover": "",
+        "url": "",
+        "metrics": { "read": "1,200+", "like": "86", "comment": "12" }
+      },
+      {
+        "id": "wx-sample-2",
+        "platform": "wechat",
+        "title": "示例标题 · 请替换为真实公众号文章",
+        "subtitle": "这里是副标题或摘要，可在 manifest.json 中修改",
+        "date": "2026.05",
+        "cover": "",
+        "url": "",
+        "metrics": { "read": "890+", "like": "52", "comment": "8" }
+      },
+      {
+        "id": "xhs-sample-1",
+        "platform": "xiaohongshu",
+        "title": "示例标题 · 请替换为真实小红书笔记",
+        "subtitle": "这里是笔记正文摘要，可在 manifest.json 中修改",
+        "date": "2026.06",
+        "cover": "",
+        "url": "",
+        "metrics": { "like": "234", "collect": "56", "comment": "18" }
+      },
+      {
+        "id": "xhs-sample-2",
+        "platform": "xiaohongshu",
+        "title": "示例标题 · 请替换为真实小红书笔记",
+        "subtitle": "这里是笔记正文摘要，可在 manifest.json 中修改",
+        "date": "2026.05",
+        "cover": "",
+        "url": "",
+        "metrics": { "like": "189", "collect": "42", "comment": "9" }
+      },
+      {
+        "id": "xhs-sample-3",
+        "platform": "xiaohongshu",
+        "title": "示例标题 · 请替换为真实小红书笔记",
+        "subtitle": "这里是笔记正文摘要，可在 manifest.json 中修改",
+        "date": "2026.04",
+        "cover": "",
+        "url": "",
+        "metrics": { "like": "312", "collect": "78", "comment": "23" }
+      }
+    ]
+  },
+
   "categories": [
     { "id": "creative", "label": "创意写作" },
     { "id": "criticism", "label": "文化批评" },
     { "id": "news", "label": "财经新闻" }
   ],
   "works": [
+    {
+      "id": "beijing-beijing",
+      "title": "北京北京",
+      "subtitle": "中篇小说 · 十章",
+      "category": "creative",
+      "format": "novel",
+      "color": "#cc3024",
+      "cover": "",
+      "chapters": [
+        { "title": "第一章", "file": "beijing-beijing/1.第一章.md" },
+        { "title": "第二章", "file": "beijing-beijing/2.第二章.md" },
+        { "title": "第三章", "file": "beijing-beijing/3.第三章.md" },
+        { "title": "第四章", "file": "beijing-beijing/4.第四章.md" },
+        { "title": "第五章", "file": "beijing-beijing/5.第五章.md" },
+        { "title": "第六章", "file": "beijing-beijing/6.第六章.md" },
+        { "title": "第七章", "file": "beijing-beijing/7.第七章.md" },
+        { "title": "第八章", "file": "beijing-beijing/8.第八章.md" },
+        { "title": "第九章", "file": "beijing-beijing/9.第九章.md" },
+        { "title": "第十章", "file": "beijing-beijing/10.第十章.md" }
+      ]
+    },
     {
       "id": "victoria-peak",
       "title": "太平山顶",
