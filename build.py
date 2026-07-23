@@ -3528,6 +3528,250 @@ TEMPLATE = r'''<!DOCTYPE html>
       .archive-lens h3 { margin-top: 42px; font-size: 25px; }
     }
 
+    /* Financial reporting is composed as one abstract newspaper front page. */
+    .financial-paper {
+      position: relative;
+      min-height: 730px;
+      padding: 24px 28px 0;
+      overflow: hidden;
+      color: #241f1a;
+      background:
+        linear-gradient(90deg, transparent 0 49.9%, rgba(45,37,30,.035) 50%, transparent 50.1%),
+        #eee4cf;
+      border-top: 2px solid #241f1a;
+      border-bottom: 2px solid #241f1a;
+      isolation: isolate;
+    }
+    .financial-paper::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      opacity: .28;
+      background-image: repeating-linear-gradient(0deg, rgba(36,31,26,.045) 0 1px, transparent 1px 5px);
+      pointer-events: none;
+    }
+    .financial-masthead {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: end;
+      padding: 0 0 13px;
+      border-bottom: 5px double #241f1a;
+    }
+    .financial-name {
+      font-family: 'Cormorant Garamond', 'Noto Serif SC', serif;
+      font-size: clamp(42px, 6.2vw, 88px);
+      font-weight: 500;
+      line-height: .8;
+      letter-spacing: -.055em;
+    }
+    .financial-name small {
+      margin-left: 10px;
+      font-family: 'Noto Serif SC', serif;
+      font-size: .25em;
+      font-weight: 500;
+      letter-spacing: .16em;
+      vertical-align: middle;
+    }
+    .financial-issue {
+      padding-bottom: 2px;
+      text-align: right;
+      font-family: var(--fd-mono);
+      font-size: 8px;
+      line-height: 1.7;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .financial-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.62fr) minmax(250px, .78fr);
+      min-height: 548px;
+    }
+    .financial-story {
+      position: relative;
+      min-width: 0;
+      padding: 24px 26px 30px 0;
+      color: inherit;
+      outline: none;
+      transition: opacity 180ms ease, transform 240ms cubic-bezier(.16,1,.3,1), background-color 180ms ease;
+    }
+    .financial-story + .financial-story {
+      padding-right: 0;
+      padding-left: 26px;
+      border-left: 1px solid rgba(36,31,26,.72);
+    }
+    .financial-story:focus-visible { outline: 2px solid #a63a2d; outline-offset: -4px; }
+    .financial-story:active { transform: scale(.985); }
+    .financial-kicker {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(36,31,26,.62);
+      font-family: var(--fd-mono);
+      font-size: 8px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .financial-motif {
+      position: relative;
+      height: 210px;
+      margin: 20px 0 22px;
+      overflow: hidden;
+      background: rgba(45,66,55,.08);
+    }
+    .merger-motif::before,
+    .merger-motif::after {
+      content: '';
+      position: absolute;
+      top: 40px;
+      width: 42%;
+      height: 128px;
+      border-radius: 4px;
+      transition: transform 260ms cubic-bezier(.16,1,.3,1);
+    }
+    .merger-motif::before { left: 7%; background: #31463b; transform: translateX(-7px); }
+    .merger-motif::after { right: 7%; background: #9d5a36; transform: translateX(7px); }
+    .merger-seam {
+      position: absolute;
+      z-index: 2;
+      left: 50%;
+      top: 25px;
+      width: 2px;
+      height: 158px;
+      background: #a52f28;
+      transform: translateX(-50%);
+      transition: height 240ms cubic-bezier(.16,1,.3,1), top 240ms cubic-bezier(.16,1,.3,1);
+    }
+    .merger-seam::after {
+      content: 'M + A';
+      position: absolute;
+      left: 11px;
+      top: 50%;
+      white-space: nowrap;
+      font-family: var(--fd-mono);
+      font-size: 8px;
+      letter-spacing: .14em;
+    }
+    .ipo-motif { background: #d7c8aa; }
+    .ipo-ring {
+      position: absolute;
+      left: 50%;
+      top: 27px;
+      width: 134px;
+      height: 134px;
+      border: 18px solid #344c40;
+      border-radius: 50%;
+      transform: translateX(-50%) rotate(-12deg);
+      transition: transform 260ms cubic-bezier(.16,1,.3,1);
+    }
+    .ipo-ring::before,
+    .ipo-ring::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 105px;
+      height: 2px;
+      background: #344c40;
+      transform: translate(-50%,-50%);
+    }
+    .ipo-ring::after { transform: translate(-50%,-50%) rotate(90deg); }
+    .ipo-rise {
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      width: 3px;
+      height: 75px;
+      background: #a52f28;
+      transform: translateX(-50%);
+      transform-origin: bottom;
+      transition: transform 260ms cubic-bezier(.16,1,.3,1);
+    }
+    .ipo-number {
+      position: absolute;
+      right: 12px;
+      bottom: 10px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(31px, 3.3vw, 48px);
+      line-height: 1;
+      letter-spacing: -.04em;
+    }
+    .financial-story h3 {
+      margin: 0;
+      font-family: 'Noto Serif SC', 'Songti SC', serif;
+      font-size: clamp(22px, 2.6vw, 38px);
+      font-weight: 600;
+      line-height: 1.32;
+      letter-spacing: -.035em;
+    }
+    .financial-side h3 { font-size: clamp(20px, 2vw, 29px); }
+    .financial-deck {
+      margin: 16px 0 0;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
+      overflow: hidden;
+      font-size: 11px;
+      line-height: 1.85;
+      text-align: justify;
+    }
+    .financial-read {
+      display: inline-flex;
+      margin-top: 19px;
+      padding-bottom: 2px;
+      border-bottom: 1px solid currentColor;
+      font-family: var(--fd-mono);
+      font-size: 8px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+    .financial-strip {
+      display: flex;
+      gap: 30px;
+      align-items: center;
+      margin: 0 -28px;
+      padding: 10px 28px 11px;
+      overflow: hidden;
+      color: #eee4cf;
+      background: #293e35;
+      font-family: var(--fd-mono);
+      font-size: 8px;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .financial-strip b { color: #d88955; font-weight: 500; }
+    @media (hover: hover) and (pointer: fine) {
+      .financial-story:hover { z-index: 2; transform: translateY(-6px); background: rgba(255,250,239,.34); }
+      .financial-grid:has(.financial-story:hover) .financial-story:not(:hover) { opacity: .48; }
+      .financial-lead:hover .merger-motif::before { transform: translateX(5px); }
+      .financial-lead:hover .merger-motif::after { transform: translateX(-5px); }
+      .financial-lead:hover .merger-seam { top: 16px; height: 176px; }
+      .financial-side:hover .ipo-ring { transform: translateX(-50%) rotate(0); }
+      .financial-side:hover .ipo-rise { transform: translateX(-50%) scaleY(1.28); }
+    }
+    @media (max-width: 800px) {
+      .financial-paper { min-height: auto; padding: 20px 18px 0; }
+      .financial-name { font-size: clamp(38px, 10vw, 64px); }
+      .financial-grid { grid-template-columns: 1fr; min-height: auto; }
+      .financial-story { padding: 24px 0 30px; }
+      .financial-story + .financial-story { padding: 26px 0 34px; border-left: 0; border-top: 1px solid rgba(36,31,26,.72); }
+      .financial-motif { height: 190px; }
+      .financial-side h3 { font-size: clamp(21px, 5vw, 29px); }
+      .financial-strip { margin: 0 -18px; padding-left: 18px; padding-right: 18px; }
+    }
+    @media (max-width: 520px) {
+      .financial-masthead { grid-template-columns: 1fr; gap: 12px; }
+      .financial-issue { padding: 9px 0 0; border-top: 1px solid rgba(36,31,26,.55); text-align: left; }
+      .financial-name small { display: block; margin: 8px 0 0; }
+      .financial-story h3 { font-size: 25px; }
+      .financial-motif { height: 174px; }
+      .merger-motif::before, .merger-motif::after { top: 32px; height: 108px; }
+      .ipo-ring { top: 20px; width: 116px; height: 116px; border-width: 16px; }
+    }
+
     .curator-journey,
     .curator-section.is-reversed .curator-journey,
     .curator-contact {
@@ -4400,6 +4644,37 @@ TEMPLATE = r'''<!DOCTYPE html>
         </div>`;
       }
 
+      function financialNewspaper() {
+        const works = (MANIFEST.works || []).filter(w => w.category === 'news');
+        const lead = works.find(w => w.id === 'china-ma-fund-2024') || works[0];
+        const side = works.find(w => w.id === 'new2') || works[1];
+        const story = (w, type) => {
+          if (!w) return '';
+          const isLead = type === 'lead';
+          const motif = isLead
+            ? '<div class="financial-motif merger-motif" aria-hidden="true"><i class="merger-seam"></i></div>'
+            : '<div class="financial-motif ipo-motif" aria-hidden="true"><i class="ipo-ring"></i><i class="ipo-rise"></i><strong class="ipo-number">498.3%</strong></div>';
+          return `<a class="financial-story financial-${type}" href="#/read/${encodeURIComponent(w.id)}">
+            <div class="financial-kicker"><span>${isLead ? '01 / M&A' : '02 / IPO'}</span><span>${isLead ? 'Capital structure' : 'Market debut'}</span></div>
+            ${motif}
+            <h3>${escapeHtml(w.title)}</h3>
+            <p class="financial-deck">${escapeHtml(w.subtitle || '')}</p>
+            <span class="financial-read">read dispatch ↗</span>
+          </a>`;
+        };
+        return `<div class="financial-paper fade-stagger">
+          <header class="financial-masthead">
+            <div class="financial-name">Field Notes<small>财经现场</small></div>
+            <div class="financial-issue">No. 03 · Zhou Wei<br>${String(works.length).padStart(2, '0')} reports / selected works</div>
+          </header>
+          <div class="financial-grid">
+            ${story(lead, 'lead')}
+            ${story(side, 'side')}
+          </div>
+          <div class="financial-strip" aria-hidden="true"><span><b>M&A</b> / 并购重组</span><span><b>IPO</b> / 北交所</span><span>Corporate observation</span><span>Policy & capital</span><span>现场 · 结构 · 人</span></div>
+        </div>`;
+      }
+
       const journeyHTML = (s.journey || []).map(j => `
         <div class="curator-stop">
           <div class="curator-stop-year">${escapeHtml(j.year || '')}</div>
@@ -4456,7 +4731,7 @@ TEMPLATE = r'''<!DOCTYPE html>
                 <h2>现场<span>结构正在发生</span></h2>
                 <p>当历史不再只存在于文学中，它表现为企业、资本、制度和人的选择。新闻写作是对现实结构的另一种细读。</p>
               </div>
-              <div class="curator-works fade-stagger">${workCards('news')}</div>
+              ${financialNewspaper()}
             </section>
 
             <section class="curator-section is-reversed" id="curated-journey" data-curator-section="journey">
