@@ -2936,35 +2936,34 @@
       .creative-world:has(.creative-object:hover) .creative-object:not(:hover) { opacity: .62; }
     }
     .creative-symbol { width: 100%; height: 100%; display: block; overflow: visible; }
-    .creative-object.mountain { right: 8%; top: 8%; width: 32%; height: 35%; }
-    .creative-object.mountain .topo-line {
+    .creative-object.mountain { right: 12%; top: 18%; width: 25%; height: 18%; }
+    .creative-object.mountain .mountain-line {
       fill: none;
-      stroke: rgba(236,221,188,.72);
-      stroke-width: 1.25;
+      stroke: rgba(236,221,188,.78);
+      stroke-width: 2;
       vector-effect: non-scaling-stroke;
       transition: stroke 180ms ease, transform 260ms cubic-bezier(.16,1,.3,1);
       transform-origin: center;
     }
     .creative-object.mountain .tram-track {
       stroke: #2c3932;
-      stroke-width: 2;
-      stroke-dasharray: 5 5;
+      stroke-width: 1.4;
       vector-effect: non-scaling-stroke;
     }
     .creative-object.mountain .tram-car {
       fill: #8f302b;
       stroke: #e6d4ad;
-      stroke-width: 1.5;
+      stroke-width: 0;
       vector-effect: non-scaling-stroke;
       transition: transform 260ms cubic-bezier(.16,1,.3,1);
       transform-box: fill-box;
       transform-origin: center;
     }
     @media (hover: hover) and (pointer: fine) {
-      .creative-object.mountain:hover .topo-line:nth-child(2n) { transform: scale(1.018); stroke: rgba(247,232,198,.96); }
-      .creative-object.mountain:hover .tram-car { transform: translate(-5px,-5px); }
+      .creative-object.mountain:hover .mountain-line:nth-child(2) { transform: translateY(-3px); stroke: rgba(247,232,198,.98); }
+      .creative-object.mountain:hover .tram-car { transform: translate(-6px,-4px); }
     }
-    .creative-object.mountain::after { right: 4%; bottom: 4%; }
+    .creative-object.mountain::after { right: 4%; bottom: -19px; }
     .creative-object.raft { left: 46%; bottom: 20%; width: 22%; height: 9%; transform: rotate(-5deg); }
     .creative-object.raft::before {
       content: '';
@@ -2983,35 +2982,22 @@
       box-shadow: inset 20px 0 rgba(241,213,170,.24), 0 10px 14px rgba(18,26,22,.32);
     }
     .creative-object.road::after { left: 26%; bottom: -17px; }
-    .creative-object.city { left: 5%; top: 27%; width: 27%; height: 24%; }
-    .creative-object.city .city-mass { fill: rgba(34,50,43,.72); }
-    .creative-object.city .city-ghost { fill: rgba(230,214,181,.28); }
-    .creative-object.city .city-loop {
+    .creative-object.city { left: 10%; top: 33%; width: 18%; height: 11%; }
+    .creative-object.city .city-block-a { fill: #293b33; }
+    .creative-object.city .city-block-b { fill: #6f765f; }
+    .creative-object.city .city-bridge {
       fill: none;
       stroke: #9c312b;
-      stroke-width: 2.2;
+      stroke-width: 2;
       vector-effect: non-scaling-stroke;
-      transition: stroke-width 180ms ease;
+      transition: stroke-width 180ms ease, transform 240ms cubic-bezier(.16,1,.3,1);
+      transform-origin: center;
     }
-    .creative-object.city .city-node { fill: #ead8b2; stroke: #9c312b; stroke-width: 2; vector-effect: non-scaling-stroke; }
-    .creative-object.city .city-node-text {
-      fill: #8d2f29;
-      font-family: 'Noto Serif SC', serif;
-      font-size: 17px;
-      text-anchor: middle;
-      dominant-baseline: middle;
-    }
-    .creative-object.city .city-route {
-      fill: none;
-      stroke: rgba(235,220,190,.7);
-      stroke-width: 1;
-      stroke-dasharray: 2 5;
-      vector-effect: non-scaling-stroke;
-    }
+    .creative-object.city .city-node { fill: #9c312b; }
     @media (hover: hover) and (pointer: fine) {
-      .creative-object.city:hover .city-loop { stroke-width: 3; }
+      .creative-object.city:hover .city-bridge { stroke-width: 3; transform: scaleX(1.04); }
     }
-    .creative-object.city::after { left: 43%; bottom: -12px; transform: translateX(-50%); }
+    .creative-object.city::after { left: 50%; bottom: -22px; transform: translateX(-50%); }
     .creative-manuscript {
       position: absolute;
       z-index: 12;
@@ -3041,8 +3027,8 @@
       .creative-world { min-height: 920px; background: linear-gradient(180deg,#ead8b8 0 28%,#536457 28.2%,#263b35 100%); }
       .creative-world-head { left: 14px; top: 16px; }
       .creative-city { top: 20%; width: 45%; }
-      .creative-object.city { left: 2%; top: 19%; width: 47%; height: 25%; }
-      .creative-object.mountain { right: 1%; top: 12%; width: 53%; height: 28%; }
+      .creative-object.city { left: 8%; top: 25%; width: 36%; height: 12%; }
+      .creative-object.mountain { right: 5%; top: 22%; width: 42%; height: 14%; }
       .creative-object.road { left: 8%; bottom: 43%; width: 36%; }
       .creative-object.raft { left: 48%; bottom: 43%; width: 42%; }
       .creative-river { left: 18%; bottom: 0; width: 100%; height: 70%; }
@@ -3838,30 +3824,17 @@
         const objects = works.map((w, i) => {
           const [kind, index] = slots[w.id] || ['road', String(i + 1).padStart(2, '0')];
           const symbol = kind === 'city' ? `
-            <svg class="creative-symbol" viewBox="0 0 280 180" aria-hidden="true">
-              <path class="city-route" d="M18 135 C62 105 94 148 136 112 S210 76 264 96"/>
-              <g class="city-ghost">
-                <rect x="32" y="55" width="24" height="98"/><rect x="65" y="25" width="31" height="128"/>
-                <rect x="176" y="44" width="28" height="109"/><rect x="216" y="68" width="32" height="85"/>
-              </g>
-              <g class="city-mass">
-                <rect x="15" y="88" width="20" height="65"/><rect x="43" y="48" width="27" height="105"/>
-                <rect x="78" y="14" width="34" height="139"/><rect x="166" y="30" width="31" height="123"/>
-                <rect x="205" y="76" width="22" height="77"/><rect x="234" y="50" width="30" height="103"/>
-              </g>
-              <path class="city-loop" d="M52 101 C67 49 107 36 140 79 C170 119 205 124 228 76 C244 42 221 20 188 30 C142 43 122 136 78 132 C48 129 38 116 52 101Z"/>
-              <circle class="city-node" cx="88" cy="61" r="18"/><text class="city-node-text" x="88" y="62">京</text>
-              <circle class="city-node" cx="202" cy="96" r="18"/><text class="city-node-text" x="202" y="97">京</text>
+            <svg class="creative-symbol" viewBox="0 0 260 100" aria-hidden="true">
+              <g class="city-block-a"><rect x="18" y="26" width="27" height="58" rx="3"/><rect x="51" y="8" width="38" height="76" rx="3"/><rect x="95" y="38" width="23" height="46" rx="3"/></g>
+              <g class="city-block-b"><rect x="142" y="34" width="25" height="50" rx="3"/><rect x="173" y="15" width="39" height="69" rx="3"/><rect x="218" y="45" width="24" height="39" rx="3"/></g>
+              <path class="city-bridge" d="M46 54 C87 17 122 17 157 51 C185 78 207 72 229 49"/>
+              <circle class="city-node" cx="46" cy="54" r="6"/><circle class="city-node" cx="229" cy="49" r="6"/>
             </svg>` : kind === 'mountain' ? `
-            <svg class="creative-symbol" viewBox="0 0 360 250" aria-hidden="true">
-              <path d="M18 222 C48 170 73 183 103 137 C133 91 154 104 179 59 C197 28 218 43 239 79 C262 119 283 117 342 222Z" fill="rgba(44,62,52,.72)"/>
-              <path class="topo-line" d="M35 216 C68 177 91 188 119 146 C145 107 162 118 184 78 C201 47 218 61 238 94 C257 126 281 137 327 216"/>
-              <path class="topo-line" d="M57 215 C82 190 104 194 128 157 C151 122 168 132 188 96 C201 72 216 78 232 106 C250 137 271 151 306 215"/>
-              <path class="topo-line" d="M81 214 C105 195 119 195 141 166 C161 139 175 145 191 116 C202 97 214 99 228 123 C244 149 260 164 283 214"/>
-              <path class="topo-line" d="M108 214 C127 199 139 195 155 175 C172 154 183 159 195 137 C204 121 213 121 224 141 C236 162 248 178 260 214"/>
-              <path class="tram-track" d="M92 218 L246 76"/>
-              <g class="tram-car" transform="translate(157 145) rotate(-42)"><rect x="-18" y="-10" width="36" height="20" rx="3"/><path d="M-11 -10V10M7 -10V10" stroke="#e6d4ad" stroke-width="1"/></g>
-              <circle cx="246" cy="76" r="4" fill="#ead8b2"/>
+            <svg class="creative-symbol" viewBox="0 0 320 130" aria-hidden="true">
+              <path class="mountain-line" d="M14 106 C65 101 98 91 131 60 C151 41 166 22 183 25 C204 29 216 65 241 79 C261 91 282 96 308 97"/>
+              <path class="mountain-line" d="M19 118 C76 113 111 100 143 72 C163 54 174 40 188 42 C207 45 220 76 244 89 C265 101 286 105 309 106" opacity=".48"/>
+              <path class="tram-track" d="M91 99 L230 65"/>
+              <g class="tram-car" transform="translate(164 81) rotate(-14)"><rect x="-22" y="-9" width="44" height="18" rx="9"/></g>
             </svg>` : '';
           return `<a class="creative-object ${kind}${i === 0 ? ' is-active' : ''}"
             href="#/read/${encodeURIComponent(w.id)}"
