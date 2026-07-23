@@ -3359,6 +3359,175 @@ TEMPLATE = r'''<!DOCTYPE html>
       .archive-lens h3 { margin-top: 62px; font-size: 27px; }
     }
 
+    /* Desk composition: scattered objects, same spatial grammar as the writing landscape. */
+    .criticism-archive {
+      min-height: min(76vw, 840px);
+      padding: 0;
+      display: block;
+      background:
+        radial-gradient(circle at 20% 18%, rgba(255,250,239,.72), transparent 26%),
+        linear-gradient(112deg, rgba(86,65,43,.045), transparent 42%),
+        #d8c7aa;
+    }
+    .criticism-archive::before {
+      content: '';
+      position: absolute;
+      left: 5%;
+      top: 9%;
+      width: 31%;
+      height: 44%;
+      border: 1px solid rgba(37,31,25,.2);
+      background:
+        repeating-linear-gradient(180deg, transparent 0 25px, rgba(37,31,25,.09) 25px 26px),
+        rgba(240,227,202,.34);
+      transform: rotate(-3deg);
+      box-shadow: 11px 13px 0 rgba(53,42,31,.07);
+    }
+    .criticism-archive::after {
+      content: 'READING DESK · 文学批评';
+      right: 18px;
+      top: 18px;
+      writing-mode: horizontal-tb;
+      color: rgba(32,29,25,.58);
+    }
+    .archive-thread {
+      position: absolute;
+      z-index: 1;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: visible;
+    }
+    .archive-thread path {
+      fill: none;
+      stroke: rgba(142,43,38,.48);
+      stroke-width: 1.2;
+      vector-effect: non-scaling-stroke;
+    }
+    .archive-thread circle { fill: #96302b; }
+    .archive-ledger {
+      position: absolute;
+      inset: 0;
+      display: block;
+      padding: 0;
+    }
+    .archive-ledger::before { display: none; }
+    .archive-entry {
+      position: absolute;
+      z-index: 4;
+      min-height: 0;
+      padding: 0;
+      display: block;
+      border: 0;
+      background: transparent;
+      transition: transform 260ms cubic-bezier(.16,1,.3,1), opacity 180ms ease, filter 180ms ease;
+    }
+    .archive-entry:last-child { border: 0; }
+    .archive-entry:nth-child(1) { left: 10%; top: 18%; width: 20%; height: 24%; transform: rotate(-4deg); }
+    .archive-entry:nth-child(2) { left: 34%; bottom: 17%; width: 24%; height: 18%; transform: rotate(2deg); }
+    .archive-entry:nth-child(3) { right: 27%; top: 18%; width: 18%; height: 24%; transform: rotate(5deg); }
+    .archive-entry::before {
+      content: attr(data-index);
+      left: auto;
+      right: -8px;
+      top: -8px;
+      width: 28px;
+      height: 28px;
+      border: 1px solid rgba(142,43,38,.72);
+      color: #8d2925;
+      background: rgba(236,220,189,.9);
+      transform: none;
+    }
+    .archive-entry::after {
+      content: attr(data-short);
+      position: absolute;
+      left: 50%;
+      bottom: -27px;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      padding: 6px 8px 5px;
+      border: 1px solid rgba(37,31,25,.55);
+      background: rgba(239,225,195,.9);
+      box-shadow: 3px 4px 0 rgba(37,31,25,.09);
+      font-family: var(--fd-mono);
+      font-size: 8px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .archive-entry.is-active { background: transparent; }
+    .archive-entry.is-active::before { color: #efe1c5; background: #96302b; transform: scale(1.06); }
+    .archive-entry-copy { display: none; }
+    .archive-motif { width: 100%; height: 100%; }
+    .archive-motif.history .frame { width: 52%; height: 82%; background: rgba(237,222,193,.28); box-shadow: 8px 10px 0 rgba(48,39,30,.09); }
+    .archive-motif.history .frame:first-child { left: 7%; top: 4%; }
+    .archive-motif.history .frame:nth-child(2) { left: 37%; top: 13%; }
+    .archive-motif.history .crack { left: 49%; height: 100%; }
+    .archive-motif.translation { display: block; padding: 0; }
+    .archive-motif.translation i { position: absolute; left: 0; height: 9px; border-radius: 5px; box-shadow: 4px 5px 0 rgba(37,31,25,.08); }
+    .archive-motif.translation i:nth-child(1) { top: 16%; }
+    .archive-motif.translation i:nth-child(2) { top: 35%; }
+    .archive-motif.translation i:nth-child(3) { top: 54%; }
+    .archive-motif.translation i:nth-child(4) { top: 73%; }
+    .archive-motif.translation::after { right: 0; bottom: 1%; padding: 6px 9px; }
+    .archive-motif.ornament .swatch { width: 36%; height: 78%; top: 10%; box-shadow: 5px 7px 0 rgba(37,31,25,.08); }
+    .archive-motif.ornament .swatch:nth-child(1) { left: 0; }
+    .archive-motif.ornament .swatch:nth-child(2) { left: 32%; }
+    .archive-motif.ornament .swatch:nth-child(3) { left: 64%; }
+    @media (hover: hover) and (pointer: fine) {
+      .archive-entry:hover { transform: translateY(-8px) rotate(0); background: transparent; }
+      .archive-ledger:has(.archive-entry:hover) .archive-entry:not(:hover) { opacity: .54; }
+    }
+    .archive-lens {
+      position: absolute;
+      z-index: 6;
+      right: 3%;
+      top: auto;
+      bottom: 4%;
+      align-self: auto;
+      width: min(390px, 32%);
+      min-height: 300px;
+      padding: 20px 22px 18px;
+      border: 1px solid rgba(47,38,31,.62);
+      border-left: 1px solid rgba(47,38,31,.62);
+      color: #2b241e;
+      background: rgba(239,225,195,.94);
+      box-shadow: 11px 13px 0 rgba(37,31,25,.18), 0 26px 52px rgba(37,31,25,.16);
+      transform: rotate(-.8deg);
+    }
+    .archive-lens::before {
+      width: 130px;
+      right: 14px;
+      top: 14px;
+      border-color: rgba(142,43,38,.34);
+      background: transparent;
+      box-shadow: none;
+    }
+    .archive-lens h3 { margin: 44px 0 14px; font-size: clamp(21px, 2.25vw, 32px); }
+    .archive-abstract { -webkit-line-clamp: 4; font-size: 11px; line-height: 1.8; }
+    .archive-read { margin-top: 18px; }
+    @media (max-width: 800px) {
+      .criticism-archive { min-height: 860px; padding: 0; }
+      .criticism-archive::before { left: 2%; top: 7%; width: 46%; height: 38%; }
+      .archive-ledger { padding: 0; }
+      .archive-entry { min-height: 0; padding: 0; display: block; }
+      .archive-entry:nth-child(1) { left: 8%; top: 15%; width: 30%; height: 19%; }
+      .archive-entry:nth-child(2) { left: 12%; bottom: 35%; width: 38%; height: 14%; }
+      .archive-entry:nth-child(3) { right: 8%; top: 15%; width: 30%; height: 20%; }
+      .archive-motif { width: 100%; transform: none; }
+      .archive-lens { position: absolute; left: 14px; right: 14px; bottom: 24px; width: auto; min-height: 290px; padding: 18px 20px; }
+      .archive-lens::before { width: 120px; right: 10px; }
+    }
+    @media (max-width: 520px) {
+      .criticism-archive { min-height: 920px; }
+      .archive-entry { grid-template-columns: none; }
+      .archive-entry:nth-child(1) { left: 7%; top: 14%; width: 34%; height: 18%; }
+      .archive-entry:nth-child(2) { left: 9%; bottom: 38%; width: 44%; height: 13%; }
+      .archive-entry:nth-child(3) { right: 7%; top: 15%; width: 34%; height: 18%; }
+      .archive-entry-copy { display: none; }
+      .archive-lens h3 { margin-top: 42px; font-size: 25px; }
+    }
+
     .curator-journey,
     .curator-section.is-reversed .curator-journey,
     .curator-contact {
@@ -4193,9 +4362,9 @@ TEMPLATE = r'''<!DOCTYPE html>
       function criticismArchive() {
         const works = (MANIFEST.works || []).filter(w => w.category === 'criticism');
         const apparatus = {
-          'elieen-chang': { motif: 'history', keywords: 'history · modernity · the conquered', label: '镜像 / 历史裂缝' },
-          'quqiubai': { motif: 'translation', keywords: 'minor literature · translation · language', label: '涂抹 / 翻译插条' },
-          'zhutianwen': { motif: 'ornament', keywords: 'ornament · lyricism · subjectivity', label: '装饰 / 感官色样' }
+          'elieen-chang': { motif: 'history', keywords: 'history · modernity · the conquered', label: '镜像 / 历史裂缝', short: '张爱玲 · 历史的天使' },
+          'quqiubai': { motif: 'translation', keywords: 'minor literature · translation · language', label: '涂抹 / 翻译插条', short: '瞿秋白 · 多余的话' },
+          'zhutianwen': { motif: 'ornament', keywords: 'ornament · lyricism · subjectivity', label: '装饰 / 感官色样', short: '朱天文 · 装饰化抒情' }
         };
         const motifHTML = (type) => type === 'history'
           ? '<div class="archive-motif history"><i class="frame"></i><i class="frame"></i><i class="crack"></i></div>'
@@ -4206,7 +4375,7 @@ TEMPLATE = r'''<!DOCTYPE html>
           const data = apparatus[w.id] || { motif: 'history', keywords: 'reading · history · text', label: '文本 / 批注' };
           return `<a class="archive-entry${i === 0 ? ' is-active' : ''}" href="#/read/${encodeURIComponent(w.id)}"
             data-id="${escapeHtml(w.id)}" data-index="${String(i + 1).padStart(2, '0')}"
-            data-keywords="${escapeHtml(data.keywords)}">
+            data-keywords="${escapeHtml(data.keywords)}" data-short="${escapeHtml(data.short || w.title)}">
             ${motifHTML(data.motif)}
             <span class="archive-entry-copy"><small>${escapeHtml(data.label)}</small><strong>${escapeHtml(w.title)}</strong></span>
           </a>`;
@@ -4214,6 +4383,10 @@ TEMPLATE = r'''<!DOCTYPE html>
         const first = works[0] || {};
         const firstData = apparatus[first.id] || { keywords: 'reading · history · text' };
         return `<div class="criticism-archive" id="criticism-archive">
+          <svg class="archive-thread" viewBox="0 0 1200 760" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M174 230 C312 124 409 404 528 545 C650 691 686 191 885 211 C1005 224 1008 474 1118 527"/>
+            <circle cx="174" cy="230" r="4"/><circle cx="528" cy="545" r="4"/><circle cx="885" cy="211" r="4"/>
+          </svg>
           <div class="archive-ledger">${entries}</div>
           <aside class="archive-lens">
             <div class="archive-lens-content" id="archive-lens-content">
