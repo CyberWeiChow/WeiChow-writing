@@ -2956,6 +2956,217 @@ TEMPLATE = r'''<!DOCTYPE html>
       .curator-card:hover .curator-card-cover { filter: saturate(1.2) contrast(1.05); }
     }
 
+    /* Creative writing is one landscape, rather than four isolated cards. */
+    .creative-world {
+      --scene-x: 0px;
+      --scene-y: 0px;
+      position: relative;
+      min-height: min(78vw, 860px);
+      overflow: hidden;
+      isolation: isolate;
+      color: #241d18;
+      background:
+        linear-gradient(180deg, #ead8b8 0%, #d8ccb0 38%, #75806b 38.2%, #34483d 100%);
+      border-top: 2px solid var(--fd-ink);
+      border-bottom: 2px solid var(--fd-ink);
+    }
+    .creative-world::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 7;
+      pointer-events: none;
+      opacity: .34;
+      mix-blend-mode: multiply;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.12'/%3E%3C/svg%3E");
+    }
+    .creative-world-head {
+      position: absolute;
+      left: 26px;
+      top: 22px;
+      z-index: 8;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-family: var(--fd-mono);
+      font-size: 10px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .creative-world-head::after { content: ''; width: 64px; height: 1px; background: currentColor; }
+    .creative-layer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      transition: transform 700ms cubic-bezier(.16,1,.3,1);
+      will-change: transform;
+    }
+    .creative-layer.far { transform: translate3d(calc(var(--scene-x) * -.18), calc(var(--scene-y) * -.10), 0); }
+    .creative-layer.mid { transform: translate3d(calc(var(--scene-x) * -.38), calc(var(--scene-y) * -.20), 0); }
+    .creative-layer.near { transform: translate3d(calc(var(--scene-x) * -.62), calc(var(--scene-y) * -.32), 0); }
+    .creative-landscape-svg { width: 100%; height: 100%; display: block; }
+    .creative-mist {
+      position: absolute;
+      left: -10%;
+      right: -10%;
+      top: 34%;
+      height: 16%;
+      opacity: .46;
+      filter: blur(18px);
+      background: linear-gradient(90deg, transparent, rgba(244,233,209,.82) 22%, rgba(244,233,209,.52) 64%, transparent);
+    }
+    .creative-river {
+      position: absolute;
+      z-index: 2;
+      left: 26%;
+      bottom: -18%;
+      width: 68%;
+      height: 66%;
+      border-radius: 48% 58% 0 0;
+      transform: rotate(-7deg);
+      background:
+        repeating-linear-gradient(168deg, transparent 0 18px, rgba(239,230,204,.14) 19px 20px),
+        linear-gradient(118deg, #263b36 0%, #63776f 36%, #253b38 72%, #172d2a 100%);
+      box-shadow: inset 28px 0 50px rgba(231,220,191,.14);
+    }
+    .creative-road {
+      position: absolute;
+      z-index: 3;
+      left: -7%;
+      bottom: 10%;
+      width: 54%;
+      height: 14%;
+      transform: rotate(-11deg) skewX(-18deg);
+      border: 1px solid rgba(237,218,182,.44);
+      border-left: 0;
+      border-right: 0;
+      border-radius: 50%;
+      opacity: .78;
+    }
+    .creative-city {
+      position: absolute;
+      z-index: 3;
+      left: 4%;
+      top: 30%;
+      width: 24%;
+      height: 24%;
+      opacity: .7;
+      background:
+        linear-gradient(90deg, transparent 0 5%, #263730 5% 13%, transparent 13% 17%, #35463b 17% 28%, transparent 28% 31%, #22342d 31% 39%, transparent 39% 42%, #3b4c40 42% 55%, transparent 55% 59%, #26372f 59% 73%, transparent 73% 77%, #314238 77% 92%, transparent 92%);
+      clip-path: polygon(0 100%,0 52%,8% 52%,8% 25%,20% 25%,20% 48%,30% 48%,30% 8%,40% 8%,40% 58%,49% 58%,49% 35%,63% 35%,63% 0,74% 0,74% 47%,84% 47%,84% 20%,94% 20%,94% 62%,100% 62%,100% 100%);
+    }
+    .creative-object {
+      position: absolute;
+      z-index: 10;
+      display: grid;
+      place-items: center;
+      color: inherit;
+      text-decoration: none;
+      transform: translate3d(0,0,0);
+      transition: transform 260ms cubic-bezier(.16,1,.3,1), filter 180ms ease, opacity 180ms ease;
+      outline: none;
+    }
+    .creative-object::after {
+      content: attr(data-index) '  ' attr(data-title);
+      position: absolute;
+      white-space: nowrap;
+      padding: 7px 9px 6px;
+      border: 1px solid rgba(36,29,24,.62);
+      background: rgba(238,224,195,.86);
+      backdrop-filter: blur(7px);
+      font-family: var(--fd-mono);
+      font-size: 9px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      box-shadow: 3px 4px 0 rgba(36,29,24,.12);
+      transition: transform 220ms cubic-bezier(.16,1,.3,1), background 180ms ease;
+    }
+    .creative-object.is-active { z-index: 14; filter: saturate(1.12); }
+    .creative-object:focus-visible { outline: 2px solid #c52f25; outline-offset: 7px; }
+    .creative-object:active { transform: scale(.97); }
+    @media (hover: hover) and (pointer: fine) {
+      .creative-object:hover { transform: translateY(-8px); }
+      .creative-object:hover::after { transform: translateY(-3px); background: #f2dfb8; }
+      .creative-world:has(.creative-object:hover) .creative-object:not(:hover) { opacity: .62; }
+    }
+    .creative-object.mountain { right: 13%; top: 14%; width: 23%; height: 28%; }
+    .creative-object.mountain::before {
+      content: '';
+      width: 100%; height: 100%;
+      background: linear-gradient(145deg, #e8dbc0 0 23%, #6b7362 24% 48%, #3c5145 49% 100%);
+      clip-path: polygon(50% 0, 100% 100%, 0 100%);
+      filter: drop-shadow(0 16px 12px rgba(20,30,24,.24));
+    }
+    .creative-object.mountain::after { left: 42%; bottom: -5px; }
+    .creative-object.raft { left: 46%; bottom: 20%; width: 22%; height: 9%; transform: rotate(-5deg); }
+    .creative-object.raft::before {
+      content: '';
+      width: 100%; height: 46%;
+      background: repeating-linear-gradient(0deg, #a98650 0 5px, #59422d 5px 7px);
+      box-shadow: 0 14px 18px rgba(12,25,22,.34);
+      border-radius: 42% 40% 16% 20%;
+    }
+    .creative-object.raft::after { left: 50%; bottom: -24px; transform: translateX(-50%); }
+    .creative-object.road { left: 10%; bottom: 17%; width: 16%; height: 8%; }
+    .creative-object.road::before {
+      content: '';
+      width: 72%; height: 56%;
+      border-radius: 24% 30% 16% 18%;
+      background: #a83b2f;
+      box-shadow: inset 20px 0 rgba(241,213,170,.24), 0 10px 14px rgba(18,26,22,.32);
+    }
+    .creative-object.road::after { left: 26%; bottom: -17px; }
+    .creative-object.city { left: 9%; top: 33%; width: 19%; height: 15%; }
+    .creative-object.city::before {
+      content: '北京';
+      display: grid; place-items: center;
+      width: 68px; height: 68px;
+      border: 2px solid #8f2d27;
+      color: #8f2d27;
+      font-family: 'Noto Serif SC', serif;
+      font-size: 22px;
+      transform: rotate(-7deg);
+      background: rgba(232,216,180,.56);
+    }
+    .creative-object.city::after { left: 50%; bottom: -22px; transform: translateX(-50%); }
+    .creative-manuscript {
+      position: absolute;
+      z-index: 12;
+      right: 28px;
+      bottom: 26px;
+      width: min(340px, 31vw);
+      min-height: 190px;
+      padding: 18px 20px 17px;
+      border: 1px solid rgba(47,38,31,.6);
+      color: #2b241e;
+      background: rgba(239,225,195,.92);
+      box-shadow: 10px 12px 0 rgba(25,34,28,.2), 0 24px 50px rgba(19,29,24,.2);
+      transform: rotate(.7deg);
+      transition: opacity 160ms ease, transform 240ms cubic-bezier(.16,1,.3,1), filter 180ms ease;
+    }
+    .creative-manuscript.is-changing { opacity: .42; transform: rotate(.7deg) translateY(4px); filter: blur(1.5px); }
+    .creative-manuscript-kicker { font-family: var(--fd-mono); font-size: 9px; letter-spacing: .12em; text-transform: uppercase; }
+    .creative-manuscript h3 { margin: 30px 0 11px; font-family: 'Noto Serif SC', serif; font-size: clamp(23px, 2.4vw, 35px); line-height: 1.25; font-weight: 600; }
+    .creative-manuscript p { margin: 0; font-family: 'Noto Serif SC', serif; font-size: 12px; line-height: 1.75; }
+    .creative-manuscript-link { display: inline-flex; margin-top: 18px; padding-bottom: 2px; border-bottom: 1px solid currentColor; font-family: var(--fd-mono); font-size: 9px; letter-spacing: .1em; text-transform: uppercase; }
+    @media (max-width: 900px) {
+      .creative-world { min-height: 760px; }
+      .creative-manuscript { width: 330px; }
+      .creative-object.mountain { right: 8%; }
+    }
+    @media (max-width: 600px) {
+      .creative-world { min-height: 920px; background: linear-gradient(180deg,#ead8b8 0 28%,#536457 28.2%,#263b35 100%); }
+      .creative-world-head { left: 14px; top: 16px; }
+      .creative-city { top: 20%; width: 45%; }
+      .creative-object.city { left: 8%; top: 20%; width: 38%; }
+      .creative-object.mountain { right: 4%; top: 14%; width: 44%; height: 23%; }
+      .creative-object.road { left: 8%; bottom: 43%; width: 36%; }
+      .creative-object.raft { left: 48%; bottom: 43%; width: 42%; }
+      .creative-river { left: 18%; bottom: 0; width: 100%; height: 70%; }
+      .creative-manuscript { left: 14px; right: 14px; bottom: 24px; width: auto; min-height: 210px; }
+      .creative-manuscript h3 { margin-top: 24px; font-size: 27px; }
+    }
+
     .curator-journey,
     .curator-section.is-reversed .curator-journey,
     .curator-contact {
@@ -3733,6 +3944,47 @@ TEMPLATE = r'''<!DOCTYPE html>
         }).join('');
       }
 
+      function creativeWorld() {
+        const works = (MANIFEST.works || []).filter(w => w.category === 'creative');
+        const slots = {
+          'beijing-beijing': ['city', '01'],
+          'victoria-peak': ['mountain', '02'],
+          'drifting-water': ['raft', '03'],
+          'carsick-cars': ['road', '04']
+        };
+        const objects = works.map((w, i) => {
+          const [kind, index] = slots[w.id] || ['road', String(i + 1).padStart(2, '0')];
+          return `<a class="creative-object ${kind}${i === 0 ? ' is-active' : ''}"
+            href="#/read/${encodeURIComponent(w.id)}"
+            data-id="${escapeHtml(w.id)}"
+            data-index="${index}"
+            data-title="${escapeHtml(w.title)}"
+            data-subtitle="${escapeHtml(w.subtitle || '')}"> </a>`;
+        }).join('');
+        const first = works[0] || {};
+        return `<div class="creative-world" id="creative-world">
+          <div class="creative-world-head">Writing atlas · 创意写作地景</div>
+          <div class="creative-layer far" aria-hidden="true">
+            <svg class="creative-landscape-svg" viewBox="0 0 1200 760" preserveAspectRatio="none">
+              <path d="M0 270 C125 210 210 250 315 180 C420 106 510 232 620 150 C755 48 845 184 950 112 C1045 49 1110 101 1200 65 L1200 420 L0 420Z" fill="#7d846f"/>
+              <path d="M0 315 C150 250 280 324 410 225 C560 111 682 302 825 187 C954 83 1062 190 1200 130 L1200 440 L0 440Z" fill="#566755"/>
+            </svg>
+          </div>
+          <div class="creative-mist" aria-hidden="true"></div>
+          <div class="creative-layer mid" aria-hidden="true">
+            <div class="creative-city"></div><div class="creative-river"></div><div class="creative-road"></div>
+          </div>
+          <div class="creative-layer near" aria-hidden="true"></div>
+          ${objects}
+          <aside class="creative-manuscript" id="creative-manuscript" aria-live="polite">
+            <div class="creative-manuscript-kicker">Selected fiction · ${works.length} pieces</div>
+            <h3 id="creative-manuscript-title">${escapeHtml(first.title || '创意写作')}</h3>
+            <p id="creative-manuscript-desc">${escapeHtml(first.subtitle || '沿着地景进入作品。')}</p>
+            ${first.id ? `<a class="creative-manuscript-link" id="creative-manuscript-link" href="#/read/${encodeURIComponent(first.id)}">enter this story ↗</a>` : ''}
+          </aside>
+        </div>`;
+      }
+
       const journeyHTML = (s.journey || []).map(j => `
         <div class="curator-stop">
           <div class="curator-stop-year">${escapeHtml(j.year || '')}</div>
@@ -3771,7 +4023,7 @@ TEMPLATE = r'''<!DOCTYPE html>
                 <h2>身体<span>感受先于解释</span></h2>
                 <p>晕眩、水流、山顶与炎热构成写作最早的坐标。个人经验并非封闭的私人世界，而是时代进入身体时留下的触感。</p>
               </div>
-              <div class="curator-works fade-stagger">${workCards('creative')}</div>
+              ${creativeWorld()}
             </section>
 
             <section class="curator-section is-reversed" id="curated-reading" data-curator-section="reading">
@@ -3815,6 +4067,53 @@ TEMPLATE = r'''<!DOCTYPE html>
         </div>`;
 
       const page = document.getElementById('curated-page');
+      const creativeScene = document.getElementById('creative-world');
+      if (creativeScene) {
+        const creativeWorks = (MANIFEST.works || []).filter(w => w.category === 'creative');
+        const manuscript = document.getElementById('creative-manuscript');
+        const manuscriptTitle = document.getElementById('creative-manuscript-title');
+        const manuscriptDesc = document.getElementById('creative-manuscript-desc');
+        const manuscriptLink = document.getElementById('creative-manuscript-link');
+        let previewTimer = null;
+        let sceneRAF = null;
+        const activateObject = (object) => {
+          const work = creativeWorks.find(w => w.id === object.dataset.id);
+          if (!work) return;
+          creativeScene.querySelectorAll('.creative-object').forEach(el => el.classList.toggle('is-active', el === object));
+          manuscript.classList.add('is-changing');
+          clearTimeout(previewTimer);
+          previewTimer = setTimeout(() => {
+            manuscriptTitle.textContent = work.title;
+            manuscriptDesc.textContent = work.subtitle || '进入作品';
+            if (manuscriptLink) manuscriptLink.href = '#/read/' + encodeURIComponent(work.id);
+            manuscript.classList.remove('is-changing');
+          }, 120);
+        };
+        creativeScene.querySelectorAll('.creative-object').forEach(object => {
+          object.addEventListener('pointerenter', () => activateObject(object));
+          object.addEventListener('focus', () => activateObject(object));
+        });
+        const moveScene = (event) => {
+          if (REDUCED_MOTION || matchMedia('(pointer: coarse)').matches) return;
+          const rect = creativeScene.getBoundingClientRect();
+          const x = Math.max(-1, Math.min(1, (event.clientX - rect.left) / rect.width * 2 - 1));
+          const y = Math.max(-1, Math.min(1, (event.clientY - rect.top) / rect.height * 2 - 1));
+          if (sceneRAF) cancelAnimationFrame(sceneRAF);
+          sceneRAF = requestAnimationFrame(() => {
+            creativeScene.style.setProperty('--scene-x', (x * 14).toFixed(2) + 'px');
+            creativeScene.style.setProperty('--scene-y', (y * 10).toFixed(2) + 'px');
+          });
+        };
+        creativeScene.addEventListener('pointermove', moveScene, { passive: true });
+        creativeScene.addEventListener('pointerleave', () => {
+          creativeScene.style.setProperty('--scene-x', '0px');
+          creativeScene.style.setProperty('--scene-y', '0px');
+        });
+        onViewCleanup(() => {
+          clearTimeout(previewTimer);
+          if (sceneRAF) cancelAnimationFrame(sceneRAF);
+        });
+      }
       const sections = [...page.querySelectorAll('[data-curator-section]')];
       let scrollRAF = null;
       const syncCurator = () => {
