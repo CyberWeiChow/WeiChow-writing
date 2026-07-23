@@ -3036,6 +3036,175 @@
       .creative-manuscript h3 { margin-top: 24px; font-size: 27px; }
     }
 
+    /* Literary criticism becomes one shared reading desk / critical apparatus. */
+    .criticism-archive {
+      position: relative;
+      min-height: 760px;
+      padding: 76px 28px 92px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(300px, .75fr);
+      gap: clamp(46px, 7vw, 110px);
+      overflow: hidden;
+      color: #201d19;
+      background:
+        linear-gradient(90deg, transparent 0 68px, rgba(158,48,42,.22) 68px 69px, transparent 69px),
+        repeating-linear-gradient(180deg, rgba(40,35,29,.055) 0 1px, transparent 1px 34px),
+        #eee6d6;
+      border-top: 2px solid var(--fd-ink);
+      border-bottom: 2px solid var(--fd-ink);
+      isolation: isolate;
+    }
+    .criticism-archive::after {
+      content: 'CRITICAL APPARATUS · 批评装置';
+      position: absolute;
+      right: 18px;
+      top: 18px;
+      color: rgba(32,29,25,.52);
+      font-family: var(--fd-mono);
+      font-size: 9px;
+      letter-spacing: .12em;
+      writing-mode: vertical-rl;
+    }
+    .archive-ledger {
+      position: relative;
+      display: grid;
+      align-content: center;
+      gap: 18px;
+      padding-left: 62px;
+    }
+    .archive-ledger::before {
+      content: '';
+      position: absolute;
+      left: 17px;
+      top: 4%;
+      bottom: 4%;
+      width: 1px;
+      background: #9e302a;
+    }
+    .archive-entry {
+      --entry-accent: #9e302a;
+      position: relative;
+      min-height: 155px;
+      padding: 17px 18px 16px 20px;
+      display: grid;
+      grid-template-columns: 142px 1fr;
+      gap: 24px;
+      align-items: center;
+      color: inherit;
+      border-top: 1px solid rgba(32,29,25,.55);
+      background: rgba(247,241,228,.52);
+      transition: transform 240ms cubic-bezier(.16,1,.3,1), background 180ms ease, opacity 180ms ease;
+      outline: none;
+    }
+    .archive-entry:last-child { border-bottom: 1px solid rgba(32,29,25,.55); }
+    .archive-entry::before {
+      content: attr(data-index);
+      position: absolute;
+      left: -62px;
+      top: 18px;
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border: 1px solid #9e302a;
+      border-radius: 50%;
+      color: #8d2925;
+      background: #eee6d6;
+      font-family: var(--fd-mono);
+      font-size: 9px;
+      transition: color 180ms ease, background 180ms ease, transform 220ms cubic-bezier(.16,1,.3,1);
+    }
+    .archive-entry.is-active { background: rgba(255,250,239,.82); }
+    .archive-entry.is-active::before { color: #eee6d6; background: #9e302a; transform: scale(1.08); }
+    .archive-entry:focus-visible { outline: 2px solid #9e302a; outline-offset: 4px; }
+    .archive-entry:active { transform: scale(.985); }
+    @media (hover: hover) and (pointer: fine) {
+      .archive-entry:hover { transform: translateX(8px); background: rgba(255,250,239,.9); }
+      .archive-ledger:has(.archive-entry:hover) .archive-entry:not(:hover) { opacity: .58; }
+    }
+    .archive-entry-copy small {
+      display: block;
+      margin-bottom: 10px;
+      color: rgba(32,29,25,.55);
+      font-family: var(--fd-mono);
+      font-size: 8px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .archive-entry-copy strong {
+      display: block;
+      font-family: 'Noto Serif SC', serif;
+      font-size: clamp(16px, 1.65vw, 23px);
+      line-height: 1.45;
+      font-weight: 500;
+    }
+    .archive-motif { position: relative; width: 142px; height: 108px; }
+    .archive-motif.history .frame {
+      position: absolute;
+      width: 72px;
+      height: 88px;
+      border: 1px solid #29251f;
+      background: rgba(62,57,48,.13);
+    }
+    .archive-motif.history .frame:first-child { left: 12px; top: 3px; transform: rotate(-5deg); }
+    .archive-motif.history .frame:nth-child(2) { left: 52px; top: 15px; transform: rotate(5deg); background: rgba(158,48,42,.12); }
+    .archive-motif.history .crack { position: absolute; left: 69px; top: -1px; width: 1px; height: 110px; background: #9e302a; transform: rotate(14deg); }
+    .archive-motif.translation { display: grid; align-content: center; gap: 9px; }
+    .archive-motif.translation i { display: block; height: 7px; background: #2e2a24; }
+    .archive-motif.translation i:nth-child(1) { width: 88%; }
+    .archive-motif.translation i:nth-child(2) { width: 68%; }
+    .archive-motif.translation i:nth-child(3) { width: 96%; background: linear-gradient(90deg,#2e2a24 0 30%,#9e302a 30% 72%,#2e2a24 72%); }
+    .archive-motif.translation i:nth-child(4) { width: 52%; }
+    .archive-motif.translation::after { content: '译 / TRANS.'; position: absolute; right: 2px; bottom: 5px; padding: 4px 7px; color: #eee6d6; background: #34483d; font: 8px var(--fd-mono); letter-spacing: .08em; transform: rotate(-3deg); }
+    .archive-motif.ornament .swatch { position: absolute; width: 46px; height: 76px; top: 14px; border-radius: 50% 50% 8px 8px; opacity: .9; }
+    .archive-motif.ornament .swatch:nth-child(1) { left: 4px; background: #9e302a; transform: rotate(-8deg); }
+    .archive-motif.ornament .swatch:nth-child(2) { left: 47px; background: #a78a51; transform: translateY(-7px); }
+    .archive-motif.ornament .swatch:nth-child(3) { left: 90px; background: #42584a; transform: rotate(8deg); }
+    .archive-motif.ornament::after { content: ''; position: absolute; left: 1px; right: 1px; top: 57px; height: 28px; border-top: 1px solid #eee6d6; border-radius: 50%; transform: rotate(-8deg); }
+    .archive-lens {
+      position: sticky;
+      top: 34px;
+      align-self: start;
+      min-height: 520px;
+      padding: 62px 0 28px 38px;
+      border-left: 1px solid rgba(32,29,25,.48);
+    }
+    .archive-lens::before {
+      content: '';
+      position: absolute;
+      width: min(290px, 28vw);
+      aspect-ratio: 1;
+      right: -10%;
+      top: 4px;
+      border: 1px solid rgba(158,48,42,.5);
+      border-radius: 50%;
+      background: rgba(255,250,239,.28);
+      box-shadow: inset 0 0 60px rgba(255,255,255,.36);
+      pointer-events: none;
+    }
+    .archive-lens-content { position: relative; z-index: 1; transition: opacity 150ms ease, transform 220ms cubic-bezier(.16,1,.3,1), filter 150ms ease; }
+    .archive-lens-content.is-changing { opacity: .35; transform: translateY(5px); filter: blur(1.5px); }
+    .archive-lens-kicker { font-family: var(--fd-mono); font-size: 9px; letter-spacing: .13em; text-transform: uppercase; }
+    .archive-lens h3 { margin: 76px 0 18px; max-width: 410px; font-family: 'Noto Serif SC', serif; font-size: clamp(24px, 3vw, 42px); line-height: 1.35; font-weight: 500; }
+    .archive-keywords { margin: 0 0 22px; color: #8d2925; font-family: var(--fd-mono); font-size: 9px; letter-spacing: .12em; text-transform: uppercase; }
+    .archive-abstract { max-width: 430px; margin: 0; display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; font-family: 'Noto Serif SC', serif; font-size: 12px; line-height: 1.9; }
+    .archive-read { display: inline-flex; margin-top: 26px; padding-bottom: 3px; border-bottom: 1px solid currentColor; font-family: var(--fd-mono); font-size: 9px; letter-spacing: .1em; text-transform: uppercase; }
+    @media (max-width: 800px) {
+      .criticism-archive { grid-template-columns: 1fr; min-height: auto; padding: 64px 18px 70px; gap: 48px; }
+      .archive-ledger { padding-left: 48px; }
+      .archive-entry { grid-template-columns: 112px 1fr; gap: 16px; padding-left: 12px; }
+      .archive-motif { width: 112px; transform: scale(.82); transform-origin: left center; }
+      .archive-entry::before { left: -48px; }
+      .archive-lens { position: relative; top: auto; min-height: 420px; padding: 42px 0 0 24px; }
+      .archive-lens::before { width: 250px; right: 0; }
+    }
+    @media (max-width: 520px) {
+      .archive-entry { min-height: 132px; grid-template-columns: 78px 1fr; }
+      .archive-motif { width: 96px; transform: scale(.66); }
+      .archive-entry-copy strong { font-size: 15px; }
+      .archive-lens h3 { margin-top: 62px; font-size: 27px; }
+    }
+
     .curator-journey,
     .curator-section.is-reversed .curator-journey,
     .curator-contact {
@@ -3867,6 +4036,43 @@
         </div>`;
       }
 
+      function criticismArchive() {
+        const works = (MANIFEST.works || []).filter(w => w.category === 'criticism');
+        const apparatus = {
+          'elieen-chang': { motif: 'history', keywords: 'history · modernity · the conquered', label: '镜像 / 历史裂缝' },
+          'quqiubai': { motif: 'translation', keywords: 'minor literature · translation · language', label: '涂抹 / 翻译插条' },
+          'zhutianwen': { motif: 'ornament', keywords: 'ornament · lyricism · subjectivity', label: '装饰 / 感官色样' }
+        };
+        const motifHTML = (type) => type === 'history'
+          ? '<div class="archive-motif history"><i class="frame"></i><i class="frame"></i><i class="crack"></i></div>'
+          : type === 'translation'
+            ? '<div class="archive-motif translation"><i></i><i></i><i></i><i></i></div>'
+            : '<div class="archive-motif ornament"><i class="swatch"></i><i class="swatch"></i><i class="swatch"></i></div>';
+        const entries = works.map((w, i) => {
+          const data = apparatus[w.id] || { motif: 'history', keywords: 'reading · history · text', label: '文本 / 批注' };
+          return `<a class="archive-entry${i === 0 ? ' is-active' : ''}" href="#/read/${encodeURIComponent(w.id)}"
+            data-id="${escapeHtml(w.id)}" data-index="${String(i + 1).padStart(2, '0')}"
+            data-keywords="${escapeHtml(data.keywords)}">
+            ${motifHTML(data.motif)}
+            <span class="archive-entry-copy"><small>${escapeHtml(data.label)}</small><strong>${escapeHtml(w.title)}</strong></span>
+          </a>`;
+        }).join('');
+        const first = works[0] || {};
+        const firstData = apparatus[first.id] || { keywords: 'reading · history · text' };
+        return `<div class="criticism-archive" id="criticism-archive">
+          <div class="archive-ledger">${entries}</div>
+          <aside class="archive-lens">
+            <div class="archive-lens-content" id="archive-lens-content">
+              <div class="archive-lens-kicker">Reading dossier · ${works.length} studies</div>
+              <h3 id="archive-lens-title">${escapeHtml(first.title || '文学批评')}</h3>
+              <p class="archive-keywords" id="archive-lens-keywords">${escapeHtml(firstData.keywords)}</p>
+              <p class="archive-abstract" id="archive-lens-abstract">${escapeHtml(first.subtitle || '从文本进入历史的裂缝。')}</p>
+              ${first.id ? `<a class="archive-read" id="archive-lens-link" href="#/read/${encodeURIComponent(first.id)}">open dossier ↗</a>` : ''}
+            </div>
+          </aside>
+        </div>`;
+      }
+
       const journeyHTML = (s.journey || []).map(j => `
         <div class="curator-stop">
           <div class="curator-stop-year">${escapeHtml(j.year || '')}</div>
@@ -3914,7 +4120,7 @@
                 <h2>阅读<span>进入历史的裂缝</span></h2>
                 <p>文本并不只是解释历史。它保存被征服者、次要语言与感官主体没有说完的部分，并让另一种现代性浮现出来。</p>
               </div>
-              <div class="curator-works fade-stagger">${workCards('criticism')}</div>
+              ${criticismArchive()}
             </section>
 
             <section class="curator-section" id="curated-field" data-curator-section="field">
@@ -3995,6 +4201,35 @@
           clearTimeout(previewTimer);
           if (sceneRAF) cancelAnimationFrame(sceneRAF);
         });
+      }
+      const criticismDesk = document.getElementById('criticism-archive');
+      if (criticismDesk) {
+        const criticismWorks = (MANIFEST.works || []).filter(w => w.category === 'criticism');
+        const lensContent = document.getElementById('archive-lens-content');
+        const lensTitle = document.getElementById('archive-lens-title');
+        const lensKeywords = document.getElementById('archive-lens-keywords');
+        const lensAbstract = document.getElementById('archive-lens-abstract');
+        const lensLink = document.getElementById('archive-lens-link');
+        let lensTimer = null;
+        const activateArchiveEntry = (entry) => {
+          const work = criticismWorks.find(w => w.id === entry.dataset.id);
+          if (!work) return;
+          criticismDesk.querySelectorAll('.archive-entry').forEach(el => el.classList.toggle('is-active', el === entry));
+          lensContent.classList.add('is-changing');
+          clearTimeout(lensTimer);
+          lensTimer = setTimeout(() => {
+            lensTitle.textContent = work.title;
+            lensKeywords.textContent = entry.dataset.keywords || 'reading · history · text';
+            lensAbstract.textContent = work.subtitle || '进入文本';
+            if (lensLink) lensLink.href = '#/read/' + encodeURIComponent(work.id);
+            lensContent.classList.remove('is-changing');
+          }, 110);
+        };
+        criticismDesk.querySelectorAll('.archive-entry').forEach(entry => {
+          entry.addEventListener('pointerenter', () => activateArchiveEntry(entry));
+          entry.addEventListener('focus', () => activateArchiveEntry(entry));
+        });
+        onViewCleanup(() => clearTimeout(lensTimer));
       }
       const sections = [...page.querySelectorAll('[data-curator-section]')];
       let scrollRAF = null;
